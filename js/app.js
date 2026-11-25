@@ -1259,8 +1259,8 @@
     const linkText = document.getElementById("mobileDirectLinkText");
     const lastTime = document.getElementById("syncLastTime");
 
-    const currentKey = window.QuizCloudSync.getSyncKey();
-    if (input) input.value = currentKey;
+    const currentGist = window.QuizCloudSync.getGistId();
+    if (input) input.value = currentGist;
 
     const fullUrl = window.QuizCloudSync.getMobileSyncUrl();
     if (linkText) {
@@ -1270,15 +1270,13 @@
 
     renderSyncQRCode(fullUrl);
 
-    const lastTs = localStorage.getItem("quiz_cloud_last_pull_ts");
+    const lastTs = localStorage.getItem("quiz_sync_last_ts");
     if (lastTime) {
       if (lastTs) {
         const d = new Date(Number(lastTs));
         lastTime.textContent = `Ultima sync: ${d.toLocaleTimeString()} (${d.toLocaleDateString()})`;
-      } else if (currentKey) {
-        lastTime.textContent = "Chiave pronta. Clicca 'Salva nel Cloud'.";
       } else {
-        lastTime.textContent = "Stato: Non configurato";
+        lastTime.textContent = "Connesso a GitHub Gist Cloud Database";
       }
     }
   }
@@ -1296,11 +1294,7 @@
     const linkText = document.getElementById("mobileDirectLinkText");
 
     if (btnOpen) {
-      btnOpen.addEventListener("click", async () => {
-        if (!window.QuizCloudSync.getSyncKey()) {
-          window.QuizCloudSync.setSyncKey(window.QuizCloudSync.generateRandomSyncKey());
-        }
-        await window.QuizCloudSync.fetchLanInfo();
+      btnOpen.addEventListener("click", () => {
         updateSyncModalUI();
         if (modal) modal.classList.remove("hidden");
       });
@@ -1316,9 +1310,7 @@
     if (btnGen) {
       btnGen.addEventListener("click", () => {
         const input = document.getElementById("syncKeyInput");
-        const newKey = window.QuizCloudSync.generateRandomSyncKey();
-        if (input) input.value = newKey;
-        window.QuizCloudSync.setSyncKey(newKey);
+        if (input) input.value = window.QuizCloudSync.getGistId();
         updateSyncModalUI();
       });
     }
@@ -1328,10 +1320,10 @@
         const input = document.getElementById("syncKeyInput");
         const k = input ? input.value.trim() : "";
         if (!k) {
-          alert("Inserisci un codice valido o premi 'Genera'!");
+          alert("Inserisci un Gist ID valido!");
           return;
         }
-        window.QuizCloudSync.setSyncKey(k);
+        window.QuizCloudSync.setGistId(k);
         updateSyncModalUI();
         btnSave.disabled = true;
         btnSave.textContent = "Sincronizzazione...";
@@ -1339,9 +1331,9 @@
         btnSave.disabled = false;
         btnSave.textContent = "Salva & Collega";
         if (pushRes && pushRes.success) {
-          alert("Dati sincronizzati con successo nel cloud! Ora inquadra il QR con il telefono.");
+          alert("Dati sincronizzati con successo sul Cloud Database! Inquadra il QR con il telefono.");
         } else {
-          alert("Salvataggio locale completato.");
+          alert("Errore salvataggio: " + (pushRes.error || pushRes.reason || ""));
         }
         updateSyncModalUI();
       });
@@ -1355,9 +1347,9 @@
         btnPush.disabled = false;
         btnPush.textContent = "⬆️ Salva nel Cloud";
         if (res && res.success) {
-          alert("Salvataggio nel cloud completato con successo!");
+          alert("Salvataggio nel Cloud Database completato con successo!");
         } else {
-          alert("Salvataggio locale eseguito.");
+          alert("Errore salvataggio: " + (res.error || res.reason || ""));
         }
         updateSyncModalUI();
       });
@@ -1375,9 +1367,9 @@
           refreshSetupView();
           renderBrowse();
           renderStats();
-          alert("Dati aggiornati e uniti dal Cloud!");
+          alert("Dati scaricati e sincronizzati dal Cloud!");
         } else {
-          alert("Nessun dato aggiornato: " + (res.reason || res.error || ""));
+          alert("Nessun dato aggiornato o errore: " + (res.reason || res.error || ""));
         }
         updateSyncModalUI();
       });
@@ -1387,29 +1379,27 @@
       linkText.addEventListener("click", () => {
         const url = window.QuizCloudSync.getMobileSyncUrl();
         navigator.clipboard.writeText(url).then(() => {
-          alert("Link copiato negli appunti! Invialo via WhatsApp/Telegram o aprilo sul telefono.");
+          alert("Link di sincronizzazione copiato negli appunti! Invialo su WhatsApp o aprilo sul telefono.");
         }).catch(() => {
-          prompt("Copia questo link sul tuo smartphone:", url);
+          prompt("Copia questo link di sincronizzazione:", url);
         });
       });
     }
 
     // Startup cloud check
     window.QuizCloudSync.updateStatusDot();
-    if (window.QuizCloudSync.getSyncKey()) {
-      window.QuizCloudSync.pullFromCloud().then(res => {
-        if (res && res.hasChanges) {
-          appState = loadState();
-          refreshSetupView();
-          renderBrowse();
-          renderStats();
-        }
-      });
-    }
+    window.QuizCloudSync.pullFromCloud().then(res => {
+      if (res && res.hasChanges) {
+        appState = loadState();
+        refreshSetupView();
+        renderBrowse();
+        renderStats();
+      }
+    });
 
     // Auto-pull al rientro nella pagina (visibilità attiva)
     document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible" && window.QuizCloudSync.getSyncKey()) {
+      if (document.visibilityState === "visible") {
         window.QuizCloudSync.pullFromCloud().then(res => {
           if (res && res.hasChanges) {
             appState = loadState();
@@ -1420,6 +1410,20 @@
         });
       }
     });
+
+    // Polling periodico automatico ogni 20 secondi per sincronizzazione reciproca in tempo reale
+    setInterval(() => {
+      if (document.visibilityState === "visible") {
+        window.QuizCloudSync.pullFromCloud().then(res => {
+          if (res && res.hasChanges) {
+            appState = loadState();
+            refreshSetupView();
+            renderBrowse();
+            renderStats();
+          }
+        });
+      }
+    }, 20000);
   }
 
   // Initial population of select and brand updates

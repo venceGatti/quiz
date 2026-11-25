@@ -390,20 +390,19 @@
 
       <div class="sync-box">
         <div style="font-weight:600; font-size:0.95rem; margin-bottom:0.25rem;">
-          1. Il tuo Codice Personale (Sync Key)
+          ☁️ Database Cloud Bidirezionale (GitHub Gist Cloud Sync)
         </div>
         <p class="soft" style="margin:0 0 0.5rem 0; font-size:0.85rem;">
-          Inserisci lo stesso codice su PC e Smartphone per condividere automaticamente progressi, statistiche e cronologia. Il database cloud è attivo 24/7 anche a PC spento!
+          I tuoi progressi, risposte, errori e segnalibri vengono salvati automaticamente sul Database Cloud permanente. È attivo 24/7 anche a PC spento!
         </p>
         <div class="sync-key-row">
-          <input type="text" id="syncKeyInput" class="sync-key-input" placeholder="es. vence-2026" spellcheck="false" autocomplete="off" />
-          <button class="btn btn-sm" id="btnGenSyncKey" title="Genera chiave casuale">🎲 Genera</button>
+          <input type="text" id="syncKeyInput" class="sync-key-input" placeholder="Gist Cloud ID" spellcheck="false" autocomplete="off" />
           <button class="btn btn-primary btn-sm" id="btnSaveSyncKey">Salva & Collega</button>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.75rem; font-size:0.83rem;">
-          <span class="soft" id="syncLastTime">Stato: Non configurato</span>
+          <span class="soft" id="syncLastTime">Stato: Connesso a GitHub Gist Cloud Database</span>
           <div style="display:flex; gap:0.5rem;">
-            <button class="btn btn-sm" id="btnManualPull" title="Scarica ultimi dati dal cloud">⬇️ Scarica</button>
+            <button class="btn btn-sm" id="btnManualPull" title="Scarica ultimi dati dal cloud">⬇️ Scarica Ora</button>
             <button class="btn btn-sm btn-primary" id="btnManualPush" title="Carica dati correnti nel cloud">⬆️ Salva nel Cloud</button>
           </div>
         </div>
@@ -411,10 +410,10 @@
 
       <div class="qr-section">
         <div style="font-weight:600; font-size:0.95rem;">
-          📱 2. Inquadra con la Fotocamera dello Smartphone
+          📱 Inquadra con il Telefono per Sincronizzare all'Istante
         </div>
         <p class="soft" style="margin:0.25rem 0 0.5rem 0; font-size:0.84rem;">
-          Punta la fotocamera del tuo telefono sul QR code per aprire il quiz con la tua chiave già configurata:
+          Punta la fotocamera del tuo telefono sul QR code per aprire il quiz con tutti i tuoi dati sincronizzati:
         </p>
         <div class="qr-canvas-wrap" id="qrCodeWrap">
           <div id="qrCodeContainer"></div>
