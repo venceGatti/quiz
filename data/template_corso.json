@@ -1,0 +1,44 @@
+{
+  "course_id": "id_corso_senza_spazi",
+  "course_title": "Nome Completo del Corso",
+  "course_badge": "SIGLA",
+  "version": "1.0.0",
+  "topics": {
+    "modulo1": "01 · Modulo Introduttivo",
+    "modulo2": "02 · Modulo Avanzato"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "custom": true,
+      "title": "Titolo Breve Argomento",
+      "topic": "modulo1",
+      "question": "Testo della domanda a risposta multipla?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Opzione A (errata)"
+        },
+        {
+          "origKey": "b",
+          "text": "Opzione B (corretta)"
+        },
+        {
+          "origKey": "c",
+          "text": "Opzione C (errata)"
+        },
+        {
+          "origKey": "d",
+          "text": "Opzione D (errata)"
+        }
+      ],
+      "correctKey": "b",
+      "refs": "Riferimento bibliografico, slide o RFC",
+      "explanation": [
+        "Spiegazione dettagliata punto 1.",
+        "Spiegazione dettagliata punto 2 con formule o codice."
+      ],
+      "wrongReasons": "Motivazione per cui le altre opzioni sono errate."
+    }
+  ]
+}

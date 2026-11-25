@@ -1,0 +1,6941 @@
+// Dati PAJC per esecuzione offline / doppio click su file://
+window.QUIZ_COURSES = window.QUIZ_COURSES || {};
+window.QUIZ_COURSES['pajc'] = {
+  "course_id": "pajc",
+  "course_title": "PAJC - Prog. Avanzata Java e C++",
+  "course_badge": "PAJC",
+  "version": "2.0.0",
+  "topics": {
+    "java_core": "01 · Java Core, Generics & Modello a Oggetti",
+    "funzionale": "02 · Programmazione Funzionale, Lambda & Stream",
+    "concorrenza": "03 · Threading, JMM, Lock & Virtual Threads",
+    "gui_rete": "04 · Swing, EDT, MVC & Socket TCP/IO",
+    "c_memory": "05 · Linguaggio C, Memoria, Puntatori & Allineamento"
+  },
+  "questions": [
+    {
+      "id": 1,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Java: Modello di Memoria JVM (Stack vs Heap)",
+      "topic": "java_core",
+      "question": "Nella Java Virtual Machine (JVM), dove vengono allocate rispettivamente le variabili locali di tipo primitivo e le istanze degli oggetti create con l'operatore new?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Le variabili locali risiedono nello Stack frame del thread corrente; gli oggetti risiedono sempre nell'Heap condiviso."
+        },
+        {
+          "origKey": "b",
+          "text": "Tutto viene allocato esclusivamente nello Stack frame per velocizzare l'esecuzione."
+        },
+        {
+          "origKey": "c",
+          "text": "Le variabili locali risiedono nell'Heap; gli oggetti risiedono nel Metaspace."
+        },
+        {
+          "origKey": "d",
+          "text": "Gli oggetti creati con new risiedono nello Stack e vengono distrutti all'uscita dal blocco."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 2 (Memoria JVM)",
+      "explanation": [
+        "Ogni thread Java possiede un proprio <strong>Call Stack</strong> privato diviso in <em>Stack Frame</em>: ogni frame memorizza le variabili locali, i parametri del metodo e i valori intermedi di valutazione.",
+        "Tutti gli oggetti creati dinamicamente con <code>new</code> risiedono invece nell'<strong>Heap</strong>, un'area di memoria condivisa tra tutti i thread gestita automaticamente dal Garbage Collector.",
+        "Nello stack frame viene memorizzato unicamente il riferimento (puntatore a 64 bit o compresso a 32 bit) all'oggetto presente nell'heap."
+      ],
+      "wrongReasons": "Gli oggetti non possono stare solo nello stack ({{opt:b}}); le variabili locali non stanno nell'heap ({{opt:c}}); l'allocazione su stack di oggetti con new non è il modello Java standard ({{opt:d}})."
+    },
+    {
+      "id": 2,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Passaggio dei Parametri nei Metodi",
+      "topic": "java_core",
+      "question": "Cosa accade eseguendo il seguente metodo Java?\n<pre><code>void swap(StringBuilder a, StringBuilder b) {\n    StringBuilder tmp = a;\n    a = b;\n    b = tmp;\n    a.append(\"!x\");\n}</code></pre> invocato con due istanze <code>s1 = new StringBuilder(\"A\")</code> e <code>s2 = new StringBuilder(\"B\")</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "In Java il passaggio dei parametri è rigorosamente pass-by-value: i riferimenti a e b sono copie locali dei puntatori; lo swap locale non altera s1 e s2 nel chiamante, ma a.append(\"!x\") modifica lo stato dell'oggetto puntato da s2, che diventa \"B!x\"."
+        },
+        {
+          "origKey": "b",
+          "text": "I riferimenti s1 e s2 vengono scambiati nel chiamante (pass-by-reference) e s1 diventa \"B!x\"."
+        },
+        {
+          "origKey": "c",
+          "text": "Il codice solleva una NullPointerException a runtime."
+        },
+        {
+          "origKey": "d",
+          "text": "Nessun oggetto viene modificato poiché StringBuilder è una classe immutabile come String."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 3 (Pass-by-Value in Java)",
+      "explanation": [
+        "In Java <strong>tutto è passato per valore (pass-by-value)</strong>.",
+        "Quando si passa un oggetto, il valore passato è <em>la copia del riferimento (indirizzo di memoria)</em>.",
+        "Riassegnare <code>a = b</code> nello scope locale modifica solo la variabile locale <code>a</code> sul frame dello stack, senza toccare <code>s1</code> nel chiamante.",
+        "Tuttavia, dopo lo scambio locale, <code>a</code> punta all'oggetto originale <code>s2</code> (\"B\"): l'invocazione <code>a.append(\"!x\")</code> muta l'oggetto condiviso nell'heap, che diventa \"B!x\"."
+      ],
+      "wrongReasons": "Java non ha pass-by-reference per i puntatori come C++ ({{opt:b}}); nessun riferimento è null ({{opt:c}}); StringBuilder è mutabile, a differenza di String ({{opt:d}})."
+    },
+    {
+      "id": 3,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Contratto equals() e hashCode()",
+      "topic": "java_core",
+      "question": "Quale regola fondamentale impone il contratto generale tra i metodi equals() e hashCode() in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Se due oggetti sono uguali secondo equals(Object), devono tassativamente restituire lo stesso valore intero da hashCode(); se due oggetti hanno lo stesso hashCode(), non è invece obbligatorio che siano uguali secondo equals()."
+        },
+        {
+          "origKey": "b",
+          "text": "Due oggetti con hashCode() diverso devono sempre risultare uguali secondo equals()."
+        },
+        {
+          "origKey": "c",
+          "text": "hashCode() deve restituire sempre un numero negativo per gli oggetti immutabili."
+        },
+        {
+          "origKey": "d",
+          "text": "equals() e hashCode() non hanno alcuna relazione nelle collezioni hash come HashSet e HashMap."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 4 (Contratto equals e hashCode)",
+      "explanation": [
+        "Il contratto di <code>java.lang.Object</code> stabilisce:",
+        "1. <strong>Coerenza:</strong> se <code>x.equals(y) == true</code>, allora <code>x.hashCode() == y.hashCode()</code> è <strong>obbligatorio</strong>.",
+        "2. <strong>Collisioni ammesse:</strong> se <code>x.hashCode() == y.hashCode()</code>, non è detto che <code>x.equals(y)</code> sia true (collisione hash).",
+        "Se si sovrascrive <code>equals()</code> senza sovrascrivere coerentemente <code>hashCode()</code>, l'oggetto non funzionerà mai correttamente come chiave in una <code>HashMap</code> o elemento in un <code>HashSet</code>."
+      ],
+      "wrongReasons": "Se hanno hashCode diverso non possono essere uguali ({{opt:b}}); hashCode restituisce un int arbitrario ({{opt:c}}); HashMap dipende direttamente da questo contratto ({{opt:d}})."
+    },
+    {
+      "id": 4,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Java: String Pool e Confronto con == vs equals()",
+      "topic": "java_core",
+      "question": "Qual è l'output del seguente codice Java?\n<pre><code>String s1 = \"Pajc\";\nString s2 = \"Pajc\";\nString s3 = new String(\"Pajc\");\nSystem.out.println((s1 == s2) + \" \" + (s1 == s3) + \" \" + s1.equals(s3));</code></pre>",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "true false true"
+        },
+        {
+          "origKey": "b",
+          "text": "true true true"
+        },
+        {
+          "origKey": "c",
+          "text": "false false true"
+        },
+        {
+          "origKey": "d",
+          "text": "false false false"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 5 (String Pool e Immutabilità)",
+      "explanation": [
+        "I letterali stringa identici come <code>\"Pajc\"</code> vengono memorizzati nello <strong>String Constant Pool</strong>: <code>s1</code> e <code>s2</code> puntano allo stesso identico indirizzo nell'heap, quindi <code>s1 == s2</code> vale <code>true</code>.",
+        "L'operatore <code>new String(\"Pajc\")</code> forza l'allocazione di un <em>nuovo</em> oggetto separato nell'heap fuori dal pool, quindi <code>s1 == s3</code> confronta due indirizzi di memoria distinti e vale <code>false</code>.",
+        "Il metodo <code>s1.equals(s3)</code> confronta il contenuto testuale carattere per carattere e vale <code>true</code>."
+      ],
+      "wrongReasons": "s1 e s3 sono istanze diverse nell'heap, quindi s1 == s3 è false ({{opt:b}}, {{opt:c}}, {{opt:d}})."
+    },
+    {
+      "id": 5,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Record Classes (Java 16+)",
+      "topic": "java_core",
+      "question": "Quali caratteristiche architetturali contraddistinguono un record in Java (introdotto stabilmente in Java 16)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "È una classe finale trasparente e immutabile i cui campi sono final e privati, per cui il compilatore genera automaticamente costruttore canonico, getter (con lo stesso nome del campo), equals(), hashCode() e toString()."
+        },
+        {
+          "origKey": "b",
+          "text": "È una classe mutabile che estende automaticamente java.lang.Thread."
+        },
+        {
+          "origKey": "c",
+          "text": "I record possono estendere un'altra classe arbitraria tramite extends NomeClasse."
+        },
+        {
+          "origKey": "d",
+          "text": "I getter generati dal compilatore hanno il prefisso get (es. getNome())."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 6 & Formulario Java (Record)",
+      "explanation": [
+        "Un <code>record Point(int x, int y) {}</code> è uno zucchero sintattico per creare un portatore di dati immutabile (<em>data carrier</em>).",
+        "Tutti i record estendono implicitamente <code>java.lang.Record</code> e sono <strong>final</strong> (non possono estendere altre classi né essere estesi).",
+        "I componenti sono campi <code>private final</code>.",
+        "I metodi di accesso non usano la convenzione JavaBean (non c'è il prefisso <code>get</code>): si invocano con <code>p.x()</code> e <code>p.y()</code>."
+      ],
+      "wrongReasons": "Non sono mutabili né estendono Thread ({{opt:b}}); non possono estendere altre classi poiché estendono già Record ({{opt:c}}); i getter non hanno prefisso get ({{opt:d}})."
+    },
+    {
+      "id": 6,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Sealed Classes e Sealed Interfaces (Java 17+)",
+      "topic": "java_core",
+      "question": "A cosa serve la parola chiave sealed introdotta in Java 17?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Consente a una classe o interfaccia di limitare esplicitamente quali altre classi o interfacce possono estenderla o implementarla tramite la clausola permits."
+        },
+        {
+          "origKey": "b",
+          "text": "Rende i campi della classe crittografati con certificato X.509."
+        },
+        {
+          "origKey": "c",
+          "text": "Impedisce l'invocazione dei metodi da parte del Garbage Collector."
+        },
+        {
+          "origKey": "d",
+          "text": "Impone che tutti i metodi siano synchronized a livello hardware."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 7 (Sealed Classes)",
+      "explanation": [
+        "Le <strong>Sealed Classes</strong> permettono di modellare gerarchie chiuse a livello di dominio (tipi algebrici di dato):",
+        "<code>public sealed interface Shape permits Circle, Rectangle, Square {}</code>",
+        "Solo le classi esplicitamente elencate in <code>permits</code> possono estendere l'interfaccia. Ciascuna sottoclasse deve poi essere dichiarata <code>final</code>, <code>sealed</code> o <code>non-sealed</code>.",
+        "Questo permette al compilatore di verificare l'esaustività nei costrutti <code>switch</code> di pattern matching senza bisogno della clausola <code>default</code>."
+      ],
+      "wrongReasons": "Non riguarda la crittografia ({{opt:b}}); non riguarda il GC ({{opt:c}}); non sincronizza metodi ({{opt:d}})."
+    },
+    {
+      "id": 7,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Generics e Principio PECS (Producer Extends, Consumer Super)",
+      "topic": "java_core",
+      "question": "Nel framework dei Generics di Java, cosa stabilisce la regola mnemonica PECS (Producer Extends, Consumer Super)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Se una struttura dati parametrizzata produce elementi in lettura si usa ? extends T; se consuma elementi in scrittura si usa ? super T."
+        },
+        {
+          "origKey": "b",
+          "text": "Tutti i generics devono estendere contemporaneamente Exception e RuntimeException."
+        },
+        {
+          "origKey": "c",
+          "text": "Le collezioni di tipo ? extends T consentono di inserire qualsiasi oggetto tramite collection.add(obj)."
+        },
+        {
+          "origKey": "d",
+          "text": "Il wildcard ? super T permette solo operazioni di lettura ritornando Object."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 & Formulario Java (PECS Rule - Joshua Bloch)",
+      "explanation": [
+        "Formulata da Joshua Bloch (Effective Java):",
+        "<strong>Producer Extends:</strong> se la collezione è un fornitore di dati (da cui si legge con <code>get()</code>), si usa la covarianza <code>List<? extends Number></code>. Da essa si possono estrarre elementi e trattarli come <code>Number</code>, ma non è permesso inserire nulla (tranne <code>null</code>).",
+        "<strong>Consumer Super:</strong> se la collezione consuma dati (in cui si scrive con <code>add()</code>), si usa la controvarianza <code>List<? super Integer></code>. In essa si possono inserire istanze di <code>Integer</code> (o suoi sottotipi) con assoluta type-safety."
+      ],
+      "wrongReasons": "Non c'entra con Exception ({{opt:b}}); in `? extends T` non si può inserire nulla poiché il tipo reale è ignoto ({{opt:c}}); in `? super T` si scrive ({{opt:d}})."
+    },
+    {
+      "id": 8,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Java: Type Erasure e Array di Tipi Generici",
+      "topic": "java_core",
+      "question": "Per quale motivo in Java è vietata la creazione diretta di un array di tipo generico come new T[10] o new List<String>[10]?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Perché gli array in Java sono reificati (conservano il tipo reale a runtime ed eseguono controlli come ArrayStoreException), mentre i generics subiscono il Type Erasure a tempo di compilazione e perderebbero il tipo esatto."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché gli array richiedono memoria nello stack mentre i generics risiedono nel Metaspace."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché Java non supporta array con più di 5 elementi."
+        },
+        {
+          "origKey": "d",
+          "text": "Perché List è un'interfaccia non serializzabile."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 8 (Type Erasure & Array Invariance)",
+      "explanation": [
+        "In Java gli array sono <strong>reificati (*reified*)</strong>: l'array ricorda a runtime il tipo esatto degli elementi e lancia <code>ArrayStoreException</code> se si tenta di inserire un tipo incompatibile.",
+        "Inoltre gli array sono <strong>covarianti</strong> (<code>String[]</code> è un sottotipo di <code>Object[]</code>).",
+        "I tipi generici sono invece <strong>invarianti</strong> e subiscono la <strong>cancellazione dei tipi (Type Erasure)</strong>: a runtime <code>List<String></code> e <code>List<Integer></code> sono la medesima classe grezza <code>List</code>.",
+        "Permettere <code>new List<String>[10]</code> porterebbe a falle di sicurezza del sistema di tipi (*heap pollution*) senza che la JVM possa accorgersene a runtime."
+      ],
+      "wrongReasons": "Non c'entra con stack/metaspace ({{opt:b}}); la dimensione è arbitraria ({{opt:c}}); List è spesso serializzabile ({{opt:d}})."
+    },
+    {
+      "id": 9,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Autoboxing e Cache dei Wrapper (Integer.valueOf)",
+      "topic": "java_core",
+      "question": "Qual è il risultato delle seguenti istruzioni in Java?\n<pre><code>Integer a = 127; Integer b = 127;\nInteger c = 128; Integer d = 128;\nSystem.out.println((a == b) + \" \" + (c == d));</code></pre>",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "true false (Java memorizza in una cache interna gli oggetti Integer tra -128 e 127 riusando la stessa istanza; oltre 127 alloca nuovi oggetti distinti)."
+        },
+        {
+          "origKey": "b",
+          "text": "true true"
+        },
+        {
+          "origKey": "c",
+          "text": "false false"
+        },
+        {
+          "origKey": "d",
+          "text": "false true"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "JLS §5.1.7 & PAJC - Cap. 01 Sez. 3",
+      "explanation": [
+        "L'assegnazione <code>Integer a = 127</code> viene compilata in <code>Integer.valueOf(127)</code> (autoboxing).",
+        "Per specifica del linguaggio (JLS §5.1.7), la JVM mantiene un pool di cache per i valori tra <strong>-128 e 127</strong> estremi inclusi.",
+        "Per 127, <code>valueOf</code> restituisce la stessa istanza memorizzata nella cache: <code>a == b</code> è <code>true</code>.",
+        "Per 128, <code>valueOf</code> alloca una nuova istanza <code>new Integer(128)</code>: <code>c</code> e <code>d</code> sono due oggetti diversi nell'heap e <code>c == d</code> vale <code>false</code>. Per confrontare il valore si deve sempre usare <code>c.equals(d)</code>."
+      ],
+      "wrongReasons": "128 non rientra nella cache standard, quindi c == d è false ({{opt:b}}, {{opt:c}}, {{opt:d}})."
+    },
+    {
+      "id": 10,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Java: Gerarchia delle Collezioni (Set vs List vs Map)",
+      "topic": "java_core",
+      "question": "Nel Java Collections Framework, quale delle seguenti affermazioni descrive correttamente le proprietà fondamentali di Set, List e Map?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "List è una sequenza ordinata che ammette elementi duplicati; Set è una collezione che non ammette duplicati basata su equals/hashCode; Map non estende Collection e associa chiavi uniche a valori."
+        },
+        {
+          "origKey": "b",
+          "text": "Set ammette duplicati ordinati per indice posizionale."
+        },
+        {
+          "origKey": "c",
+          "text": "Map estende direttamente java.util.Collection e contiene solo numeri interi."
+        },
+        {
+          "origKey": "d",
+          "text": "ArrayList non consente duplicati mentre HashSet li consente."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 9 (Collections Framework)",
+      "explanation": [
+        "<strong>List (es. ArrayList, LinkedList):</strong> collezione ordinata posizionale, accesso per indice, ammette duplicati ed elementi null.",
+        "<strong>Set (es. HashSet, TreeSet):</strong> collezione modellata sull'insieme matematico, <strong>non ammette duplicati</strong> (garantito tramite <code>equals()</code> e <code>hashCode()</code> o <code>compareTo()</code>).",
+        "<strong>Map (es. HashMap, TreeMap):</strong> mappa di coppie chiave-valore con chiavi univoche. <em>Nota architetturale:</em> l'interfaccia <code>Map</code> <strong>non estende</strong> <code>Collection</code> perché manipola coppie e non singoli elementi."
+      ],
+      "wrongReasons": "Set non ammette duplicati ({{opt:b}}); Map non estende Collection ({{opt:c}}); ArrayList ammette duplicati ({{opt:d}})."
+    },
+    {
+      "id": 11,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Java: Funzionamento Interno di HashMap (Buckets e Treeify)",
+      "topic": "java_core",
+      "question": "In Java 8 e versioni successive, cosa accade quando in un bucket di una HashMap si verificano molte collisioni hash consecutive superando la soglia di TREEIFY_THRESHOLD (default: 8 elementi)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Se la dimensione della tabella supera 64 bucket, la lista concatenata nel bucket viene convertita in un albero rosso-nero (Red-Black Tree), abbattendo la complessità di ricerca nel caso peggiore da O(n) a O(log n)."
+        },
+        {
+          "origKey": "b",
+          "text": "La HashMap cancella tutti gli elementi in eccesso generando una OutOfMemoryError."
+        },
+        {
+          "origKey": "c",
+          "text": "La HashMap si converte automaticamente in una LinkedList."
+        },
+        {
+          "origKey": "d",
+          "text": "La chiave viene ignorata e scartata silenziosamente."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 & Formulario Java (Internals di HashMap)",
+      "explanation": [
+        "Fino a Java 7, ogni bucket di una <code>HashMap</code> usava una semplice lista concatenata (<code>Node<K,V></code>): con collisioni patologiche, il costo di <code>get()</code> degenerava a $O(n)$.",
+        "Da Java 8, se un singolo bucket supera <code>TREEIFY_THRESHOLD = 8</code> e la tabella ha almeno 64 bucket (<code>MIN_TREEIFY_CAPACITY</code>), la lista viene trasformata in un <strong>albero binario autobilanciante rosso-nero (TreeNode)</strong>.",
+        "Questo garantisce una complessità di ricerca nel caso peggiore limitata a <strong>$O(\\log n)$</strong>, proteggendo la JVM da attacchi denial-of-service basati su hash collision."
+      ],
+      "wrongReasons": "Non cancella elementi ({{opt:b}}); non si converte in LinkedList ({{opt:c}}); non scarta chiavi ({{opt:d}})."
+    },
+    {
+      "id": 12,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Java: Checked vs Unchecked Exceptions",
+      "topic": "java_core",
+      "question": "Qual è la differenza fondamentale tra Checked Exceptions e Unchecked Exceptions in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Le Checked (sottoclassi di Exception ma non di RuntimeException) devono essere obbligatoriamente gestite con try-catch o dichiarate nella firma con throws; le Unchecked (sottoclassi di RuntimeException e Error) rappresentano difetti logici o di sistema e non impongono la gestione esplicita a tempo di compilazione."
+        },
+        {
+          "origKey": "b",
+          "text": "Le Unchecked provocano lo spegnimento immediato del computer."
+        },
+        {
+          "origKey": "c",
+          "text": "Le Checked non possono mai essere catturate con un blocco catch."
+        },
+        {
+          "origKey": "d",
+          "text": "RuntimeException è una Checked Exception che estende Throwable direttamente."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 10 (Gerarchia delle Eccezioni)",
+      "explanation": [
+        "In Java, tutte le eccezioni discendono da <code>Throwable</code>:",
+        "<strong>Error:</strong> problemi gravi e non recuperabili della JVM (es. <code>OutOfMemoryError</code>, <code>StackOverflowError</code>); unchecked.",
+        "<strong>Exception:</strong> condizioni anomale recuperabili:",
+        "- <em>Unchecked (RuntimeException e derivate):</em> es. <code>NullPointerException</code>, <code>IndexOutOfBoundsException</code>. Rappresentano bug del programmatore.",
+        "- <em>Checked (tutte le altre Exception, es. IOException, SQLException):</em> condizioni prevedibili esterne; il compilatore impone di gestirle con <code>try-catch</code> o rilanciarle con <code>throws</code>."
+      ],
+      "wrongReasons": "Non spengono il PC ({{opt:b}}); le Checked si catturano normalmente con catch ({{opt:c}}); RuntimeException è la radice delle unchecked ({{opt:d}})."
+    },
+    {
+      "id": 13,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Pattern Matching per instanceof (Java 16+)",
+      "topic": "java_core",
+      "question": "Cosa consente la sintassi del Pattern Matching per instanceof introdotta in Java 16?\n<pre><code>if (obj instanceof String s) {\n    System.out.println(s.toUpperCase());\n}</code></pre>",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Verifica il tipo a runtime e, se true, dichiara e assegna automaticamente la variabile di pattern s con il cast appropriato nello scope del blocco if, eliminando la necessità del cast manuale esplicito."
+        },
+        {
+          "origKey": "b",
+          "text": "Converte qualsiasi oggetto in String anche se obj è un numero intero."
+        },
+        {
+          "origKey": "c",
+          "text": "Alloca un nuovo oggetto String nello stack."
+        },
+        {
+          "origKey": "d",
+          "text": "Solleva ClassCastException a runtime se obj non è null."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 & Formulario Java (Pattern Matching)",
+      "explanation": [
+        "Prima di Java 16, il controllo richiedeva due passaggi ridondanti:",
+        "<code>if (obj instanceof String) { String s = (String) obj; ... }</code>",
+        "Con il <strong>Pattern Matching per <code>instanceof</code></strong>, la dichiarazione <code>instanceof String s</code> verifica il tipo e, in caso di successo, assegna la variabile <code>s</code> già tipizzata.",
+        "La variabile <code>s</code> ha visibilità condizionale limitata allo scope in cui il pattern corrisponde (<em>flow scoping</em>)."
+      ],
+      "wrongReasons": "Non forza la conversione se il tipo non corrisponde ({{opt:b}}); non alloca nuovi oggetti nello stack ({{opt:c}}); se non corrisponde restituisce semplicemente false senza eccezioni ({{opt:d}})."
+    },
+    {
+      "id": 14,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Modificatori di Accesso (Default/Package-Private vs Protected)",
+      "topic": "java_core",
+      "question": "Cosa differenzia la visibilità protected dalla visibilità di default (package-private) per un metodo o campo in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "protected è accessibile da tutte le classi nello stesso package e da tutte le sottoclassi anche se situate in package diversi; package-private è accessibile solo ed esclusivamente dalle classi nello stesso identico package."
+        },
+        {
+          "origKey": "b",
+          "text": "protected è visibile a tutte le classi di Internet liberamente."
+        },
+        {
+          "origKey": "c",
+          "text": "package-private è più permissivo di public."
+        },
+        {
+          "origKey": "d",
+          "text": "protected impedisce l'ereditarietà alle sottoclassi."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 1",
+      "explanation": [
+        "La gerarchia dei livelli di visibilità in Java (dal più restrittivo al più permissivo) è:",
+        "1. <strong>private:</strong> visibile solo all'interno della stessa classe.",
+        "2. <strong>default (senza modificatore / package-private):</strong> visibile a tutte le classi dello <strong>stesso package</strong>, ma invisibile al di fuori anche per le sottoclassi.",
+        "3. <strong>protected:</strong> visibile nello <strong>stesso package</strong> e in più ereditabile e accessibile da <strong>tutte le sottoclassi in qualsiasi package</strong>.",
+        "4. <strong>public:</strong> accessibile ovunque da qualsiasi classe."
+      ],
+      "wrongReasons": "protected non è accessibile ovunque come public ({{opt:b}}); public è il più permissivo ({{opt:c}}); protected serve proprio per l'ereditarietà ({{opt:d}})."
+    },
+    {
+      "id": 15,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Java: Reflection API e Invocazione Dinamica di Metodi Privati",
+      "topic": "java_core",
+      "question": "Come consente la Reflection API di Java di invocare un metodo dichiarato come private su un'istanza sconosciuta a compile-time?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Si ottiene l'oggetto Method tramite clazz.getDeclaredMethod(\"nome\", paramTypes), si invoca method.setAccessible(true) per disabilitare il controllo di accesso e infine method.invoke(instance, args)."
+        },
+        {
+          "origKey": "b",
+          "text": "Invocando direttamente clazz.getMethod(\"nome\") poiché getMethod() restituisce anche i metodi privati."
+        },
+        {
+          "origKey": "c",
+          "text": "Modificando a runtime il codice sorgente .java e ricompilandolo da riga di comando."
+        },
+        {
+          "origKey": "d",
+          "text": "La Reflection non può in nessun caso accedere a membri privati della classe."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 07 (Java Reflection & Runtime Metaprogramming)",
+      "explanation": [
+        "Con la <strong>Reflection API</strong>:",
+        "1. <code>getMethod()</code> restituisce solo i metodi <code>public</code> (inclusi quelli ereditati).",
+        "2. <strong><code>getDeclaredMethod()</code></strong> restituisce qualsiasi metodo dichiarato nella classe specifica, compresi quelli <code>private</code> e <code>protected</code>.",
+        "3. L'invocazione di <strong><code>setAccessible(true)</code></strong> sopprime il controllo di accesso standard della JVM.",
+        "4. <code>method.invoke(target, args)</code> esegue il metodo e restituisce il risultato."
+      ],
+      "wrongReasons": "getMethod() restituisce solo metodi public ({{opt:b}}); non riscrive file sorgente su disco ({{opt:c}}); setAccessible(true) consente l'accesso ({{opt:d}})."
+    },
+    {
+      "id": 16,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Java: Parole Chiave final (Variabili, Metodi, Classi)",
+      "topic": "java_core",
+      "question": "Qual è il significato della parola chiave final applicata rispettivamente a una variabile, a un metodo e a una classe in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Variabile: non può essere riassegnata dopo l'inizializzazione; Metodo: non può essere sovrascritto (override) nelle sottoclassi; Classe: non può essere estesa (ereditata)."
+        },
+        {
+          "origKey": "b",
+          "text": "Variabile: allocata nello stack; Metodo: eseguito all'infinito; Classe: astratta."
+        },
+        {
+          "origKey": "c",
+          "text": "Rende qualsiasi oggetto automaticamente immutabile in profondità (deep immutability)."
+        },
+        {
+          "origKey": "d",
+          "text": "Indica che il metodo deve essere eseguito esclusivamente prima del Garbage Collector."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 1",
+      "explanation": [
+        "<strong>Variabile final:</strong> costante di riferimento; il valore non può cambiare dopo la prima assegnazione (attenzione: per un oggetto, il riferimento è fisso ma lo stato interno dell'oggetto può rimanere mutabile).",
+        "<strong>Metodo final:</strong> impedisce alle classi figlie di ridefinire il comportamento con <code>@Override</code>.",
+        "<strong>Classe final:</strong> impedisce l'estensione (es. <code>java.lang.String</code>, <code>java.lang.Math</code> sono classi final)."
+      ],
+      "wrongReasons": "Non riguarda stack o loop ({{opt:b}}); final sul riferimento non rende mutabile l'oggetto interno ({{opt:c}}); non c'entra con il GC ({{opt:d}})."
+    },
+    {
+      "id": 17,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Interfacce vs Classi Astratte",
+      "topic": "java_core",
+      "question": "Qual è la differenza fondamentale tra un'interfaccia e una classe astratta in Java a partire da Java 8?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Una classe può implementare molteplici interfacce ma può estendere una sola classe (ereditarietà singola di stato); le classi astratte possono possedere costruttori e campi di istanza con stato mutabile, mentre le interfacce non possono avere costruttori e i loro campi sono solo costanti public static final."
+        },
+        {
+          "origKey": "b",
+          "text": "Le interfacce non possono contenere codice nei metodi, le classi astratte sì."
+        },
+        {
+          "origKey": "c",
+          "text": "Le classi astratte non possono avere metodi astratti."
+        },
+        {
+          "origKey": "d",
+          "text": "In Java una classe può estendere 10 classi astratte contemporaneamente."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 2 & Cap. 02",
+      "explanation": [
+        "In Java l'ereditarietà di classe è singola (<code>extends SingolaClasse</code>), mentre l'implementazione di interfacce è multipla (<code>implements A, B, C</code>).",
+        "Da Java 8 le interfacce possono contenere codice tramite metodi <strong>default</strong> e <strong>static</strong>, ma rimangono prive di stato di istanza.",
+        "Le classi astratte possono definire costruttori, campi di istanza protetti/privati e stato mutabile."
+      ],
+      "wrongReasons": "Da Java 8 le interfacce possono contenere metodi default e static ({{opt:b}}); le classi astratte hanno metodi astratti ({{opt:c}}); non esiste ereditarietà multipla di classe in Java ({{opt:d}})."
+    },
+    {
+      "id": 18,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Metodi Default nelle Interfacce e Risoluzione dei Conflitti",
+      "topic": "java_core",
+      "question": "Cosa accade se una classe C implementa due interfacce A e B che definiscono entrambe lo stesso metodo di default default void hello() con la stessa firma?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il compilatore solleva un errore di compilazione per conflitto di ereditarietà multipla; la classe C è obbligata a sovrascrivere il metodo hello() risolvendo esplicitamente l'ambiguità (eventualmente invocando A.super.hello())."
+        },
+        {
+          "origKey": "b",
+          "text": "La JVM sceglie a caso quale metodo invocare ad ogni esecuzione."
+        },
+        {
+          "origKey": "c",
+          "text": "Viene sempre eseguito il metodo dell'interfaccia dichiarata per prima nella clausola implements."
+        },
+        {
+          "origKey": "d",
+          "text": "La classe C si rifiuta di compilare ed è necessario cancellare una delle due interfacce."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 4 (Default Methods & Conflitti)",
+      "explanation": [
+        "Regole di risoluzione dei metodi default in Java:",
+        "1. <strong>Le classi vincono sulle interfacce:</strong> un metodo definito in una superclasse ha sempre la precedenza sui metodi default delle interfacce.",
+        "2. <strong>Le sotto-interfacce vincono sulle super-interfacce.</strong>",
+        "3. <strong>Conflitto tra interfacce indipendenti:</strong> se due interfacce indipendenti offrono lo stesso metodo default, il compilatore rifiuta il codice finché la classe non fa <code>@Override</code> esplicito, potendo delegare con <code>A.super.hello()</code> o <code>B.super.hello()</code>."
+      ],
+      "wrongReasons": "Nessuna scelta casuale ({{opt:b}}); l'ordine nella clausola implements non ha priorità ({{opt:c}}); non serve cancellare interfacce, basta sovrascrivere ({{opt:d}})."
+    },
+    {
+      "id": 19,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Try-With-Resources e Interfaccia AutoCloseable",
+      "topic": "java_core",
+      "question": "Quale vincolo deve rispettare un oggetto per poter essere utilizzato all'interno dell'istruzione try-with-resources in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "La sua classe deve implementare l'interfaccia java.lang.AutoCloseable (o java.io.Closeable), garantendo l'invocazione automatica del metodo close() all'uscita dal blocco anche in caso di eccezione."
+        },
+        {
+          "origKey": "b",
+          "text": "Deve essere un oggetto marcato con la parola chiave transient."
+        },
+        {
+          "origKey": "c",
+          "text": "Deve obbligatoriamente estendere java.lang.Thread."
+        },
+        {
+          "origKey": "d",
+          "text": "Deve implementare java.io.Serializable."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 10 & Cap. 06",
+      "explanation": [
+        "Il costrutto <strong>try-with-resources</strong> (introdotto in Java 7):",
+        "<code>try (BufferedReader br = new BufferedReader(...)) { ... }</code>",
+        "richiede che la risorsa implementi <strong><code>AutoCloseable</code></strong>.",
+        "La JVM garantisce che <code>close()</code> venga invocato in ordine inverso di apertura all'uscita dal blocco, sopprimendo correttamente eventuali eccezioni secondarie tramite <code>Throwable.addSuppressed()</code>."
+      ],
+      "wrongReasons": "transient serve per la serializzazione ({{opt:b}}); non riguarda i thread ({{opt:c}}); Serializable non c'entra con close() ({{opt:d}})."
+    },
+    {
+      "id": 20,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Java: Garbage Collector e Ciclo di Vita degli Oggetti",
+      "topic": "java_core",
+      "question": "Quando un oggetto allocato nell'Heap diventa eleggibile per la deallocazione da parte del Garbage Collector?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Quando non è più raggiungibile tramite alcuna catena di riferimenti attivi a partire dai Garbage Collection Roots (GC Roots: variabili locali sullo stack, thread attivi, campi statici)."
+        },
+        {
+          "origKey": "b",
+          "text": "Esattamente all'uscita dal blocco in cui è stata invocata la new."
+        },
+        {
+          "origKey": "c",
+          "text": "Solo quando il programmatore invoca esplicitamente free(ptr)."
+        },
+        {
+          "origKey": "d",
+          "text": "Quando il computer esaurisce completamente la memoria del disco fisso."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 2 (GC Roots & Reachability)",
+      "explanation": [
+        "La JVM determina la vitalità degli oggetti tramite l'analisi di <strong>raggiungibilità (Reachability Analysis)</strong> a partire dai <strong>GC Roots</strong> (stack frame, riferimenti JNI, classi caricate nel Metaspace, variabili statiche).",
+        "Se un oggetto non è raggiungibile da alcun GC Root (anche se due oggetti si riferiscono tra loro in un ciclo isolato), esso diventa non raggiungibile ed eleggibile per il recupero della memoria da parte del GC."
+      ],
+      "wrongReasons": "L'uscita dallo scope elimina solo il riferimento locale sullo stack, ma l'oggetto nell'heap può essere ancora referenziato altrove ({{opt:b}}); in Java non esiste free() ({{opt:c}}); il GC opera sulla RAM, non sul disco ({{opt:d}})."
+    },
+    {
+      "id": 21,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Java: Riferimenti Deboli (WeakReference vs SoftReference vs PhantomReference)",
+      "topic": "java_core",
+      "question": "Qual è la differenza fondamentale tra SoftReference e WeakReference in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Un oggetto puntato solo da WeakReference viene raccolto al prossimo ciclo di Garbage Collection; un oggetto puntato da SoftReference viene mantenuto in memoria e deallocato dal GC solo quando la memoria della JVM è vicina alla saturazione (ideale per cache)."
+        },
+        {
+          "origKey": "b",
+          "text": "WeakReference non permette mai la lettura dell'oggetto."
+        },
+        {
+          "origKey": "c",
+          "text": "SoftReference provoca sempre un errore di memoria a runtime."
+        },
+        {
+          "origKey": "d",
+          "text": "Sono sinonimi identici senza alcuna differenza di comportamento."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 2 (Reference Objects)",
+      "explanation": [
+        "Il package <code>java.lang.ref</code> fornisce diversi livelli di debolezza dei riferimenti:",
+        "<strong>Strong Reference (ordinario):</strong> impedisce la raccolta finché esiste.",
+        "<strong>SoftReference:</strong> il GC cancella l'oggetto solo in caso di reale penuria di memoria (<em>memory pressure</em>): perfetto per cache in memoria.",
+        "<strong>WeakReference:</strong> il GC dealloca l'oggetto non appena si accorge che non vi sono riferimenti forti, tipico in <code>WeakHashMap</code> per evitare memory leak su metadati."
+      ],
+      "wrongReasons": "WeakReference permette get() finché l'oggetto è in vita ({{opt:b}}); non provocano errori ({{opt:c}}); il loro comportamento sul GC è molto diverso ({{opt:d}})."
+    },
+    {
+      "id": 22,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Cloneable e Differenza tra Shallow Copy e Deep Copy",
+      "topic": "java_core",
+      "question": "Cosa distingue una copia superficiale (Shallow Copy) da una copia profonda (Deep Copy) di un oggetto in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "La shallow copy duplica la struttura dell'oggetto principale ma copia solo i riferimenti agli oggetti interni nidificati (condividendoli); la deep copy duplica ricorsivamente sia l'oggetto principale sia tutti gli oggetti interni a cui fa riferimento, rendendo le copie totalmente indipendenti."
+        },
+        {
+          "origKey": "b",
+          "text": "La shallow copy crea un oggetto immutabile, la deep copy un oggetto mutabile."
+        },
+        {
+          "origKey": "c",
+          "text": "La deep copy funziona solo per i tipi primitivi."
+        },
+        {
+          "origKey": "d",
+          "text": "In Java tutte le copie sono automaticamente deep copy."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 4 & Eserciziario",
+      "explanation": [
+        "Il metodo <code>Object.clone()</code> di default esegue una <strong>Shallow Copy (copia campo a campo)</strong>: per i campi primitivi copia il valore; per i campi oggetto copia solo l'indirizzo di memoria.",
+        "Se l'oggetto interno viene modificato, la modifica si riflette sia nell'originale sia nel clone.",
+        "Una <strong>Deep Copy</strong> deve istanziare nuovi oggetti clonando manualmente o ricorsivamente l'intero grafo degli oggetti."
+      ],
+      "wrongReasons": "Non riguarda l'immutabilità della classe ({{opt:b}}); i primitivi non hanno oggetti nidificati ({{opt:c}}); clone() di Object fa solo shallow copy ({{opt:d}})."
+    },
+    {
+      "id": 23,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Comparazione tra Oggetti (Comparable vs Comparator)",
+      "topic": "java_core",
+      "question": "Qual è la differenza tra l'interfaccia java.lang.Comparable e java.util.Comparator?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Comparable definisce l'ordinamento naturale all'interno della classe stessa tramite compareTo(T o); Comparator definisce strategie di ordinamento esterne e multiple tramite compare(T o1, T o2) senza modificare la classe originale."
+        },
+        {
+          "origKey": "b",
+          "text": "Comparable confronta solo numeri interi, Comparator solo stringhe."
+        },
+        {
+          "origKey": "c",
+          "text": "Comparator è un'interfaccia deprecata sostituita da Runnable."
+        },
+        {
+          "origKey": "d",
+          "text": "Comparable accetta due parametri, Comparator ne accetta uno solo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 9 & Cap. 02",
+      "explanation": [
+        "<strong>Comparable<T>:</strong> implementata dalla classe stessa (es. <code>public class Persona implements Comparable<Persona></code>), impone l'ordinamento naturale con <code>int compareTo(Persona p)</code>.",
+        "<strong>Comparator<T>:</strong> classe o lambda esterna (es. <code>Comparator.comparing(Persona::getEta)</code>) con metodo <code>int compare(T o1, T o2)</code>: consente di definire infiniti criteri di ordinamento diversi (per nome, per età, per stipendio inverso)."
+      ],
+      "wrongReasons": "Confrontano qualsiasi tipo ({{opt:b}}); Comparator è usatissimo con le lambda in Java 8+ ({{opt:c}}); Comparable ha 1 argomento, Comparator ne ha 2 ({{opt:d}})."
+    },
+    {
+      "id": 24,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Pattern Singleton Thread-Safe (Initialization-on-Demand Holder)",
+      "topic": "java_core",
+      "question": "Perché il pattern Singleton realizzato tramite la tecnica \"Initialization-on-Demand Holder Idiom\" è considerato eccellente in Java?\n<pre><code>public class Singleton {\n    private Singleton() {}\n    private static class Holder {\n        static final Singleton INSTANCE = new Singleton();\n    }\n    public static Singleton getInstance() {\n        return Holder.INSTANCE;\n    }\n}</code></pre>",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Garantisce l'inizializzazione pigra (lazy) senza alcun overhead di sincronizzazione (lock-free): la classe interna Holder non viene caricata dalla JVM finché non viene invocato getInstance(), e l'inizializzazione statica è garantita thread-safe dalla JVM durante il class loading."
+        },
+        {
+          "origKey": "b",
+          "text": "Alloca il Singleton direttamente nello spazio delle variabili locali del thread."
+        },
+        {
+          "origKey": "c",
+          "text": "Rende il Singleton automaticamente accessibile via socket TCP su porta 80."
+        },
+        {
+          "origKey": "d",
+          "text": "Richiede obbligatoriamente un blocco synchronized all'interno di getInstance()."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 (Design Pattern GoF) & Formulario Java",
+      "explanation": [
+        "L'idioma dell'<strong>Holder</strong> sfrutta le garanzie formali della JVM sulla fase di caricamento delle classi (JLS §12.4.2):",
+        "La classe interna <code>Holder</code> non viene caricata quando si carica <code>Singleton</code>, ma solo quando viene referenziata la prima volta dentro <code>getInstance()</code> (<strong>lazy initialization</strong>).",
+        "La JVM garantisce l'esecuzione atomica e thread-safe dell'inizializzazione dei campi statici durante il caricamento, eliminando la necessità di blocchi <code>synchronized</code> o costrutti con <code>volatile</code> (double-checked locking)."
+      ],
+      "wrongReasons": "Non alloca nello stack ({{opt:b}}); non riguarda il networking TCP ({{opt:c}}); non richiede synchronized ({{opt:d}})."
+    },
+    {
+      "id": 25,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Design Pattern Factory Method e Disaccoppiamento",
+      "topic": "java_core",
+      "question": "Nel contesto dell'ingegneria del software in Java, qual è il principale vantaggio del pattern Creational Factory Method rispetto all'invocazione diretta del costruttore new?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Disaccoppia il codice chiamante dalle classi concrete da istanziare, consentendo di restituire sottoclassi polimorfe o istanze in cache senza che il client conosca l'implementazione esatta."
+        },
+        {
+          "origKey": "b",
+          "text": "Evita l'allocazione della memoria nell'Heap della JVM."
+        },
+        {
+          "origKey": "c",
+          "text": "Raddoppia la velocità del clock della CPU durante l'esecuzione."
+        },
+        {
+          "origKey": "d",
+          "text": "Impedisce l'utilizzo dell'ereditarietà in Java."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 1 (Pattern Creazionali)",
+      "explanation": [
+        "L'uso diretto di <code>new ConcreteProduct()</code> lega saldamente il codice a una specifica classe concreta.",
+        "Con il <strong>Factory Method</strong> (o metodi factory statici come <code>List.of()</code>), il client programma verso un'interfaccia; il metodo può restituire diverse implementazioni (es. <code>ArrayList</code>, <code>UnmodifiableList</code>) o riusare istanze in cache senza alterare il chiamante."
+      ],
+      "wrongReasons": "L'oggetto viene comunque allocato nell'heap ({{opt:b}}); non modifica l'hardware ({{opt:c}}); favorisce il polimorfismo e l'ereditarietà ({{opt:d}})."
+    },
+    {
+      "id": 26,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Pattern Observer e Architettura ad Eventi",
+      "topic": "java_core",
+      "question": "Quali ruoli architetturali definisce il Pattern Observer (GoF), impiegato ampiamente nei listener di Swing e nei sistemi ad eventi?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Un Soggetto (Subject o Observable) che mantiene un elenco di Osservatori (Observer o Listener) e li notifica automaticamente invocando un metodo di callback ogni volta che il proprio stato interno cambia."
+        },
+        {
+          "origKey": "b",
+          "text": "Due database SQL che eseguono repliche master-slave sincrone."
+        },
+        {
+          "origKey": "c",
+          "text": "Un compilatore che traduce codice Java in bytecode C++."
+        },
+        {
+          "origKey": "d",
+          "text": "Un algoritmo di compressione lossless per file ZIP."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 2 & Cap. 08 (Observer Pattern)",
+      "explanation": [
+        "Il pattern <strong>Observer</strong> disaccoppia chi produce l'evento (<em>Subject</em>, es. un <code>JButton</code>) da chi lo gestisce (<em>Observer</em>, es. un <code>ActionListener</code>).",
+        "Il Subject fornisce metodi per registrarsi (<code>addListener</code>) e cancellarsi (<code>removeListener</code>); quando accade un evento (es. click del mouse), il Subject itera sulla lista e invia la notifica a tutti gli osservatori registrati."
+      ],
+      "wrongReasons": "Non riguarda database SQL ({{opt:b}}); non riguarda compilatori ({{opt:c}}); non riguarda compressione dati ({{opt:d}})."
+    },
+    {
+      "id": 27,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Java: Inizializzatori Statici (Static Initializer Block)",
+      "topic": "java_core",
+      "question": "Quando viene eseguito un blocco di inizializzazione statico static { ... } all'interno di una classe Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Una sola volta quando la classe viene caricata e inizializzata per la prima volta nella JVM dal ClassLoader, prima di qualsiasi istanziazione o accesso ai campi statici."
+        },
+        {
+          "origKey": "b",
+          "text": "Ad ogni invocazione del costruttore new NomeClasse()."
+        },
+        {
+          "origKey": "c",
+          "text": "Solo quando il Garbage Collector elimina l'oggetto."
+        },
+        {
+          "origKey": "d",
+          "text": "Ogni volta che viene invocato un metodo non-statico."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 1 (Inizializzazione Classi)",
+      "explanation": [
+        "Il blocco <code>static { ... }</code> viene eseguito una e una sola volta nella vita del ClassLoader quando la classe viene <strong>inizializzata</strong>.",
+        "I blocchi di istanza ordinari <code>{ ... }</code> vengono invece eseguiti ad ogni creazione di un'istanza prima del corpo del costruttore."
+      ],
+      "wrongReasons": "Non viene eseguito ad ogni new (quello è il blocco di istanza, {{opt:b}}); non è il finalize ({{opt:c}}); non viene eseguito sui metodi ({{opt:d}})."
+    },
+    {
+      "id": 28,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Java: ClassLoader e Meccanismo di Delega Genitori (Parent Delegation)",
+      "topic": "java_core",
+      "question": "Come opera il modello standard di caricamento delle classi in Java (Parent Delegation Model)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Quando un ClassLoader deve caricare una classe, delega prima la richiesta al proprio ClassLoader genitore (risalendo fino al Bootstrap ClassLoader); solo se il genitore non trova la classe, il ClassLoader figlio tenta di caricarla dal proprio classpath."
+        },
+        {
+          "origKey": "b",
+          "text": "Il figlio carica sempre la classe per primo sovrascrivendo qualsiasi classe di sistema."
+        },
+        {
+          "origKey": "c",
+          "text": "Tutte le classi vengono caricate contemporaneamente in memoria RAM all'avvio del computer."
+        },
+        {
+          "origKey": "d",
+          "text": "I ClassLoader caricano solo file binari compilati in C++."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 07 Sez. 3 (ClassLoader & Class Loading)",
+      "explanation": [
+        "Il <strong>Parent Delegation Model</strong> garantisce la sicurezza e l'integrità della piattaforma Java:",
+        "1. <strong>Bootstrap ClassLoader</strong> (classi core della JVM come <code>java.lang.*</code>).",
+        "2. <strong>Platform/Extension ClassLoader</strong>.",
+        "3. <strong>Application/System ClassLoader</strong> (il classpath dell'applicazione).",
+        "Delegando verso l'alto, un utente malevolo non può sostituire la classe di sistema <code>java.lang.String</code> con una propria versione dannosa nel classpath locale."
+      ],
+      "wrongReasons": "Inverte la gerarchia violando la sicurezza ({{opt:b}}); il caricamento è dinamico e pigro (lazy loading), non totale all'avvio ({{opt:c}}); carica file .class bytecode Java ({{opt:d}})."
+    },
+    {
+      "id": 29,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Serializzazione e Parola Chiave transient",
+      "topic": "java_core",
+      "question": "Cosa indica la parola chiave transient applicata a un campo di una classe che implementa java.io.Serializable?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Indica che il campo non deve essere incluso durante il processo di serializzazione dell'oggetto, venendo ignorato e ripristinato al suo valore di default (es. null o 0) durante la deserializzazione."
+        },
+        {
+          "origKey": "b",
+          "text": "Rende il campo accessibile contemporaneamente da due thread senza lock."
+        },
+        {
+          "origKey": "c",
+          "text": "Forza il campo ad essere salvato in formato XML crittografato."
+        },
+        {
+          "origKey": "d",
+          "text": "Indica che la variabile cambia valore ad ogni millisecondo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 10 & Cap. 06",
+      "explanation": [
+        "Durante la serializzazione con <code>ObjectOutputStream</code>, tutti i campi non statici vengono salvati nel flusso di byte.",
+        "I campi marcati <strong><code>transient</code></strong> vengono intenzionalmente omessi: si usa per dati sensibili (es. password in chiaro), risorse legate al sistema operativo locale (file descriptor, socket) o campi calcolati memorizzabili in cache."
+      ],
+      "wrongReasons": "Non riguarda la concorrenza tra thread ({{opt:b}}); non riguarda formati XML ({{opt:c}}); non altera la frequenza temporale della variabile ({{opt:d}})."
+    },
+    {
+      "id": 30,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Java: String vs StringBuilder vs StringBuffer",
+      "topic": "java_core",
+      "question": "Quale delle seguenti combinazioni descrive accuratamente le proprietà di String, StringBuilder e StringBuffer in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "String è immutabile e thread-safe; StringBuilder è mutabile ma non sincronizzato (più performante in ambito single-thread); StringBuffer è mutabile e sincronizzato (thread-safe con overhead di sincronizzazione)."
+        },
+        {
+          "origKey": "b",
+          "text": "StringBuilder è immutabile, String è mutabile."
+        },
+        {
+          "origKey": "c",
+          "text": "StringBuffer è stato abolito in Java e non può più essere utilizzato."
+        },
+        {
+          "origKey": "d",
+          "text": "Tutti e tre condividono la stessa identica implementazione priva di differenze."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 5 (String Processing)",
+      "explanation": [
+        "<strong>String:</strong> immutabile; ogni operazione di concatenazione (<code>+</code>) crea un nuovo oggetto nell'heap (se non ottimizzato dal compilatore).",
+        "<strong>StringBuilder:</strong> buffer mutabile a dimensione dinamica; <strong>non thread-safe</strong>, ideale per concatenazioni intensive in loop nello stesso thread.",
+        "<strong>StringBuffer:</strong> classe storica (Java 1.0) con metodi <code>synchronized</code>; thread-safe ma più lenta a causa dell'acquisizione continua di monitor."
+      ],
+      "wrongReasons": "String è immutabile, StringBuilder mutabile ({{opt:b}}); StringBuffer esiste ancora per retrocompatibilità ({{opt:c}}); differiscono per mutabilità e thread-safety ({{opt:d}})."
+    },
+    {
+      "id": 31,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Covarianza del Tipo di Ritorno nell'Override",
+      "topic": "java_core",
+      "question": "In Java, cosa stabilisce la regola del tipo di ritorno covariante quando si sovrascrive un metodo in una sottoclasse?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il metodo sovrascritto nella sottoclasse può restituire un sottotipo più specifico del tipo di ritorno dichiarato nel metodo della superclasse."
+        },
+        {
+          "origKey": "b",
+          "text": "Il tipo di ritorno deve essere obbligatoriamente void."
+        },
+        {
+          "origKey": "c",
+          "text": "Il metodo nella sottoclasse può restituire solo tipi primitivi."
+        },
+        {
+          "origKey": "d",
+          "text": "La sottoclasse deve restituire un supertipo più generico."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 1 (Covariant Return Types)",
+      "explanation": [
+        "A partire da Java 5, quando si sovrascrive un metodo con <code>@Override</code>, il tipo di ritorno non deve necessariamente essere identico:",
+        "Se la superclasse dichiara <code>public Number calcola()</code>, la sottoclasse può lecitamente dichiarare <code>public Integer calcola()</code>.",
+        "Poiché <code>Integer</code> è un sottotipo di <code>Number</code> (<strong>covarianza</strong>), il principio di sostituibilità di Liskov è perfettamente rispettato."
+      ],
+      "wrongReasons": "Non deve essere void ({{opt:b}}); vale per qualsiasi tipo di riferimento polimorfo ({{opt:c}}); non può restituire un supertipo perché violerebbe il contratto del chiamante ({{opt:d}})."
+    },
+    {
+      "id": 32,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Java: Polimorfismo e Binding Dinamico (invokevirtual vs invokestatic)",
+      "topic": "java_core",
+      "question": "A livello di bytecode JVM, come viene implementato il polimorfismo per i metodi di istanza ordinari rispetto ai metodi statici?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "I metodi di istanza usano l'istruzione invokevirtual (o invokeinterface) con binding dinamico a runtime basato sulla vtable dell'oggetto reale; i metodi statici usano invokestatic con binding statico a tempo di compilazione basato sul tipo della variabile di riferimento."
+        },
+        {
+          "origKey": "b",
+          "text": "I metodi statici supportano l'override polimorfo a runtime."
+        },
+        {
+          "origKey": "c",
+          "text": "I metodi privati vengono invocati con invokevirtual."
+        },
+        {
+          "origKey": "d",
+          "text": "La JVM interpreta tutti i metodi riga per riga senza tabella virtuale."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 & Cap. 10 (Internals JVM & vtable)",
+      "explanation": [
+        "In Java i metodi di istanza non-private e non-final sono <strong>virtuali per default</strong>:",
+        "Vengono invocati tramite <code>invokevirtual</code>, che consulta la <em>vtable</em> (virtual method table) della classe dell'oggetto puntato a runtime (<strong>Late/Dynamic Binding</strong>).",
+        "I metodi <code>static</code> appartengono alla classe e non supportano l'override (subiscono solo <em>method hiding</em>): il compilatore emette <code>invokestatic</code> risolvendo il target a tempo di compilazione (<strong>Early/Static Binding</strong>)."
+      ],
+      "wrongReasons": "I metodi statici non sono polimorfi ({{opt:b}}); i metodi privati usano invokespecial ({{opt:c}}); la JVM compila con JIT ed usa vtable ({{opt:d}})."
+    },
+    {
+      "id": 33,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Java: Differenza tra Fail-Fast e Fail-Safe Iterators",
+      "topic": "java_core",
+      "question": "Cosa distingue un iteratore Fail-Fast (es. di ArrayList) da un iteratore Fail-Safe (es. di CopyOnWriteArrayList)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "L'iteratore Fail-Fast rileva modifiche strutturali concorrenti sulla collezione durante l'iterazione e solleva immediatamente ConcurrentModificationException; l'iteratore Fail-Safe opera su una copia o snapshot della collezione e non lancia mai eccezioni anche se la collezione sottostante viene modificata."
+        },
+        {
+          "origKey": "b",
+          "text": "L'iteratore Fail-Safe cancella la collezione in caso di errore."
+        },
+        {
+          "origKey": "c",
+          "text": "L'iteratore Fail-Fast non permette mai l'uscita da un ciclo while."
+        },
+        {
+          "origKey": "d",
+          "text": "Entrambi sollevano NullPointerException al secondo elemento."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 9 & Cap. 05 Sez. 6",
+      "explanation": [
+        "<strong>Fail-Fast:</strong> mantiene un contatore interno <code>modCount</code>. Se la collezione viene modificata (aggiunta/rimozione) senza passare dall'iteratore (<code>iterator.remove()</code>), la discrepanza causa <code>ConcurrentModificationException</code>.",
+        "<strong>Fail-Safe (o weakly consistent):</strong> le collezioni del package <code>java.util.concurrent</code> (es. <code>CopyOnWriteArrayList</code>, <code>ConcurrentHashMap</code>) iterano su una copia o snapshot dello stato, tollerando modifiche concorrenti senza lanciare eccezioni."
+      ],
+      "wrongReasons": "Non cancella collezioni ({{opt:b}}); è un normale iteratore che esce regolarmente a fine lista ({{opt:c}}); non lancia NullPointerException ({{opt:d}})."
+    },
+    {
+      "id": 34,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Java: Enum e Funzionalità Avanzate",
+      "topic": "java_core",
+      "question": "Quale delle seguenti affermazioni riguardo agli enum in Java è corretta?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "In Java gli enum sono classi speciali che possono contenere campi, costruttori privati, metodi e implementare interfacce, garantendo istanze uniche per ciascuna costante (Singleton type-safe)."
+        },
+        {
+          "origKey": "b",
+          "text": "Gli enum in Java sono semplici numeri interi a 8 bit come in C classico senza metodi."
+        },
+        {
+          "origKey": "c",
+          "text": "I costruttori degli enum devono essere obbligatoriamente pubblici."
+        },
+        {
+          "origKey": "d",
+          "text": "Non è possibile usare gli enum all'interno di un'istruzione switch."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 1 & Formulario Java",
+      "explanation": [
+        "A differenza del linguaggio C in cui gli enum sono meri interi, in Java un <code>enum</code> è una classe a tutti gli effetti che estende <code>java.lang.Enum<E></code>.",
+        "Possono possedere costruttori (rigorosamente <code>private</code> o package-private), variabili di istanza, metodi ordinari e astratti sovrascritti dalle singole costanti, e possono implementare qualsiasi interfaccia."
+      ],
+      "wrongReasons": "Non sono meri interi come in C ({{opt:b}}); i costruttori non possono essere public ({{opt:c}}); sono perfettamente supportati negli switch ({{opt:d}})."
+    },
+    {
+      "id": 35,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Java: Type Invariance e Array Covariance (Heap Pollution)",
+      "topic": "java_core",
+      "question": "Si consideri il seguente codice:\n<pre><code>String[] sArr = new String[5];\nObject[] oArr = sArr;\noArr[0] = Integer.valueOf(42);</code></pre>Cosa accade all'esecuzione?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il codice compila correttamente a causa della covarianza degli array, ma solleva una ArrayStoreException a runtime sulla terza riga poiché la JVM verifica il tipo reale dell'array allocato nell'heap."
+        },
+        {
+          "origKey": "b",
+          "text": "Il codice non compila perché Object[] non può puntare a String[]."
+        },
+        {
+          "origKey": "c",
+          "text": "L'intero array viene convertito in un array di numeri interi."
+        },
+        {
+          "origKey": "d",
+          "text": "L'assegnazione ha successo senza errori e sArr[0] contiene il numero 42."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 01 Sez. 8 (Array Covariance & Runtime Checks)",
+      "explanation": [
+        "In Java gli array sono <strong>covarianti</strong>: poiché <code>String</code> è sottotipo di <code>Object</code>, <code>String[]</code> è considerato sottotipo di <code>Object[]</code> e il compilatore permette l'assegnazione.",
+        "Tuttavia, l'oggetto reale allocato nell'heap è marcato come array di stringhe.",
+        "Quando a runtime si tenta di inserire un <code>Integer</code> in <code>oArr[0]</code>, la JVM intercetta la violazione ed emette immediatamente <strong><code>java.lang.ArrayStoreException</code></strong>.",
+        "Questo difetto storico degli array è il motivo per cui i Generics sono stati progettati invarianti (<code>List<Object> l = new ArrayList<String>()</code> produce errore di compilazione)."
+      ],
+      "wrongReasons": "Il codice compila per la covarianza degli array ({{opt:b}}); non converte tipi ({{opt:c}}); lancia ArrayStoreException ({{opt:d}})."
+    },
+    {
+      "id": 36,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Funzionale: Definizione di Interfaccia Funzionale (SAM)",
+      "topic": "funzionale",
+      "question": "Cos'è una <strong>Functional Interface</strong> in Java e qual è il ruolo dell'annotazione <code>@FunctionalInterface</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "È un'interfaccia con esattamente un metodo astratto (Single Abstract Method - SAM); l'annotazione @FunctionalInterface è facoltativa ma fa verificare al compilatore che esista un solo metodo astratto."
+        },
+        {
+          "origKey": "b",
+          "text": "È un'interfaccia che non contiene alcun metodo astratto e può avere solo campi statici."
+        },
+        {
+          "origKey": "c",
+          "text": "L'annotazione @FunctionalInterface trasforma automaticamente tutti i metodi dell'interfaccia in metodi statici."
+        },
+        {
+          "origKey": "d",
+          "text": "È un'interfaccia speciale che impedisce l'uso di metodi di default o metodi statici al suo interno."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 1 (Interfacce Funzionali & SAM)",
+      "explanation": [
+        "In Java una <strong>interfaccia funzionale</strong> è qualsiasi interfaccia con <em>esattamente un metodo astratto</em> (Single Abstract Method o <strong>SAM</strong>).",
+        "Può contenere un numero arbitrario di metodi <code>default</code>, metodi <code>static</code> o metodi pubblici che sovrascrivono metodi di <code>java.lang.Object</code> (come <code>equals</code>), senza perdere la qualifica di SAM.",
+        "L'annotazione <code>@FunctionalInterface</code> istruisce il compilatore ad emettere un errore di compilazione qualora l'interfaccia non rispetti la regola del singolo metodo astratto."
+      ],
+      "wrongReasons": "Non deve essere vuota ({{opt:b}}); non rende i metodi statici ({{opt:c}}); può benissimo contenere metodi default e static ({{opt:d}})."
+    },
+    {
+      "id": 37,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Funzionale: Interfaccia Predicate<T>",
+      "topic": "funzionale",
+      "question": "Qual è la firma del metodo astratto dell'interfaccia funzionale standard <code>java.util.function.Predicate&lt;T&gt;</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "boolean test(T t)"
+        },
+        {
+          "origKey": "b",
+          "text": "R apply(T t)"
+        },
+        {
+          "origKey": "c",
+          "text": "void accept(T t)"
+        },
+        {
+          "origKey": "d",
+          "text": "T get()"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 2 (Package java.util.function)",
+      "explanation": [
+        "<code>Predicate<T></code> accetta un argomento di tipo <code>T</code> e restituisce un valore booleano: <code>boolean test(T t)</code>.",
+        "Include metodi di default per combinazione logica come <code>and(Predicate)</code>, <code>or(Predicate)</code>, <code>negate()</code> e il factory <code>isEqual(Object)</code>."
+      ],
+      "wrongReasons": "R apply(T t) appartiene a Function<T,R> ({{opt:b}}); void accept(T t) appartiene a Consumer<T> ({{opt:c}}); T get() appartiene a Supplier<T> ({{opt:d}})."
+    },
+    {
+      "id": 38,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Funzionale: Interfaccia Function<T, R>",
+      "topic": "funzionale",
+      "question": "Qual è il compito dell'interfaccia <code>Function&lt;T, R&gt;</code> e qual è la differenza tra <code>andThen</code> e <code>compose</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Rappresenta una funzione T -> R (metodo R apply(T t)). f.andThen(g) esegue prima f e poi g (g(f(x))), mentre f.compose(g) esegue prima g e poi f (f(g(x)))."
+        },
+        {
+          "origKey": "b",
+          "text": "f.andThen e f.compose sono sinonimi identici che eseguono sempre prima g e poi f."
+        },
+        {
+          "origKey": "c",
+          "text": "Function accetta solo tipi primitivi e non ammette tipi generici."
+        },
+        {
+          "origKey": "d",
+          "text": "compose serve a parallelizzare la funzione mentre andThen la esegue sequenzialmente."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 2 & Formulario Java",
+      "explanation": [
+        "<code>Function<T, R></code> modella una trasformazione unaria da un input di tipo <code>T</code> a un output di tipo <code>R</code> (<code>R apply(T t)</code>).",
+        "<strong>f.andThen(g):</strong> pipeline orientata all'avanti: <code>g.apply(f.apply(x))</code>.",
+        "<strong>f.compose(g):</strong> composizione matematica classica: <code>f.apply(g.apply(x))</code>."
+      ],
+      "wrongReasons": "Non sono sinonimi ({{opt:b}}); accetta qualsiasi tipo generico ({{opt:c}}); non c'entra la parallelizzazione ({{opt:d}})."
+    },
+    {
+      "id": 39,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Funzionale: Consumer<T> e Supplier<T>",
+      "topic": "funzionale",
+      "question": "Quale tra le seguenti affermazioni distingue correttamente <code>Consumer&lt;T&gt;</code> da <code>Supplier&lt;T&gt;</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Consumer<T> consuma un valore e non restituisce nulla (void accept(T t)); Supplier<T> non accetta argomenti e produce un valore (T get())."
+        },
+        {
+          "origKey": "b",
+          "text": "Consumer<T> produce valori mentre Supplier<T> li distrugge."
+        },
+        {
+          "origKey": "c",
+          "text": "Entrambi hanno la firma T apply(T t)."
+        },
+        {
+          "origKey": "d",
+          "text": "Supplier<T> può lanciare eccezioni checked mentre Consumer<T> è limitato ai thread."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 2",
+      "explanation": [
+        "<code>Consumer<T></code> ha il metodo <code>void accept(T t)</code>: riceve un valore ed effettua un side-effect (es. stampa a video, scrittura su socket).",
+        "<code>Supplier<T></code> ha il metodo <code>T get()</code>: funge da factory pigro (lazy evaluation) senza richiedere parametri di ingresso."
+      ],
+      "wrongReasons": "Inverte i ruoli ({{opt:b}}); non hanno quella firma ({{opt:c}}); nessuno dei due ha eccezioni checked nella firma SAM ({{opt:d}})."
+    },
+    {
+      "id": 40,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Funzionale: UnaryOperator e BinaryOperator",
+      "topic": "funzionale",
+      "question": "Cosa caratterizza le interfacce <code>UnaryOperator&lt;T&gt;</code> e <code>BinaryOperator&lt;T&gt;</code> rispetto a <code>Function</code> e <code>BiFunction</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Sono sottotipi specializzati in cui i tipi degli argomenti di input coincidono con il tipo del valore restituito (T -> T per Unary, (T, T) -> T per Binary)."
+        },
+        {
+          "origKey": "b",
+          "text": "Operano solo su tipi primitivi come int o double senza boxing."
+        },
+        {
+          "origKey": "c",
+          "text": "Richiedono che i parametri siano marcati come transient."
+        },
+        {
+          "origKey": "d",
+          "text": "Possono restituire solo valori booleani true o false."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 2",
+      "explanation": [
+        "<code>UnaryOperator<T> extends Function<T, T></code>: riceve <code>T</code> e restituisce <code>T</code>.",
+        "<code>BinaryOperator<T> extends BiFunction<T, T, T></code>: riceve due valori di tipo <code>T</code> e restituisce un valore dello stesso tipo <code>T</code> (fondamentale per le operazioni di accumulo e riduzione negli stream)."
+      ],
+      "wrongReasons": "Non sono specializzazioni primitive (esistono IntUnaryOperator ecc.) ({{opt:b}}); transient non c'entra ({{opt:c}}); non restituiscono booleani (quello è Predicate) ({{opt:d}})."
+    },
+    {
+      "id": 41,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Funzionale: Variabili Effective Final e Cattura nelle Closure",
+      "topic": "funzionale",
+      "question": "Per quale motivo una lambda expression in Java può accedere solo a variabili locali che siano <code>final</code> o <em>effectively final</em>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Perché Java cattura le variabili locali per valore (copia nello stack/heap del frame della lambda); se la variabile locale cambiasse successivamente nello stack del thread chiamante, si creerebbero disallineamenti di memoria non gestibili."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché il Garbage Collector rifiuta di deallocare variabili usate da più metodi."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché le variabili locali in Java sono memorizzate nel ClassLoader permanente."
+        },
+        {
+          "origKey": "d",
+          "text": "È un vincolo opzionale disattivabile tramite la direttiva @SuppressWarnings(\"mutable\")."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 3 (Closure & Variable Capture)",
+      "explanation": [
+        "In Java, le lambda non catturano lo stack frame del metodo chiamante (che viene distrutto al termine dell'esecuzione del metodo), ma catturano una <strong>copia</strong> del valore della variabile locale (capture-by-value).",
+        "Per evitare inconsistenze tra la copia locale della lambda e la variabile nello stack del metodo o tra thread concorrenti, il linguaggio impone che la variabile sia <strong>final</strong> o <strong>effectively final</strong> (ossia mai riassegnata dopo l'inizializzazione)."
+      ],
+      "wrongReasons": "Non c'entra il GC in questo modo ({{opt:b}}); non sono nel ClassLoader ({{opt:c}}); non esiste suppress warnings per rendere mutabili variabili catturate ({{opt:d}})."
+    },
+    {
+      "id": 42,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Funzionale: Tipi di Method Reference",
+      "topic": "funzionale",
+      "question": "Quante e quali sono le 4 tipologie principali di <strong>Method Reference</strong> introdotte in Java 8?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "1. Metodo statico (Class::staticMethod); 2. Metodo d'istanza su oggetto specifico (inst::method); 3. Metodo d'istanza su oggetto arbitrario (Class::method); 4. Costruttore (Class::new)."
+        },
+        {
+          "origKey": "b",
+          "text": "1. Metodo privato; 2. Metodo protetto; 3. Metodo pubblico; 4. Metodo transient."
+        },
+        {
+          "origKey": "c",
+          "text": "1. Direct; 2. Indirect; 3. Virtual; 4. Abstract."
+        },
+        {
+          "origKey": "d",
+          "text": "Esiste solo il riferimento a costruttori tramite Class::new."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 4 (Method References Syntax & Semantics)",
+      "explanation": [
+        "I Method Reference rappresentano una sintassi compatta per lambda che richiamano direttamente un metodo esistente:",
+        "1. <strong>Static:</strong> <code>Math::max</code> equivale a <code>(a, b) -> Math.max(a, b)</code>.",
+        "2. <strong>Bound Instance:</strong> <code>System.out::println</code> equivale a <code>x -> System.out.println(x)</code> su un'istanza prefissata.",
+        "3. <strong>Unbound Instance:</strong> <code>String::length</code> equivale a <code>s -> s.length()</code> (il primo argomento della lambda è il target dell'invocazione).",
+        "4. <strong>Constructor:</strong> <code>ArrayList::new</code> equivale a <code>() -> new ArrayList<>()</code>."
+      ],
+      "wrongReasons": "Non sono modificatori di visibilità ({{opt:b}}); non sono classificazioni virtual/abstract ({{opt:c}}); ne esistono 4, non una sola ({{opt:d}})."
+    },
+    {
+      "id": 43,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Funzionale: Method Reference Unbound vs Bound",
+      "topic": "funzionale",
+      "question": "Data la dichiarazione <code>BiFunction&lt;String, String, Boolean&gt; startsWithRef = String::startsWith;</code>, a quale lambda corrisponde esattamente?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "(s1, s2) -> s1.startsWith(s2) [Method reference a metodo d'istanza su istanza arbitraria fornita come primo parametro]"
+        },
+        {
+          "origKey": "b",
+          "text": "s -> s.startsWith(\"default\")"
+        },
+        {
+          "origKey": "c",
+          "text": "(s1, s2) -> String.startsWith(s1, s2) dove startsWith è un metodo statico di String"
+        },
+        {
+          "origKey": "d",
+          "text": "Non compila perché String::startsWith può accettare solo un singolo parametro"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 4",
+      "explanation": [
+        "Nel method reference di tipo <strong>Unbound Instance</strong> (<code>ClassName::instanceMethod</code>), il metodo non è legato a un oggetto esistente.",
+        "La JVM passa il <em>primo parametro</em> della funzione come destinatario (<code>this</code>) dell'invocazione, e i successivi argomenti come parametri del metodo:",
+        "<code>(s1, s2) -> s1.startsWith(s2)</code> soddisfa perfettamente la firma <code>BiFunction<String, String, Boolean></code>."
+      ],
+      "wrongReasons": "Non usa stringhe cablate ({{opt:b}}); startsWith non è un metodo statico ({{opt:c}}); compila perfettamente ({{opt:d}})."
+    },
+    {
+      "id": 44,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Stream: Caratteristica di Pigrizia (Lazy Evaluation)",
+      "topic": "funzionale",
+      "question": "Cosa significa che le operazioni intermedie in un <code>Stream</code> Java sono <strong>lazy</strong> (pigre)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Vengono memorizzate in una pipeline descrittiva e non elaborano alcun elemento finché non viene invocata un'operazione terminale sullo stream."
+        },
+        {
+          "origKey": "b",
+          "text": "Vengono eseguite con priorità minima dal sistema operativo e solo quando la CPU è in stato di idle."
+        },
+        {
+          "origKey": "c",
+          "text": "Creano collezioni temporanee complete in memoria ad ogni singolo passaggio intermedio."
+        },
+        {
+          "origKey": "d",
+          "text": "Possono essere eseguite solo su un thread in background separato rispetto al main thread."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 1 (Architettura Stream & Pipeline)",
+      "explanation": [
+        "In Java Streams, le operazioni intermedie (es. <code>filter</code>, <code>map</code>, <code>sorted</code>) non producono alcun risultato immediato e non scorrono i dati.",
+        "Costruiscono una descrizione della pipeline; l'esecuzione effettiva dei dati avviene <em>solo quando viene chiamata un'operazione terminale</em> (es. <code>collect</code>, <code>forEach</code>, <code>reduce</code>, <code>count</code>).",
+        "Questo consente ottimizzazioni critiche come il <strong>loop fusion</strong> (un elemento attraversa tutti i filtri/mappe in un unico passaggio) e lo <strong>short-circuiting</strong>."
+      ],
+      "wrongReasons": "Non c'entra l'idle della CPU ({{opt:b}}); non creano collezioni intermedie (è proprio il vantaggio della lazy evaluation) ({{opt:c}}); non richiedono un thread separato ({{opt:d}})."
+    },
+    {
+      "id": 45,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Stream: Operazioni Intermedie Stateless vs Stateful",
+      "topic": "funzionale",
+      "question": "Quale delle seguenti operazioni intermedie su uno Stream è classificata come <strong>stateful</strong> (con stato)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "sorted()"
+        },
+        {
+          "origKey": "b",
+          "text": "filter()"
+        },
+        {
+          "origKey": "c",
+          "text": "map()"
+        },
+        {
+          "origKey": "d",
+          "text": "peek()"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 2 (Stateless vs Stateful Intermediate Operations)",
+      "explanation": [
+        "<strong>Operazioni Stateless:</strong> elaborano ciascun elemento indipendentemente dagli altri (es. <code>filter</code>, <code>map</code>, <code>flatMap</code>, <code>peek</code>).",
+        "<strong>Operazioni Stateful:</strong> richiedono di mantenere uno stato o di esaminare l'intero stream prima di produrre elementi:",
+        "- <code>sorted()</code> deve attendere tutti gli elementi per ordinarli.",
+        "- <code>distinct()</code> deve ricordare gli elementi già incontrati.",
+        "- <code>limit(n)</code> e <code>skip(n)</code> devono tracciare il conteggio degli elementi transitati."
+      ],
+      "wrongReasons": "filter, map e peek sono stateless perché non dipendono dagli elementi passati prima ({{opt:b}}, {{opt:c}}, {{opt:d}})."
+    },
+    {
+      "id": 46,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Stream: Differenza tra map() e flatMap()",
+      "topic": "funzionale",
+      "question": "Qual è la differenza fondamentale tra <code>Stream.map()</code> e <code>Stream.flatMap()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "map trasforma ogni elemento in un nuovo elemento (relazione 1:1), mentre flatMap trasforma ogni elemento in un intero Stream e 'appiattisce' (flattening) tutti i flussi risultanti in un unico stream cumulativo (relazione 1:N o 1:0)."
+        },
+        {
+          "origKey": "b",
+          "text": "flatMap può essere usata solo con numeri interi mentre map accetta qualsiasi oggetto."
+        },
+        {
+          "origKey": "c",
+          "text": "map è un'operazione terminale mentre flatMap è intermedia."
+        },
+        {
+          "origKey": "d",
+          "text": "flatMap cancella gli elementi nulli mentre map genera sempre NullPointerException."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 2 (Trasformazioni di Pipeline)",
+      "explanation": [
+        "<code>Stream.map(Function<T, R>)</code>: mappa ogni elemento <code>T</code> in un singolo valore <code>R</code> (<code>Stream<T> -> Stream<R></code>).",
+        "<code>Stream.flatMap(Function<T, Stream<R>>)</code>: trasforma ogni elemento in uno stream di elementi e poi concatena/appiattisce tutti i flussi in un unico <code>Stream<R></code>.",
+        "È tipicamente impiegata per appiattire liste annidate: <code>List<List<String>> -> Stream<String></code>."
+      ],
+      "wrongReasons": "Non è limitata agli interi ({{opt:b}}); entrambe sono operazioni intermedie ({{opt:c}}); non è quella la gestione dei null ({{opt:d}})."
+    },
+    {
+      "id": 47,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Stream: Riuso dello Stream e IllegalStateException",
+      "topic": "funzionale",
+      "question": "Cosa accade se si tenta di invocare due volte un'operazione terminale sullo stesso oggetto <code>Stream</code> in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Viene sollevata una java.lang.IllegalStateException: lo stream è monouso (single-use) e si consuma irrevocabilmente dopo la prima operazione terminale."
+        },
+        {
+          "origKey": "b",
+          "text": "La seconda operazione terminale riavvolge automaticamente lo stream dall'inizio."
+        },
+        {
+          "origKey": "c",
+          "text": "La seconda operazione restituisce sempre una collezione vuota senza errori."
+        },
+        {
+          "origKey": "d",
+          "text": "Lo stream viene clonato in memoria trasparente e l'esecuzione prosegue."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 1 (Single-use Lifecycle)",
+      "explanation": [
+        "In Java un'istanza di <code>Stream</code> è <strong>monouso</strong> (consumabile una sola volta).",
+        "Non appena viene invocata un'operazione terminale (es. <code>count()</code>, <code>forEach()</code>, <code>collect()</code>), lo stream entra nello stato di consumato.",
+        "Qualsiasi ulteriore tentativo di invocare operazioni su di esso produce immediatamente <strong><code>IllegalStateException: stream has already been operated upon or closed</code></strong>.",
+        "Per iterare nuovamente occorre generare un nuovo stream dalla sorgente originaria."
+      ],
+      "wrongReasons": "Non si riavvolge ({{opt:b}}); non restituisce vuoto silenciosamente ({{opt:c}}); non viene clonato automaticamente ({{opt:d}})."
+    },
+    {
+      "id": 48,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Stream: Operazioni di Short-Circuiting",
+      "topic": "funzionale",
+      "question": "Quali tra le seguenti operazioni su Stream sono definite di <strong>short-circuiting</strong> (a cortocircuito)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "findFirst(), findAny(), anyMatch(), allMatch(), noneMatch(), limit()"
+        },
+        {
+          "origKey": "b",
+          "text": "filter(), map(), distinct(), sorted()"
+        },
+        {
+          "origKey": "c",
+          "text": "reduce(), collect(), toList(), count()"
+        },
+        {
+          "origKey": "d",
+          "text": "Solo e unicamente peek()"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 3 (Short-Circuiting Operations)",
+      "explanation": [
+        "Un'operazione è di <strong>short-circuiting</strong> se può completare il suo compito senza dover esaminare tutti gli elementi di uno stream (anche infinito):",
+        "- <strong>Terminali:</strong> <code>anyMatch</code> (si ferma al primo true), <code>allMatch</code> (si ferma al primo false), <code>findFirst</code>, <code>findAny</code>.",
+        "- <strong>Intermedie:</strong> <code>limit(maxSize)</code> (tronca lo stream non appena raggiunge la dimensione richiesta)."
+      ],
+      "wrongReasons": "filter, map, sorted devono esaminare tutti gli elementi di base ({{opt:b}}); reduce e count scorrono tutto lo stream ({{opt:c}}); peek non è short-circuiting ({{opt:d}})."
+    },
+    {
+      "id": 49,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Stream: Funzionamento di reduce() a Tre Parametri",
+      "topic": "funzionale",
+      "question": "Qual è il ruolo del terzo parametro (il <em>combiner</em>) nella firma <code>&lt;U&gt; U reduce(U identity, BiFunction&lt;U, ? super T, U&gt; accumulator, BinaryOperator&lt;U&gt; combiner)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Unisce i risultati parziali di tipo U calcolati da thread differenti durante l'elaborazione di uno stream parallelo."
+        },
+        {
+          "origKey": "b",
+          "text": "Serve a convertire il tipo U nel tipo primitivo double."
+        },
+        {
+          "origKey": "c",
+          "text": "Viene invocato per filtrare i valori nulli restituiti dall'accumulator."
+        },
+        {
+          "origKey": "d",
+          "text": "Serve a definire il criterio di ordinamento preliminare prima della riduzione."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 4 (Stream Reduction & Parallel Combiners)",
+      "explanation": [
+        "In uno stream sequenziale, il terzo parametro non viene invocato perché l'accumulatore ripiega tutti gli elementi in un singolo valore <code>U</code>.",
+        "In uno <strong>stream parallelo</strong>, i dati vengono divisi tra più thread del <code>ForkJoinPool</code>. Ciascun thread calcola una riduzione parziale usando l'<code>accumulator</code>.",
+        "Il <strong><code>combiner</code></strong> (<code>BinaryOperator<U></code>) è indispensabile per fondere insieme i risultati parziali <code>(U, U) -> U</code> prodotti dai vari worker thread."
+      ],
+      "wrongReasons": "Non converte tipi primitivi ({{opt:b}}); non filtra null ({{opt:c}}); non definisce ordinamento ({{opt:d}})."
+    },
+    {
+      "id": 50,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Collectors: Collectors.groupingBy() e Downstream Collector",
+      "topic": "funzionale",
+      "question": "Cosa restituisce l'espressione <code>stream.collect(Collectors.groupingBy(Person::getCity, Collectors.counting()))</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Una Map<String, Long> che associa a ciascuna città il numero di persone residenti in quella città."
+        },
+        {
+          "origKey": "b",
+          "text": "Una Map<String, List<Person>> ordinata per nome."
+        },
+        {
+          "origKey": "c",
+          "text": "Un singolo Long con la somma totale di tutte le città distinte."
+        },
+        {
+          "origKey": "d",
+          "text": "Una List<String> contenente i nomi delle città duplicate."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 5 (Advanced Collectors & Downstream Aggregations)",
+      "explanation": [
+        "<code>Collectors.groupingBy(classifier, downstream)</code> raggruppa gli elementi in una <code>Map<K, D></code>.",
+        "Qui la chiave <code>K</code> è la città (<code>String</code>) e il downstream collector <code>Collectors.counting()</code> calcola il numero di elementi per ciascun gruppo, producendo un valore <code>Long</code>.",
+        "Il risultato è dunque <strong><code>Map<String, Long></code></strong>."
+      ],
+      "wrongReasons": "Map<String, List<Person>> si ottiene con il groupingBy a un solo argomento ({{opt:b}}); non restituisce un singolo Long ({{opt:c}}); non restituisce una lista ({{opt:d}})."
+    },
+    {
+      "id": 51,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Collectors: Collectors.partitioningBy()",
+      "topic": "funzionale",
+      "question": "Qual è la caratteristica peculiare di <code>Collectors.partitioningBy(Predicate&lt;? super T&gt; predicate)</code> rispetto a <code>groupingBy</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Restituisce sempre una Map<Boolean, List<T>> contenente esattamente due chiavi (true e false), anche se una delle due partizioni risulta priva di elementi."
+        },
+        {
+          "origKey": "b",
+          "text": "Restituisce un array bidimensionale di interi."
+        },
+        {
+          "origKey": "c",
+          "text": "Accetta solo predicati che testano numeri pari o dispari."
+        },
+        {
+          "origKey": "d",
+          "text": "Crea una nuova tabella nel database per partizionare i record."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 5",
+      "explanation": [
+        "<code>partitioningBy</code> è un caso speciale di raggruppamento binario guidato da un <code>Predicate<T></code>.",
+        "La mappa restituita è di tipo <strong><code>Map<Boolean, List<T>></code></strong> e contiene <em>sempre</em> entrambe le chiavi <code>Boolean.TRUE</code> e <code>Boolean.FALSE</code>, anche qualora la lista associata a una di esse sia vuota."
+      ],
+      "wrongReasons": "Non restituisce array ({{opt:b}}); accetta qualsiasi predicato generico ({{opt:c}}); non interagisce con database SQL ({{opt:d}})."
+    },
+    {
+      "id": 52,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Optional: Scopo e Metodo orElse vs orElseGet",
+      "topic": "funzionale",
+      "question": "Qual è la differenza fondamentale tra <code>optional.orElse(fallbackMethod())</code> e <code>optional.orElseGet(() -> fallbackMethod())</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "orElse valuta fallbackMethod() sempre e subito in modo eager anche se l'Optional è pieno; orElseGet valuta il Supplier in modo lazy solo se l'Optional è vuoto."
+        },
+        {
+          "origKey": "b",
+          "text": "orElse è asincrono mentre orElseGet è sincrono."
+        },
+        {
+          "origKey": "c",
+          "text": "orElseGet lancia un'eccezione se il valore di fallback è nullo, orElse no."
+        },
+        {
+          "origKey": "d",
+          "text": "Non c'è alcuna differenza di comportamento o performance."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 5 (Optional Anti-patterns & Idioms)",
+      "explanation": [
+        "In <code>orElse(expr)</code>, <code>expr</code> viene valutato <strong>immediatamente</strong> al momento della chiamata come argomento del metodo (eager evaluation). Se <code>fallbackMethod()</code> compie operazioni pesanti (I/O, query DB), queste verranno eseguite inutilmente anche se l'Optional contiene già un valore!",
+        "In <code>orElseGet(Supplier)</code>, il lambda supplier viene invocato <strong>esclusivamente</strong> se l'Optional risulta effettivamente vuoto (lazy evaluation)."
+      ],
+      "wrongReasons": "Non c'entra l'asincronia ({{opt:b}}); la differenza critica è la lazy evaluation ({{opt:c}}, {{opt:d}})."
+    },
+    {
+      "id": 53,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Optional: flatMap() vs map() in Optional Annidati",
+      "topic": "funzionale",
+      "question": "Se la classe <code>User</code> possiede il metodo <code>Optional&lt;Address&gt; getAddress()</code>, cosa restituisce <code>userOpt.map(User::getAddress)</code> vs <code>userOpt.flatMap(User::getAddress)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "map restituisce Optional<Optional<Address>>, mentre flatMap appiattisce il livello annidato restituendo direttamente Optional<Address>."
+        },
+        {
+          "origKey": "b",
+          "text": "map e flatMap restituiscono entrambi lo stesso tipo Optional<Address>."
+        },
+        {
+          "origKey": "c",
+          "text": "flatMap lancia NullPointerException se getAddress() restituisce Optional.empty()."
+        },
+        {
+          "origKey": "d",
+          "text": "map converte l'Optional in una List<Address>."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 5",
+      "explanation": [
+        "Poiché la funzione di estrazione restituisce a sua volta un <code>Optional</code>:",
+        "- <code>map</code> incapsula il risultato della funzione dentro un ulteriore <code>Optional</code>, producendo <code>Optional<Optional<Address>></code>.",
+        "- <strong><code>flatMap</code></strong> rimuove il livello di annidamento e restituisce direttamente un <code>Optional<Address></code> pulito."
+      ],
+      "wrongReasons": "Non restituiscono lo stesso tipo ({{opt:b}}); flatMap gestisce Optional.empty() in modo safe ({{opt:c}}); non converte in lista ({{opt:d}})."
+    },
+    {
+      "id": 54,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Stream: Primitive Streams (IntStream, LongStream, DoubleStream)",
+      "topic": "funzionale",
+      "question": "Per quale motivo sono state introdotte le interfacce <code>IntStream</code>, <code>LongStream</code> e <code>DoubleStream</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Per evitare l'enorme overhead di memoria e tempo dovuto al continuo autoboxing/unboxing dei tipi primitivi e offrire metodi aggregatori nativi come sum(), average() e summaryStatistics()."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché lo Stream ordinario non può elaborare più di 100 elementi numerici."
+        },
+        {
+          "origKey": "c",
+          "text": "Per garantire la crittografia hardware dei numeri interi."
+        },
+        {
+          "origKey": "d",
+          "text": "Perché i tipi primitivi in Java non possono essere usati nei cicli for standard."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 3 (Primitive Stream Specializations)",
+      "explanation": [
+        "Uno <code>Stream<Integer></code> alloca oggetti <code>Integer</code> nell'heap per ciascun valore, comportando un overhead di 16-24 byte per numero e continue conversioni di boxing/unboxing.",
+        "<strong><code>IntStream</code></strong>, <code>LongStream</code> e <code>DoubleStream</code> lavorano direttamente sui tipi primitivi grezzi in memoria contigua, ottimizzando cache hit e performance.",
+        "Inoltre forniscono operazioni matematiche specializzate come <code>sum()</code>, <code>average()</code>, <code>min()</code>, <code>max()</code> senza ricorrere a comparatori."
+      ],
+      "wrongReasons": "Stream ordinario non ha limiti a 100 ({{opt:b}}); nessuna crittografia ({{opt:c}}); i primitivi possono essere usati nei for ({{opt:d}})."
+    },
+    {
+      "id": 55,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Stream Paralleli: ForkJoinPool.commonPool() e Thread Safety",
+      "topic": "funzionale",
+      "question": "Cosa accade se in una pipeline <code>stream.parallel().forEach(list::add)</code> si aggiungono elementi a una normale <code>java.util.ArrayList</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Si genera una race condition: ArrayList non è thread-safe, provocando perdita di elementi, ArrayIndexOutOfBoundsException o corruzione dell'array interno."
+        },
+        {
+          "origKey": "b",
+          "text": "La JVM sincronizza automaticamente l'accesso ad ArrayList rendendola thread-safe."
+        },
+        {
+          "origKey": "c",
+          "text": "Lo stream parallelo converte automaticamente ArrayList in Vector prima di aggiungere."
+        },
+        {
+          "origKey": "d",
+          "text": "Il codice non compila perché forEach rifiuta method reference su stream paralleli."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 6 (Parallel Streams & Concurrency Hazards)",
+      "explanation": [
+        "Gli stream paralleli suddividono il carico tra i thread del pool comune (<code>ForkJoinPool.commonPool()</code>).",
+        "<code>ArrayList</code> non possiede alcuna sincronizzazione interna. Chiamare <code>list.add()</code> contemporaneamente da thread diversi corrompe il contatore <code>size</code> e l'array interno (sovrascrittura di elementi, null spuri o eccezioni di out of bounds).",
+        "Per aggregare elementi in sicurezza da uno stream parallelo occorre usare il pattern di riduzione funzionale puro: <code>collect(Collectors.toList())</code>."
+      ],
+      "wrongReasons": "La JVM non sincronizza automaticamente ({{opt:b}}); non converte in Vector ({{opt:c}}); compila ma fallisce a runtime ({{opt:d}})."
+    },
+    {
+      "id": 56,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Funzionale: Interfacce Funzionali Primitive Specializzate",
+      "topic": "funzionale",
+      "question": "Quale interfaccia funzionale standard evita il boxing quando si trasforma un <code>int</code> in un oggetto di tipo <code>String</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "IntFunction<String>"
+        },
+        {
+          "origKey": "b",
+          "text": "ToIntFunction<String>"
+        },
+        {
+          "origKey": "c",
+          "text": "IntPredicate"
+        },
+        {
+          "origKey": "d",
+          "text": "IntToLongFunction"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 2 (Primitive Function Specializations)",
+      "explanation": [
+        "<strong><code>IntFunction<R></code>:</strong> accetta un primitivo <code>int</code> e restituisce un oggetto di tipo generico <code>R</code> (metodo <code>R apply(int value)</code>). Quindi <code>IntFunction<String></code> accetta <code>int</code> ed emette <code>String</code> senza alcun boxing in ingresso.",
+        "<code>ToIntFunction<T></code> farebbe l'opposto (da oggetto <code>T</code> a <code>int</code> primitivo)."
+      ],
+      "wrongReasons": "ToIntFunction fa l'opposto (oggetto -> int) ({{opt:b}}); IntPredicate restituisce boolean ({{opt:c}}); IntToLongFunction restituisce long primitivo ({{opt:d}})."
+    },
+    {
+      "id": 57,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Stream: Generazione con Stream.iterate() e Stream.generate()",
+      "topic": "funzionale",
+      "question": "Qual è la differenza tra <code>Stream.generate(Supplier&lt;T&gt; s)</code> e <code>Stream.iterate(T seed, UnaryOperator&lt;T&gt; f)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "generate produce uno stream infinito invocando ripetutamente un Supplier senza memoria dello stato precedente; iterate produce una sequenza infinita applicando iterativamente f a partire dal seed (seed, f(seed), f(f(seed))...)."
+        },
+        {
+          "origKey": "b",
+          "text": "generate crea stream finiti mentre iterate crea sempre e solo stream finiti a 10 elementi."
+        },
+        {
+          "origKey": "c",
+          "text": "iterate non può essere fermato con limit() mentre generate sì."
+        },
+        {
+          "origKey": "d",
+          "text": "generate richiede un seed iniziale numerico."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 1 (Infinite Streams)",
+      "explanation": [
+        "Entrambi possono generare stream infiniti:",
+        "- <code>Stream.generate(Supplier<T>)</code> invoca ad ogni richiesta <code>s.get()</code> (es. numeri casuali con <code>Math::random</code>).",
+        "- <code>Stream.iterate(seed, f)</code> produce una sequenza ordinata calcolando l'elemento successivo in funzione del precedente (es. <code>Stream.iterate(0, n -> n + 2)</code> per i numeri pari).",
+        "Entrambi richiedono tipicamente un'operazione come <code>limit(n)</code> per essere consumati in modo finito."
+      ],
+      "wrongReasons": "Entrambi producono stream infiniti ({{opt:b}}); entrambi possono essere fermati con limit() ({{opt:c}}); generate non usa seed ({{opt:d}})."
+    },
+    {
+      "id": 58,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Stream: Metodi di default takeWhile() e dropWhile() (Java 9+)",
+      "topic": "funzionale",
+      "question": "Dato uno stream ordinato <code>Stream.of(2, 4, 6, 7, 8, 10)</code>, cosa restituisce <code>stream.takeWhile(n -> n % 2 == 0)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "[2, 4, 6] (prende elementi finché il predicato è vero; al primo elemento dispari 7 si interrompe immediatamente)"
+        },
+        {
+          "origKey": "b",
+          "text": "[2, 4, 6, 8, 10] (filtra tutti i pari ignorando i dispari sull'intero stream)"
+        },
+        {
+          "origKey": "c",
+          "text": "[7, 8, 10]"
+        },
+        {
+          "origKey": "d",
+          "text": "Lancia IllegalArgumentException perché il numero 7 è dispari"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 2 (Java 9 Stream Additions)",
+      "explanation": [
+        "A differenza di <code>filter()</code> che valuta tutti gli elementi dello stream:",
+        "<strong><code>takeWhile(predicate)</code></strong> prende gli elementi finché il predicato risulta <code>true</code>. Non appena incontra il primo elemento per cui il predicato è <code>false</code> (qui il <code>7</code>), si arresta (short-circuit) scartando tutto il resto.",
+        "<code>dropWhile(predicate)</code> fa il complementare: scarta finché il predicato è true e prende tutto il rimanente."
+      ],
+      "wrongReasons": "Il comportamento di filtrare tutti i pari su tutto lo stream è di filter() ({{opt:b}}); [7, 8, 10] sarebbe il risultato di dropWhile() ({{opt:c}}); non solleva eccezioni ({{opt:d}})."
+    },
+    {
+      "id": 59,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Stream: Spliterator e Parallelismo",
+      "topic": "funzionale",
+      "question": "Qual è il ruolo del metodo <code>trySplit()</code> nell'interfaccia <code>java.util.Spliterator&lt;T&gt;</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Tenta di partizionare la sorgente dati corrente restituendo un nuovo Spliterator che copre un sottoinsieme degli elementi, consentendo la suddivisione ricorsiva del carico (divide-et-impera) nei thread del ForkJoinPool."
+        },
+        {
+          "origKey": "b",
+          "text": "Divide una stringa in token basandosi su un'espressione regolare."
+        },
+        {
+          "origKey": "c",
+          "text": "Crea una copia di backup su file temporaneo in caso di OutOfMemoryError."
+        },
+        {
+          "origKey": "d",
+          "text": "Verifica se il computer dispone di più di una CPU fisica prima di eseguire il codice."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 6 (Spliterator Architecture)",
+      "explanation": [
+        "Lo <strong>Spliterator</strong> ('splitable iterator') è alla base dell'architettura degli Stream Java.",
+        "Il metodo <strong><code>trySplit()</code></strong> partiziona gli elementi: se la sorgente può essere divisa, restituisce un nuovo <code>Spliterator</code> che copre una porzione dei dati, mentre l'istanza originale copre la porzione rimanente.",
+        "Questo meccanismo permette al framework <code>Fork/Join</code> di suddividere ricorsivamente il flusso di dati su molteplici thread in parallelo."
+      ],
+      "wrongReasons": "Non fa regex splitting di stringhe ({{opt:b}}); non fa backup su disco ({{opt:c}}); non fa controlli hardware diretti ({{opt:d}})."
+    },
+    {
+      "id": 60,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Stream: peek() e Linee Guida di Uso",
+      "topic": "funzionale",
+      "question": "Qual è lo scopo principale del metodo <code>Stream.peek(Consumer&lt;? super T&gt; action)</code> e perché è sconsigliato usarlo per modificare lo stato degli elementi?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "È pensato esclusivamente per scopi di debugging e logging durante il transito degli elementi lungo la pipeline; l'uso con side-effect su oggetti mutabili viola la trasparenza referenziale ed è fonte di race condition in stream paralleli."
+        },
+        {
+          "origKey": "b",
+          "text": "È l'unico modo consentito per salvare dati sul disco fisso durante uno stream."
+        },
+        {
+          "origKey": "c",
+          "text": "peek è un'operazione terminale che svuota lo stream."
+        },
+        {
+          "origKey": "d",
+          "text": "Serve a garantire che gli elementi arrivino in ordine alfabetico."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 2 (Stream Debugging Best Practices)",
+      "explanation": [
+        "La documentazione ufficiale Java specifica che <code>peek()</code> esiste principalmente per supportare il <strong>debugging</strong> (es. stampare gli elementi transitanti: <code>.peek(System.out::println)</code>).",
+        "Inoltre, la JVM è libera di ottimizzare o eliminare del tutto le chiamate a <code>peek()</code> se l'operazione terminale non richiede il transito degli elementi (es. in <code>stream.peek(...).count()</code> in Java 9+ i conteggi possono essere risolti senza scorrere la pipeline!)."
+      ],
+      "wrongReasons": "Non serve per salvare dati su disco ({{opt:b}}); è un'operazione intermedia, non terminale ({{opt:c}}); non ordina elementi ({{opt:d}})."
+    },
+    {
+      "id": 61,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Collectors: Collectors.toMap() e Risoluzione dei Conflitti di Chiave",
+      "topic": "funzionale",
+      "question": "Cosa accade se si invoca <code>list.stream().collect(Collectors.toMap(Person::getName, Person::getAge))</code> e due persone nella lista hanno lo stesso identico nome?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Viene sollevata un'eccezione java.lang.IllegalStateException (Duplicate key) a meno che non venga fornito un mergeFunction di risoluzione come terzo parametro."
+        },
+        {
+          "origKey": "b",
+          "text": "Il secondo valore sovrascrive automaticamente il primo senza alcun avviso."
+        },
+        {
+          "origKey": "c",
+          "text": "La mappa crea automaticamente una lista come valore per contenere entrambe le età."
+        },
+        {
+          "origKey": "d",
+          "text": "Il duplicato viene scartato silenziosamente lasciando il primo valore."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 5 (Map Collectors & Collision Handling)",
+      "explanation": [
+        "La variante a 2 argomenti di <code>Collectors.toMap(keyMapper, valueMapper)</code> presuppone che le chiavi siano strettamente univoche.",
+        "In caso di collisione di chiavi, il collector lancia <strong><code>IllegalStateException: Duplicate key</code></strong>.",
+        "Per gestire le collisioni occorre usare la variante a 3 argomenti con mergeFunction:",
+        "<code>Collectors.toMap(Person::getName, Person::getAge, (age1, age2) -> Math.max(age1, age2))</code>."
+      ],
+      "wrongReasons": "Non sovrascrive silenziosamente ({{opt:b}}); non crea liste (quello è groupingBy) ({{opt:c}}); non scarta silenziosamente ({{opt:d}})."
+    },
+    {
+      "id": 62,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Funzionale: BiPredicate e BiConsumer",
+      "topic": "funzionale",
+      "question": "Quali sono le firme dei metodi astratti di <code>BiPredicate&lt;T, U&gt;</code> e <code>BiConsumer&lt;T, U&gt;</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "BiPredicate: boolean test(T t, U u); BiConsumer: void accept(T t, U u)"
+        },
+        {
+          "origKey": "b",
+          "text": "BiPredicate: boolean test(T t); BiConsumer: void accept(U u)"
+        },
+        {
+          "origKey": "c",
+          "text": "BiPredicate: int compare(T t, U u); BiConsumer: U apply(T t)"
+        },
+        {
+          "origKey": "d",
+          "text": "Entrambi restituiscono una mappa Map<T, U>"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 2",
+      "explanation": [
+        "Il prefisso <code>Bi</code> denota funzioni a due argomenti:",
+        "- <code>BiPredicate<T, U></code>: <code>boolean test(T t, U u)</code> accetta due argomenti di tipi arbitrari <code>T</code> e <code>U</code> e restituisce un booleano.",
+        "- <code>BiConsumer<T, U></code>: <code>void accept(T t, U u)</code> accetta due argomenti e produce un effetto collaterale senza restituire nulla."
+      ],
+      "wrongReasons": "Accettano entrambi 2 parametri, non 1 ({{opt:b}}); non sono compare o apply ({{opt:c}}); non restituiscono mappe ({{opt:d}})."
+    },
+    {
+      "id": 63,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Stream: Ordinamento con Comparator.comparing() e thenComparing()",
+      "topic": "funzionale",
+      "question": "Come si ordina uno <code>Stream&lt;Employee&gt;</code> in base al dipartimento in ordine alfabetico e, a parità di dipartimento, per stipendio decrescente?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "stream.sorted(Comparator.comparing(Employee::getDepartment).thenComparing(Comparator.comparing(Employee::getSalary).reversed()))"
+        },
+        {
+          "origKey": "b",
+          "text": "stream.sorted(Comparator.comparing(Employee::getDepartment, Employee::getSalary))"
+        },
+        {
+          "origKey": "c",
+          "text": "stream.sortAscending(Employee::getDepartment).sortDescending(Employee::getSalary)"
+        },
+        {
+          "origKey": "d",
+          "text": "stream.sorted().reverse()"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 4 & Formulario Java (Comparator Composition)",
+      "explanation": [
+        "In Java 8+ i comparatori sono componibili in modo fluido:",
+        "<code>Comparator.comparing(keyExtractor)</code> crea il comparatore primario.",
+        "<strong><code>thenComparing(otherComparator)</code></strong> definisce il criterio secondario di spareggio in caso di parità sul primo.",
+        "<code>.reversed()</code> inverte l'ordine naturale del criterio specifico (rendendo lo stipendio decrescente)."
+      ],
+      "wrongReasons": "comparing non accetta due estrattori insieme in quel modo ({{opt:b}}); non esistono quei metodi su Stream ({{opt:c}}); sorted().reverse() non esiste ({{opt:d}})."
+    },
+    {
+      "id": 64,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Stream: Collectors.joining() per Concatenazione Stringhe",
+      "topic": "funzionale",
+      "question": "Cosa produce la chiamata <code>Stream.of(\"A\", \"B\", \"C\").collect(Collectors.joining(\", \", \"[\", \"]\"))</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "\"[A, B, C]\""
+        },
+        {
+          "origKey": "b",
+          "text": "\"A, B, C\""
+        },
+        {
+          "origKey": "c",
+          "text": "\"[[A], [B], [C]]\""
+        },
+        {
+          "origKey": "d",
+          "text": "\"[, A, B, C, ]\""
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 5",
+      "explanation": [
+        "La variante completa di <code>Collectors.joining(delimiter, prefix, suffix)</code> concatena le stringhe inserendo:",
+        "- <code>prefix</code> all'inizio (<code>\"[\"</code>)",
+        "- <code>delimiter</code> tra ciascun elemento (<code>\", \"</code>)",
+        "- <code>suffix</code> alla fine (<code>\"]\"</code>)",
+        "Il risultato formattato finale è esattamente <code>\"[A, B, C]\"</code>."
+      ],
+      "wrongReasons": "\"A, B, C\" si ottiene senza prefisso/suffisso ({{opt:b}}); non incapsula singoli elementi tra quadre ({{opt:c}}); non inserisce delimitatori prima o dopo i bordi ({{opt:d}})."
+    },
+    {
+      "id": 65,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Funzionale: Currying e Funzioni di Ordine Superiore",
+      "topic": "funzionale",
+      "question": "Cos'è il <strong>Currying</strong> nella programmazione funzionale e come si esprime in Java tramite interfacce funzionali standard?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "È la trasformazione di una funzione che accetta N argomenti in una catena di N funzioni a singolo argomento; in Java una funzione binaria (A, B) -> C diventa Function<A, Function<B, C>>."
+        },
+        {
+          "origKey": "b",
+          "text": "È una tecnica per serializzare lambda expression su disco."
+        },
+        {
+          "origKey": "c",
+          "text": "È l'eliminazione dei cicli for a favore di thread worker."
+        },
+        {
+          "origKey": "d",
+          "text": "È l'iniezione automatica delle dipendenze a runtime nei costruttori."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 6 (Higher-Order Functions & Currying)",
+      "explanation": [
+        "Prende il nome dal matematico Haskell Curry.",
+        "Consiste nel riscrivere una funzione a più argomenti <code>f(x, y)</code> come una funzione unaria che, ricevuto il primo argomento <code>x</code>, restituisce una nuova funzione unaria che attende il secondo argomento <code>y</code>:",
+        "In Java: <code>Function<Integer, Function<Integer, Integer>> addCurried = x -> y -> x + y;</code>",
+        "Permette l'applicazione parziale dei parametri (partial application)."
+      ],
+      "wrongReasons": "Non riguarda la serializzazione ({{opt:b}}); non riguarda l'eliminazione dei thread ({{opt:c}}); non c'entra la dependency injection ({{opt:d}})."
+    },
+    {
+      "id": 66,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Stream: findFirst() vs findAny() in Sequenziale e Parallelo",
+      "topic": "funzionale",
+      "question": "Qual è la differenza fondamentale di comportamento tra <code>findFirst()</code> e <code>findAny()</code> su uno stream parallelo?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "findFirst è deterministico e restituisce tassativamente il primo elemento nell'ordine di incontro (encounter order), costringendo i thread a sincronizzarsi; findAny è non-deterministico e restituisce il primo elemento trovato da qualsiasi thread, massimizzando le prestazioni del parallelismo."
+        },
+        {
+          "origKey": "b",
+          "text": "findAny può restituire solo valori nulli mentre findFirst restituisce Optional non vuoti."
+        },
+        {
+          "origKey": "c",
+          "text": "findFirst richiede che lo stream sia infinito mentre findAny richiede uno stream finito."
+        },
+        {
+          "origKey": "d",
+          "text": "Non esiste alcuna differenza: entrambi restituiscono sempre lo stesso elemento."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 3 (Encounter Order vs Parallel Throughput)",
+      "explanation": [
+        "In uno stream sequenziale ordinato, <code>findFirst()</code> e <code>findAny()</code> restituiscono tipicamente lo stesso elemento.",
+        "Tuttavia, in uno <strong>stream parallelo</strong>, garantire l'ordine originale (encounter order) per <code>findFirst()</code> comporta un forte overhead di coordinamento tra i thread del pool.",
+        "<code>findAny()</code> è stato progettato appositamente per le esecuzioni parallele: restituisce immediatamente l'elemento trovato dal primo worker thread che soddisfa la condizione, senza attendere i thread precedenti."
+      ],
+      "wrongReasons": "Nessuno dei due restituisce solo nulli ({{opt:b}}); entrambi lavorano su qualsiasi stream ({{opt:c}}); in parallelo possono restituire elementi diversi a seconda della velocità dei thread ({{opt:d}})."
+    },
+    {
+      "id": 67,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Collectors: Custom Collector con Collector.of()",
+      "topic": "funzionale",
+      "question": "Quali sono le 4 componenti indispensabili per definire un Collector custom tramite il factory method <code>Collector.of()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "1. supplier (crea il contenitore); 2. accumulator (inserisce elementi); 3. combiner (fonde due contenitori in parallelo); 4. finisher (trasforma il contenitore nel risultato finale, o Function.identity())."
+        },
+        {
+          "origKey": "b",
+          "text": "1. filter; 2. map; 3. reduce; 4. sort."
+        },
+        {
+          "origKey": "c",
+          "text": "1. threadPool; 2. lock; 3. semaphore; 4. monitor."
+        },
+        {
+          "origKey": "d",
+          "text": "1. serialVersionUID; 2. readObject; 3. writeObject; 4. defaultWriteObject."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 5 (Custom Collector Implementation)",
+      "explanation": [
+        "L'interfaccia <code>java.util.stream.Collector<T, A, R></code> è parametrizzata su tipo di input <code>T</code>, accumulatore intermedio <code>A</code> e risultato finale <code>R</code>.",
+        "<code>Collector.of(supplier, accumulator, combiner, finisher, characteristics)</code> richiede:",
+        "- <strong>supplier:</strong> <code>Supplier<A></code>",
+        "- <strong>accumulator:</strong> <code>BiConsumer<A, T></code>",
+        "- <strong>combiner:</strong> <code>BinaryOperator<A></code>",
+        "- <strong>finisher:</strong> <code>Function<A, R></code>",
+        "- <strong>characteristics:</strong> set di flag (<code>IDENTITY_FINISH</code>, <code>CONCURRENT</code>, <code>UNORDERED</code>)."
+      ],
+      "wrongReasons": "Non sono le operazioni della pipeline ({{opt:b}}); non sono primitive di lock ({{opt:c}}); non sono metodi di serializzazione ({{opt:d}})."
+    },
+    {
+      "id": 68,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Funzionale: Interfaccia Runnable e Callable come SAM",
+      "topic": "funzionale",
+      "question": "Qual è la differenza fondamentale tra <code>Runnable</code> e <code>Callable&lt;V&gt;</code> quando usate come espressioni lambda?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Runnable ha il metodo void run() che non accetta parametri, non restituisce valori e non può lanciare checked exceptions; Callable<V> ha V call() che restituisce un valore di tipo V e può lanciare Exception generiche."
+        },
+        {
+          "origKey": "b",
+          "text": "Callable può essere eseguito solo da un singolo thread mentre Runnable crea 10 thread."
+        },
+        {
+          "origKey": "c",
+          "text": "Runnable può essere espresso come lambda, Callable no."
+        },
+        {
+          "origKey": "d",
+          "text": "Runnable è un'interfaccia di rete, Callable è per la grafica."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 1 & Cap. 04 Sez. 1",
+      "explanation": [
+        "Sia <code>Runnable</code> che <code>Callable<V></code> sono interfacce funzionali (SAM):",
+        "- <code>Runnable</code>: <code>void run()</code> (storica da Java 1.0), non restituisce nulla e non ammette checked exception nella clausola throws.",
+        "- <code>Callable<V></code>: <code>V call() throws Exception</code> (introdotta in Java 5), ideale per task computazionali asincroni affidati a un <code>ExecutorService</code> che restituiscono un risultato o falliscono con eccezione."
+      ],
+      "wrongReasons": "Non creano thread in quel modo fisso ({{opt:b}}); entrambi sono interfacce funzionali ed esprimibili come lambda ({{opt:c}}); non c'entrano rete o grafica ({{opt:d}})."
+    },
+    {
+      "id": 69,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Stream: Files.lines() e Chiusura Risorse (AutoCloseable)",
+      "topic": "funzionale",
+      "question": "Perché quando si crea uno stream di righe da un file con <code>Files.lines(Path path)</code> è obbligatorio incapsularlo in un blocco <code>try-with-resources</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Perché Files.lines apre un file handle di sistema sottostante; Stream implementa AutoCloseable e la chiusura garantisce il rilascio immediato del descrittore di file del SO evitando resource leak."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché altrimenti la JVM cancellerebbe il file dal filesystem al termine dell'esecuzione."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché lo stream fallirebbe immediatamente con NullPointerException alla prima riga."
+        },
+        {
+          "origKey": "d",
+          "text": "Perché try-with-resources trasforma lo stream in uno stream parallelo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 03 Sez. 1 & Formulario Java (IO Streams & Resource Management)",
+      "explanation": [
+        "La maggior parte degli stream creati da collezioni in memoria non necessita di chiusura.",
+        "Tuttavia, <code>Stream</code> implementa <code>AutoCloseable</code> proprio per gestire stream associati a risorse I/O fisiche (file, socket).",
+        "<code>Files.lines()</code> mantiene aperto un <code>BufferedReader</code>. Se lo stream non viene chiuso, il file descriptor rimane bloccato dal processo nel sistema operativo, causando esaurimento di descrittori (Too many open files)."
+      ],
+      "wrongReasons": "Non cancella file dal disco ({{opt:b}}); non fallisce con NPE ({{opt:c}}); non rende lo stream parallelo ({{opt:d}})."
+    },
+    {
+      "id": 70,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Funzionale: invokedynamic e Traduzione delle Lambda nel Bytecode",
+      "topic": "funzionale",
+      "question": "Come viene compilata ed eseguita una lambda expression nel bytecode Java a partire da Java 8?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il compilatore genera l'istruzione invokedynamic associata a un bootstrap method (LambdaMetafactory); alla prima esecuzione, la JVM genera dinamicamente al volo una classe anonima o un CallSite altamente ottimizzato evitando la proliferazione di file .class su disco."
+        },
+        {
+          "origKey": "b",
+          "text": "Viene generato a priori un file .class per ogni lambda presente nel codice sorgente."
+        },
+        {
+          "origKey": "c",
+          "text": "Le lambda vengono interpretate come script JavaScript tramite il motore Nashorn."
+        },
+        {
+          "origKey": "d",
+          "text": "Il codice della lambda viene sostituito testualmente con macro C dal precompilatore."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 02 Sez. 7 (Bytecode Internals: invokedynamic & LambdaMetafactory)",
+      "explanation": [
+        "A differenza delle vecchie classi interne anonime (che generavano file fisici <code>Outer$1.class</code> su disco per ogni istanza con forte footprint sul caricamento del ClassLoader):",
+        "Java 8 usa <strong><code>invokedynamic</code></strong> (introdotto in Java 7 per i linguaggi dinamici).",
+        "Il compilatore emette un'istruzione <code>invokedynamic</code> che punta a <strong><code>LambdaMetafactory.metafactory</code></strong>.",
+        "La JVM a runtime crea una call site ottimizzata (spesso basata su un MethodHandle diretto), permettendo inlining del JIT compiler e allocazioni quasi nulle."
+      ],
+      "wrongReasons": "Non genera file .class fisici su disco per ogni lambda ({{opt:b}}); non usa motori JavaScript ({{opt:c}}); non usa macro C ({{opt:d}})."
+    },
+    {
+      "id": 71,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Concorrenza: Stati del Ciclo di Vita di un Thread (Thread.State)",
+      "topic": "concorrenza",
+      "question": "Quali sono i 6 stati ufficiali del ciclo di vita di un Thread definiti dall'enum <code>Thread.State</code> nella JVM?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED"
+        },
+        {
+          "origKey": "b",
+          "text": "START, RUNNING, SLEEPING, PAUSED, STOPPED, DEAD"
+        },
+        {
+          "origKey": "c",
+          "text": "READY, EXECUTING, SUSPENDED, KILLED, ZOMBIE, ABORTED"
+        },
+        {
+          "origKey": "d",
+          "text": "INIT, RUN, WAIT, NOTIFY, JOIN, DESTROY"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 1 (Thread Lifecycle & Thread.State)",
+      "explanation": [
+        "L'enum <code>java.lang.Thread.State</code> definisce rigorosamente 6 stati:",
+        "- <strong>NEW:</strong> thread creato ma non ancora avviato con <code>start()</code>.",
+        "- <strong>RUNNABLE:</strong> in esecuzione o pronto per essere schedulato dalla CPU.",
+        "- <strong>BLOCKED:</strong> in attesa di acquisire un monitor intrinseco (lock <code>synchronized</code>).",
+        "- <strong>WAITING:</strong> in attesa a tempo indeterminato di un'azione da un altro thread (es. <code>wait()</code>, <code>join()</code>, <code>LockSupport.park()</code>).",
+        "- <strong>TIMED_WAITING:</strong> attesa con timeout prefissato (es. <code>sleep(ms)</code>, <code>wait(ms)</code>).",
+        "- <strong>TERMINATED:</strong> esecuzione del metodo <code>run()</code> completata o interrotta da eccezione non catturata."
+      ],
+      "wrongReasons": "Le altre opzioni usano nomi storici di SO Unix o metodi deprecati invece degli stati JVM ({{opt:b}}, {{opt:c}}, {{opt:d}})."
+    },
+    {
+      "id": 72,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Concorrenza: Metodo start() vs run()",
+      "topic": "concorrenza",
+      "question": "Qual è la differenza fondamentale tra invocare <code>thread.start()</code> e <code>thread.run()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "start() richiede al sistema operativo di creare un nuovo thread e ne avvia l'esecuzione asincrona; run() esegue semplicemente il codice del metodo in modo sincrono nel thread corrente chiamante."
+        },
+        {
+          "origKey": "b",
+          "text": "start() e run() sono sinonimi equivalenti in Java."
+        },
+        {
+          "origKey": "c",
+          "text": "run() alloca memoria nello heap, start() alloca nello stack."
+        },
+        {
+          "origKey": "d",
+          "text": "run() può essere invocato più volte, start() crea 5 thread."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 1",
+      "explanation": [
+        "Invocando direttamente <code>thread.run()</code> non viene creato alcun nuovo thread: il corpo di <code>run()</code> viene eseguito sequenzialmente dal thread chiamante corrente (es. il <code>main</code> thread).",
+        "Solo l'invocazione di <strong><code>thread.start()</code></strong> registra il thread presso lo scheduler nativo del sistema operativo, alloca lo stack dedicato e avvia l'esecuzione parallela.",
+        "Invocare <code>start()</code> una seconda volta solleva <code>IllegalThreadStateException</code>."
+      ],
+      "wrongReasons": "Non sono sinonimi ({{opt:b}}); non riguarda stack vs heap ({{opt:c}}); non crea 5 thread ({{opt:d}})."
+    },
+    {
+      "id": 73,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Concorrenza: Parola Chiave volatile e Memory Barrier",
+      "topic": "concorrenza",
+      "question": "Cosa garantisce e cosa NON garantisce la parola chiave <code>volatile</code> in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Garantisce visibilità immediata delle scritture a tutti i thread (letture/scritture dirette in memoria principale) e impedisce il reordering delle istruzioni, ma NON garantisce l'atomicità delle operazioni composte come il post-incremento (count++)."
+        },
+        {
+          "origKey": "b",
+          "text": "Garantisce mutua esclusione e lock atomico come synchronized."
+        },
+        {
+          "origKey": "c",
+          "text": "Rende qualsiasi collezione automaticamente thread-safe."
+        },
+        {
+          "origKey": "d",
+          "text": "Garantisce che la variabile non possa essere modificata da alcun thread (costante immutabile)."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 2 (Java Memory Model & Volatile Semantics)",
+      "explanation": [
+        "<code>volatile</code> impone una barriera di memoria (Memory Barrier):",
+        "1. <strong>Visibilità:</strong> ogni scrittura su una variabile <code>volatile</code> viene immediatamente scaricata nella RAM principale, e ogni lettura la ricarica dalla RAM bypassando le cache L1/L2 locali della CPU.",
+        "2. <strong>Ordinamento:</strong> stabilisce una relazione di <em>happens-before</em>, impedendo al compilatore e alla CPU di riordinare le istruzioni attorno alla barriera.",
+        "3. <strong>Mancata atomicità:</strong> l'operazione <code>count++</code> è una sequenza di 3 passi (read-modify-write) e rimane soggetta a race condition se due thread la eseguono simultaneamente."
+      ],
+      "wrongReasons": "Non garantisce mutua esclusione né atomicità di read-modify-write ({{opt:b}}); non rende collezioni thread-safe ({{opt:c}}); immutabile è final, non volatile ({{opt:d}})."
+    },
+    {
+      "id": 74,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Concorrenza: Monitor Intrinseco e Metodi synchronized",
+      "topic": "concorrenza",
+      "question": "Quale monitor (lock intrinseco) acquisiscono rispettivamente un metodo d'istanza <code>synchronized void foo()</code> e un metodo statico <code>synchronized static void bar()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "foo() acquisisce il monitor dell'istanza corrente (this); bar() acquisisce il monitor dell'oggetto Class associato alla classe (NomeClasse.class)."
+        },
+        {
+          "origKey": "b",
+          "text": "Entrambi acquisiscono sempre il monitor globale della JVM (Object.class)."
+        },
+        {
+          "origKey": "c",
+          "text": "foo() acquisisce la CPU; bar() acquisisce la RAM."
+        },
+        {
+          "origKey": "d",
+          "text": "bar() non acquisisce alcun lock perché i metodi statici non possono essere sincronizzati."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 2 (Intrinsic Locks & Monitors)",
+      "explanation": [
+        "Ogni oggetto Java possiede un <strong>monitor intrinseco</strong> associato nel suo header (Mark Word):",
+        "- Un metodo d'istanza sincronizzato equivale a: <code>synchronized(this) { ... }</code>.",
+        "- Un metodo statico sincronizzato opera a livello di classe e equivale a: <code>synchronized(NomeClasse.class) { ... }</code>.",
+        "Di conseguenza, un thread che esegue <code>foo()</code> su un'istanza NON blocca un altro thread che esegue <code>bar()</code> sulla classe, poiché i due lock risiedono su oggetti fisicamente distinti."
+      ],
+      "wrongReasons": "Non esiste un unico monitor globale JVM per tutto ({{opt:b}}); la CPU/RAM non sono lock Java ({{opt:c}}); i metodi statici possono essere perfettamente synchronized ({{opt:d}})."
+    },
+    {
+      "id": 75,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Concorrenza: Rientranza del Lock (Reentrancy)",
+      "topic": "concorrenza",
+      "question": "Cosa si intende per <strong>rientranza</strong> (reentrant lock) dei monitor intrinseci in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "La capacità di un thread che possiede già un lock di riacquisire lo stesso lock (es. in chiamate ricorsive o da un metodo sincronizzato a un altro della stessa classe) senza andare in auto-deadlock, grazie a un contatore interno di acquisizioni."
+        },
+        {
+          "origKey": "b",
+          "text": "La capacità del thread di essere riavviato automaticamente dopo la terminazione."
+        },
+        {
+          "origKey": "c",
+          "text": "La possibilità per thread diversi di entrare contemporaneamente nello stesso blocco sincronizzato."
+        },
+        {
+          "origKey": "d",
+          "text": "Un meccanismo che riavvia il sistema operativo in caso di stallo di memoria."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 2 (Lock Reentrancy)",
+      "explanation": [
+        "Sia i blocchi <code>synchronized</code> sia <code>ReentrantLock</code> sono rientranti per thread:",
+        "La JVM memorizza l'identificativo del thread proprietario (owner thread) e un contatore (hold count).",
+        "Se il thread proprietario incontra un altro blocco protetto dallo stesso lock, il contatore viene semplicemente incrementato e il thread prosegue senza bloccarsi.",
+        "All'uscita dal blocco il contatore decresce; il lock viene effettivamente rilasciato solo quando il contatore torna a zero."
+      ],
+      "wrongReasons": "I thread terminati non possono essere riavviati ({{opt:b}}); thread diversi sono mutuamente esclusi ({{opt:c}}); non riguarda il SO ({{opt:d}})."
+    },
+    {
+      "id": 76,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Concorrenza: wait(), notify() e Pattern del While Loop",
+      "topic": "concorrenza",
+      "question": "Perché la chiamata a <code>wait()</code> deve essere sempre racchiusa all'interno di un ciclo <code>while (!condition)</code> e mai dentro un semplice blocco <code>if (!condition)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Per proteggersi dai risvegli spuri (spurious wakeups) e perché, tra il momento in cui un thread viene risvegliato da notifyAll() e il momento in cui riottiene il lock, un altro thread concorrente potrebbe aver già invalidato la condizione."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché il compilatore Java rifiuta la compilazione se wait() si trova in un blocco if."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché while aumenta la velocità di esecuzione rispetto a if."
+        },
+        {
+          "origKey": "d",
+          "text": "Perché notify() sveglia sempre e solo un thread ma la CPU lo fa girare in loop infinito."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 3 (Condition Queues & Spurious Wakeups)",
+      "explanation": [
+        "Ci sono due ragioni ingegneristiche fondamentali:",
+        "1. <strong>Spurious wakeups:</strong> a livello di kernel del sistema operativo (POSIX threads, Windows events), un thread in attesa su una variabile di condizione può risvegliarsi spontaneamente senza che alcun thread abbia chiamato <code>notify()</code>.",
+        "2. <strong>Contesa post-risveglio:</strong> se un thread chiama <code>notifyAll()</code>, più thread si svegliano e competono per riacquisire il lock. Il primo thread ad ottenerlo potrebbe consumare la risorsa, lasciando la condizione falsa per i successivi.",
+        "Il ciclo <code>while</code> garantisce che la condizione venga sempre verificata nuovamente prima di procedere."
+      ],
+      "wrongReasons": "Il compilatore compila anche dentro l'if (ma è un bug gravissimo) ({{opt:b}}); non c'entra la velocità ({{opt:c}}); notify non fa loop infiniti ({{opt:d}})."
+    },
+    {
+      "id": 77,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Concorrenza: IllegalMonitorStateException",
+      "topic": "concorrenza",
+      "question": "In quale circostanza viene sollevata la <code>java.lang.IllegalMonitorStateException</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Quando un thread tenta di invocare wait(), notify() o notifyAll() su un oggetto senza possedere preventivamente il lock sul monitor intrinseco di quell'oggetto (ossia fuori da un blocco/metodo synchronized)."
+        },
+        {
+          "origKey": "b",
+          "text": "Quando la risoluzione grafica del monitor video del PC non è supportata da Java."
+        },
+        {
+          "origKey": "c",
+          "text": "Quando si creano più di 100 thread contemporaneamente nello stesso programma."
+        },
+        {
+          "origKey": "d",
+          "text": "Quando si tenta di serializzare un thread su file JSON."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 3",
+      "explanation": [
+        "Le primitive <code>wait()</code>, <code>notify()</code> e <code>notifyAll()</code> operano sulla wait-set associata al monitor dell'oggetto.",
+        "Per chiamarle, il thread chiamante DEVE essere l'attuale proprietario del monitor (acquisito tramite <code>synchronized(obj)</code>).",
+        "Se il thread non possiede il lock, la JVM lancia istantaneamente <strong><code>IllegalMonitorStateException</code></strong>."
+      ],
+      "wrongReasons": "Non riguarda schermi video fisici ({{opt:b}}); non riguarda il numero di thread ({{opt:c}}); la mancata serializzazione genera NotSerializableException ({{opt:d}})."
+    },
+    {
+      "id": 78,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Concorrenza: Gestione dell'Interruzione (InterruptedException)",
+      "topic": "concorrenza",
+      "question": "Cosa accade quando un thread in stato di blocco su <code>Thread.sleep()</code> o <code>wait()</code> riceve una chiamata a <code>thread.interrupt()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il thread viene risvegliato immediatamente, il flag di interruzione viene resettato a false e viene sollevata una InterruptedException che deve essere gestita o rilanciata."
+        },
+        {
+          "origKey": "b",
+          "text": "Il processo Java viene terminato forzatamente con codice di uscita -1."
+        },
+        {
+          "origKey": "c",
+          "text": "Il thread ignora l'interruzione fino al naturale scadere del timeout di sleep."
+        },
+        {
+          "origKey": "d",
+          "text": "La memoria del thread viene deallocata all'istante causando segfault."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 1 (Interruption Mechanics & Cancellation)",
+      "explanation": [
+        "In Java l'interruzione è un meccanismo <strong>cooperativo</strong> (non forzato):",
+        "Se il thread è bloccato in un'operazione che dichiara <code>throws InterruptedException</code> (come <code>sleep</code>, <code>wait</code>, <code>join</code>), il metodo esce immediatamente sollevando <code>InterruptedException</code>.",
+        "Contestualmente, il flag di interruzione viene <em>ripulito (resettato a false)</em>.",
+        "Buona norma ingegneristica impone di ripristinare il flag (<code>Thread.currentThread().interrupt()</code>) se l'eccezione viene catturata senza essere rilanciata."
+      ],
+      "wrongReasons": "Non termina il processo ({{opt:b}}); non ignora l'interruzione ({{opt:c}}); non causa segfault ({{opt:d}})."
+    },
+    {
+      "id": 79,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Concorrenza: Thread.interrupted() vs thread.isInterrupted()",
+      "topic": "concorrenza",
+      "question": "Qual è la differenza fondamentale tra il metodo statico <code>Thread.interrupted()</code> e il metodo d'istanza <code>thread.isInterrupted()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Thread.interrupted() controlla lo stato del thread corrente e RESETTA (pulisce) il flag di interruzione a false; isInterrupted() verifica lo stato del thread su cui è invocato SENZA alterare il flag."
+        },
+        {
+          "origKey": "b",
+          "text": "Thread.interrupted() uccide il thread, isInterrupted() lo mette in pausa."
+        },
+        {
+          "origKey": "c",
+          "text": "isInterrupted() lancia InterruptedException se il thread è interrotto."
+        },
+        {
+          "origKey": "d",
+          "text": "Sono identici e nessuno dei due modifica alcuno stato."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 1",
+      "explanation": [
+        "Questo è un classico trabocchetto di Java Concurrency:",
+        "- <code>Thread.interrupted()</code> è statico, interroga il thread corrente e <strong>cancella lo stato di interruzione</strong> (se era <code>true</code>, restituisce <code>true</code> ma imposta il flag a <code>false</code>). Chiamandolo una seconda volta consecutiva restituirà <code>false</code>!",
+        "- <code>thread.isInterrupted()</code> è un metodo di istanza puramente diagnostico (getter) che restituisce il booleano senza modificare il flag."
+      ],
+      "wrongReasons": "Nessuno dei due uccide il thread ({{opt:b}}); non sollevano eccezioni ({{opt:c}}); non sono identici nel side effect ({{opt:d}})."
+    },
+    {
+      "id": 80,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Concorrenza: Thread Daemon vs User Thread",
+      "topic": "concorrenza",
+      "question": "Qual è l'effetto di marcare un thread come <strong>Daemon</strong> tramite <code>thread.setDaemon(true)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "La JVM termina automaticamente non appena tutti i thread utente (non-daemon) hanno completato la loro esecuzione, interrompendo bruscamente i thread daemon senza attendere il loro termine."
+        },
+        {
+          "origKey": "b",
+          "text": "Il thread viene eseguito con privilegi di amministratore di sistema (root/administrator)."
+        },
+        {
+          "origKey": "c",
+          "text": "Il thread non può allocare memoria nell'heap."
+        },
+        {
+          "origKey": "d",
+          "text": "Il thread può essere eseguito solo dopo la chiusura del programma."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 1",
+      "explanation": [
+        "In Java la JVM continua l'esecuzione finché esiste almeno un thread non-daemon (User Thread) attivo.",
+        "I <strong>Daemon Threads</strong> sono tipicamente thread di supporto in background (es. Garbage Collector, thread di telemetria, timer).",
+        "Quando l'ultimo thread utente termina, la JVM arresta l'intero processo all'istante: i blocchi <code>finally</code> dei thread daemon potrebbero non essere nemmeno eseguiti!"
+      ],
+      "wrongReasons": "Non conferisce privilegi di sistema root ({{opt:b}}); alloca normalmente nell'heap ({{opt:c}}); non viene eseguito dopo la chiusura ({{opt:d}})."
+    },
+    {
+      "id": 81,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Lock Espliciti: ReentrantLock e Blocco try-finally",
+      "topic": "concorrenza",
+      "question": "Qual è il pattern corretto e obbligatorio per utilizzare un <code>ReentrantLock</code> in Java per evitare deadlock?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "lock.lock() immediatamente prima del blocco try, e lock.unlock() come prima istruzione all'interno del blocco finally."
+        },
+        {
+          "origKey": "b",
+          "text": "lock.lock() dentro il blocco try e lock.unlock() dentro il blocco catch."
+        },
+        {
+          "origKey": "c",
+          "text": "lock.lock() nel costruttore e lock.unlock() nel metodo finalize()."
+        },
+        {
+          "origKey": "d",
+          "text": "Chiamare solo lock.lock(); il rilascio è automatico all'uscita dal metodo come in C++ RAII."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 1 (Explicit Locks & Idiomatic try-finally)",
+      "explanation": [
+        "In Java non esiste distruzione automatica deterministica (RAII) per i lock.",
+        "Il pattern corretto è:",
+        "<pre><code>lock.lock();\ntry {\n    // Sezione critica\n} finally {\n    lock.unlock();\n}</code></pre>",
+        "Chiamare <code>lock()</code> prima del <code>try</code> assicura che se l'acquisizione fallisce non si tenti l'unlock nello stack; inserire <code>unlock()</code> nel blocco <code>finally</code> garantisce che il lock venga rilasciato anche se nella sezione critica viene lanciata un'eccezione."
+      ],
+      "wrongReasons": "Nel catch non verrebbe rilasciato se il try termina normalmente ({{opt:b}}); finalize non è garantito ({{opt:c}}); Java non ha sblocco automatico RAII ({{opt:d}})."
+    },
+    {
+      "id": 82,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Lock Espliciti: lockInterruptibly() e tryLock()",
+      "topic": "concorrenza",
+      "question": "Quali vantaggi offrono <code>tryLock()</code> e <code>lockInterruptibly()</code> di <code>ReentrantLock</code> rispetto al blocco <code>synchronized</code> standard?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Consentono di evitare il blocco a tempo indeterminato: tryLock() permette di tentare l'acquisizione senza attendere o con un timeout prefissato, mentre lockInterruptibly() permette di interrompere un thread in attesa di un lock."
+        },
+        {
+          "origKey": "b",
+          "text": "Raddoppiano la velocità dei cicli for della CPU."
+        },
+        {
+          "origKey": "c",
+          "text": "Permettono di acquisire lock senza allocare memoria."
+        },
+        {
+          "origKey": "d",
+          "text": "tryLock() elimina la necessità di chiamare unlock()."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 1",
+      "explanation": [
+        "Il blocco <code>synchronized</code> è rigido: se un thread tenta di acquisire il monitor, non può specificare un timeout e non può essere interrotto finché non ottiene il lock (attesa incondizionata).",
+        "<code>ReentrantLock</code> introduce flessibilità fondamentale:",
+        "- <strong><code>tryLock(timeout, unit)</code>:</strong> tenta l'acquisizione e recede se il lock non è disponibile, risolvendo i problemi di deadlock ad anello.",
+        "- <strong><code>lockInterruptibly()</code>:</strong> consente di abortire l'attesa se un altro thread invoca <code>interrupt()</code>."
+      ],
+      "wrongReasons": "Non alterano la frequenza CPU ({{opt:b}}); non eliminano allocazioni di oggetti ({{opt:c}}); unlock() rimane categoricamente obbligatorio ({{opt:d}})."
+    },
+    {
+      "id": 83,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Lock Espliciti: Fair vs Nonfair Lock in ReentrantLock",
+      "topic": "concorrenza",
+      "question": "Qual è il compromesso architetturale tra un <code>ReentrantLock(true)</code> (fair) e un <code>ReentrantLock(false)</code> (non-fair, default)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il lock Fair garantisce l'acquisizione in ordine strettamente FIFO prevenendo la thread starvation, ma ha un throughput drasticamente inferiore a causa dell'overhead continuo di sospensione e context switch; il Non-fair consente il barging aumentando notevolmente il throughput complessivo."
+        },
+        {
+          "origKey": "b",
+          "text": "Il lock Fair consuma metà della memoria heap del Non-fair."
+        },
+        {
+          "origKey": "c",
+          "text": "Il lock Non-fair genera crash di sistema nel 50% dei casi."
+        },
+        {
+          "origKey": "d",
+          "text": "Fair significa che il lock è crittografato, Non-fair che è in chiaro."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 1 (Fairness vs Barging & AQS Throughput)",
+      "explanation": [
+        "In un lock <strong>fair (equo)</strong>, i thread in coda nell'AQS (AbstractQueuedSynchronizer) acquisiscono il lock strettamente nell'ordine di arrivo FIFO.",
+        "Nel lock <strong>non-fair (predefinito)</strong>, un thread appena arrivato che richiede il lock può scavalcare (barging) i thread attualmente sospesi in coda se il lock è libero in quel micro-istante.",
+        "Poiché risvegliare un thread addormentato dal kernel richiede diversi microsecondi di context switch, consentire a un thread già attivo sulla CPU di acquisire il lock subito incrementa il throughput globale anche di 1-2 ordini di grandezza."
+      ],
+      "wrongReasons": "La memoria è identica ({{opt:b}}); non provoca crash di sistema ({{opt:c}}); fairness non c'entra con la crittografia ({{opt:d}})."
+    },
+    {
+      "id": 84,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Lock Espliciti: ReadWriteLock e ReentrantReadWriteLock",
+      "topic": "concorrenza",
+      "question": "In quale scenario applicativo <code>ReentrantReadWriteLock</code> offre un netto vantaggio prestazionale rispetto a un comune <code>ReentrantLock</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "In strutture dati con frequenti operazioni di lettura concorrenti e rare operazioni di scrittura, poiché consente a un numero arbitrario di lettori simultanei di accedere alla risorsa, riservando la mutua esclusione solo agli scrittori."
+        },
+        {
+          "origKey": "b",
+          "text": "Quando ci sono solo scritture e nessuna lettura."
+        },
+        {
+          "origKey": "c",
+          "text": "Su sistemi a singolo core con un solo thread attivo."
+        },
+        {
+          "origKey": "d",
+          "text": "Quando si devono salvare dati cifrati su disco magnetico."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 1",
+      "explanation": [
+        "<code>ReadWriteLock</code> separa l'accesso in due canali:",
+        "1. <strong>Read Lock:</strong> condiviso; più thread possono leggere simultaneamente senza bloccarsi a vicenda.",
+        "2. <strong>Write Lock:</strong> esclusivo; un singolo thread scrittore blocca tutti gli altri lettori e scrittori.",
+        "Se il carico è sbilanciato sulle letture (es. 95% letture e 5% scritture), il throughput aumenta considerevolmente rispetto alla serializzazione forzata di un mutex standard."
+      ],
+      "wrongReasons": "Se ci sono solo scritture il ReadWriteLock aggiunge solo overhead rispetto a ReentrantLock ({{opt:b}}); a singolo core non dà vantaggi ({{opt:c}}); non riguarda dischi magnetici ({{opt:d}})."
+    },
+    {
+      "id": 85,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Lock Avanzati: StampedLock e Optimistic Reads",
+      "topic": "concorrenza",
+      "question": "Come funziona la <strong>Optimistic Read</strong> introdotta con <code>StampedLock</code> in Java 8?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Restituisce uno stamp temporale (long) senza acquisire alcun lock effettivo; il thread legge i dati e poi chiama validate(stamp): se nel frattempo nessuno scrittore ha acquisito il lock, la lettura è valida, altrimenti si ricade su una lettura con lock bloccante."
+        },
+        {
+          "origKey": "b",
+          "text": "Acquisisce un lock prioritario che uccide qualsiasi scrittore concorrente."
+        },
+        {
+          "origKey": "c",
+          "text": "Legge i dati dal cloud senza passare per la memoria locale."
+        },
+        {
+          "origKey": "d",
+          "text": "Rende StampedLock automaticamente rientrante per thread."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 1 (StampedLock & Non-blocking Optimistic Reads)",
+      "explanation": [
+        "<code>StampedLock.tryOptimisticRead()</code> non usa alcuna istruzione atomica bloccante (zero contention sul bus):",
+        "Restituisce semplicemente un valore <code>long stamp</code>.",
+        "Il lettore legge i campi della struttura dati. Subito dopo invoca <code>lock.validate(stamp)</code>.",
+        "Se una scrittura concorrente è avvenuta nel mezzo, lo stamp risulta invalidato e il thread ritenta o scala a un read lock pessimista (<code>readLock()</code>).",
+        "Attenzione: <code>StampedLock</code> NON è rientrante!"
+      ],
+      "wrongReasons": "Non uccide thread concorrenti ({{opt:b}}); non legge dal cloud ({{opt:c}}); StampedLock NON è rientrante ({{opt:d}})."
+    },
+    {
+      "id": 86,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Sincronizzatori: CountDownLatch vs CyclicBarrier",
+      "topic": "concorrenza",
+      "question": "Qual è la differenza fondamentale tra <code>CountDownLatch</code> e <code>CyclicBarrier</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "CountDownLatch è monouso (il contatore decresce verso zero e non può essere ripristinato); CyclicBarrier può essere riutilizzata indefinitamente una volta che tutti i thread hanno raggiunto il punto di sincronizzazione comune (barrier point)."
+        },
+        {
+          "origKey": "b",
+          "text": "CountDownLatch funziona solo su un thread, CyclicBarrier su infiniti processi di macchine diverse."
+        },
+        {
+          "origKey": "c",
+          "text": "CyclicBarrier si basa su socket TCP mentre CountDownLatch su memoria RAM."
+        },
+        {
+          "origKey": "d",
+          "text": "CountDownLatch incrementa il contatore verso l'infinito mentre CyclicBarrier decresce."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 2 (High-Level Synchronizers)",
+      "explanation": [
+        "Entrambi coordinano l'avanzamento concorrente di più thread:",
+        "- <strong><code>CountDownLatch(N)</code>:</strong> uno o più thread attendono con <code>await()</code> che altri thread invochino <code>countDown()</code> N volte. Una volta raggiunto lo zero, il latch rimane aperto permanentemente e non è ripristinabile.",
+        "- <strong><code>CyclicBarrier(N, barrierAction)</code>:</strong> un gruppo fisso di N thread si aspetta a vicenda chiamando <code>await()</code>. Non appena l'ultimo arriva, viene opzionalmente eseguita la <code>barrierAction</code>, la barriera si resetta e può essere riutilizzata per un nuovo ciclo computazionale."
+      ],
+      "wrongReasons": "CountDownLatch coordina molteplici thread ({{opt:b}}); nessuno dei due usa socket TCP ({{opt:c}}); CountDownLatch decresce, non incrementa ({{opt:d}})."
+    },
+    {
+      "id": 87,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Sincronizzatori: Semaphore e Permessi",
+      "topic": "concorrenza",
+      "question": "Qual è il caso d'uso primario della classe <code>java.util.concurrent.Semaphore</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Limitare il numero massimo di accessi concorrenti a un pool finito di risorse fisiche (es. massimo 10 connessioni al database simultanee) tramite acquire() e release()."
+        },
+        {
+          "origKey": "b",
+          "text": "Inviare segnali audio al sistema operativo."
+        },
+        {
+          "origKey": "c",
+          "text": "Convertire numeri in stringhe."
+        },
+        {
+          "origKey": "d",
+          "text": "Garantire che un programma non consumi più di 1 Watt di potenza."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 2",
+      "explanation": [
+        "Un <code>Semaphore</code> mantiene un insieme di permessi:",
+        "- <code>semaphore.acquire()</code>: blocca il chiamante se non ci sono permessi disponibili finché un permesso non viene rilasciato.",
+        "- <code>semaphore.release()</code>: restituisce un permesso al semaforo.",
+        "Un semaforo inizializzato a 1 opera come un mutex binario (ma a differenza di ReentrantLock, il release può essere chiamato da un thread diverso da quello che ha fatto acquire!)."
+      ],
+      "wrongReasons": "Non invia segnali audio ({{opt:b}}); non converte tipi ({{opt:c}}); non misura consumi elettrici ({{opt:d}})."
+    },
+    {
+      "id": 88,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Atomicità: Compare-And-Swap (CAS) e Lock-Free Programming",
+      "topic": "concorrenza",
+      "question": "Come realizzano la mutua esclusione lock-free classi come <code>AtomicInteger</code> e <code>AtomicReference</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Tramite l'istruzione hardware atomica Compare-And-Swap (CAS), che aggiorna il valore in memoria solo se il valore corrente coincide con il valore atteso (expected), eseguendo un loop di retry (optimistic spin) in caso di collisione."
+        },
+        {
+          "origKey": "b",
+          "text": "Utilizzando un mutex globale nascosto nel kernel di Windows o Linux."
+        },
+        {
+          "origKey": "c",
+          "text": "Sospendendo tutti i core della scheda madre tranne uno per 1 millisecondo."
+        },
+        {
+          "origKey": "d",
+          "text": "Convertendo il codice Java in un eseguibile monothread C++."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 4 (CAS Mechanics & Hardware Atomicity)",
+      "explanation": [
+        "Le classi del package <code>java.util.concurrent.atomic</code> evitano lock bloccanti e context switch sfruttando il supporto hardware della CPU (istruzione <code>CMPXCHG</code> su architetture x86):",
+        "1. Il thread legge il valore corrente <code>V</code>.",
+        "2. Calcola il nuovo valore <code>V + 1</code>.",
+        "3. Esegue <code>compareAndSet(V, V + 1)</code>: la CPU esegue in un singolo ciclo di bus indivisibile il controllo e la scrittura.",
+        "4. Se un altro thread ha modificato il valore nel frattempo, la CAS fallisce e il thread ripete il ciclo (lock-free spin loop)."
+      ],
+      "wrongReasons": "Non usano mutex del kernel ({{opt:b}}); non spengono i core hardware ({{opt:c}}); non convertono in monothread ({{opt:d}})."
+    },
+    {
+      "id": 89,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Atomicità: LongAdder vs AtomicLong e False Sharing",
+      "topic": "concorrenza",
+      "question": "Perché sotto altissima contesa multi-core <code>LongAdder</code> offre prestazioni nettamente superiori rispetto ad <code>AtomicLong</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "AtomicLong concentra tutti i tentativi CAS su una singola variabile provocando saturazione del bus (cache coherence traffic); LongAdder distribuisce i conteggi su un array di celle indipendenti con cache padding (Striped64) per eliminare il false sharing, sommando i valori solo quando richiesto."
+        },
+        {
+          "origKey": "b",
+          "text": "LongAdder non memorizza numeri ma solo puntatori a stringhe."
+        },
+        {
+          "origKey": "c",
+          "text": "AtomicLong è limitato a numeri a 32 bit mentre LongAdder usa numeri a 128 bit."
+        },
+        {
+          "origKey": "d",
+          "text": "LongAdder usa thread GPU anziché la CPU."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 4 (Striped64 & False Sharing Elimination)",
+      "explanation": [
+        "Quando centinaia di thread tentano di incrementare contemporaneamente un <code>AtomicLong</code>, la maggior parte delle CAS fallisce per contesa sullo stesso indirizzo di memoria, saturando il protocollo MESI di coerenza cache.",
+        "<strong><code>LongAdder</code></strong> estende <code>Striped64</code>:",
+        "Mantiene un array dinamico di celle atomiche. Ciascun thread aggiorna una cella specifica associata al proprio hash di thread.",
+        "Ogni cella è dotata di <code>@Contended</code> padding per occupare un'intera cache line (64 byte), eliminando il <strong>false sharing</strong>.",
+        "La somma complessiva (<code>sum()</code>) aggrega semplicemente le varie celle."
+      ],
+      "wrongReasons": "Non usa stringhe ({{opt:b}}); entrambi operano su 64 bit ({{opt:c}}); non usa la GPU ({{opt:d}})."
+    },
+    {
+      "id": 90,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Thread Pool: Parametri Chiave di ThreadPoolExecutor",
+      "topic": "concorrenza",
+      "question": "Qual è la sequenza corretta con cui un <code>ThreadPoolExecutor</code> gestisce un nuovo task quando arriva una richiesta?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "1. Se ci sono meno di corePoolSize thread, crea un nuovo thread; 2. Se corePoolSize è raggiunto, prova ad accodare il task nella BlockingQueue; 3. Se la coda è piena e ci sono meno di maximumPoolSize thread, crea un nuovo thread; 4. Se la coda è piena e maximumPoolSize è raggiunto, applica la RejectedExecutionHandler."
+        },
+        {
+          "origKey": "b",
+          "text": "Crea subito maximumPoolSize thread all'istante anche se non ci sono task."
+        },
+        {
+          "origKey": "c",
+          "text": "Accoda sempre tutto all'infinito e non crea mai thread oltre il corePoolSize."
+        },
+        {
+          "origKey": "d",
+          "text": "Uccide i thread esistenti per fare spazio a quelli nuovi."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 3 (ThreadPoolExecutor Internals)",
+      "explanation": [
+        "L'algoritmo di espansione di <code>ThreadPoolExecutor</code> è rigidamente a 4 stadi:",
+        "1. <code>threadCount < corePoolSize</code>: crea ed avvia un nuovo worker anche se altri worker sono in idle.",
+        "2. <code>threadCount >= corePoolSize</code>: tenta di inserire il task nella <code>workQueue</code> (senza creare nuovi thread!).",
+        "3. Se l'accodamento fallisce (coda piena): se <code>threadCount < maximumPoolSize</code> crea un nuovo thread worker aggiuntivo.",
+        "4. Se anche <code>maximumPoolSize</code> è raggiunto: delega al gestore dei rifiuti (<code>RejectedExecutionHandler</code>)."
+      ],
+      "wrongReasons": "Non crea subito maximumPoolSize thread ({{opt:b}}); se la coda è bounded espande fino a maxPool ({{opt:c}}); non uccide thread a caso ({{opt:d}})."
+    },
+    {
+      "id": 91,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Thread Pool: Politiche di Rifiuto (RejectedExecutionHandler)",
+      "topic": "concorrenza",
+      "question": "Quale politica di rifiuto di <code>ThreadPoolExecutor</code> esegue il task rifiutato direttamente sul thread chiamante (client) che ha sottomesso il lavoro, rallentando naturalmente il produttore?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "ThreadPoolExecutor.CallerRunsPolicy"
+        },
+        {
+          "origKey": "b",
+          "text": "ThreadPoolExecutor.AbortPolicy"
+        },
+        {
+          "origKey": "c",
+          "text": "ThreadPoolExecutor.DiscardPolicy"
+        },
+        {
+          "origKey": "d",
+          "text": "ThreadPoolExecutor.DiscardOldestPolicy"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 3 (Backpressure & Saturation Policies)",
+      "explanation": [
+        "Le 4 policy standard di rifiuto sono:",
+        "- <strong><code>AbortPolicy</code> (default):</strong> lancia immediatamente <code>RejectedExecutionException</code>.",
+        "- <strong><code>CallerRunsPolicy</code>:</strong> non esegue il task nel pool ma nel thread che ha invocato <code>execute()</code>. Questo produce un eccellente meccanismo di <strong>backpressure</strong>, poiché il produttore viene costretto a eseguire il lavoro rallentando l'invio di nuovi task.",
+        "- <strong><code>DiscardPolicy</code>:</strong> scarta silenziosamente il task.",
+        "- <strong><code>DiscardOldestPolicy</code>:</strong> scarta il task più vecchio in testa alla coda e ritenta l'inserimento."
+      ],
+      "wrongReasons": "AbortPolicy lancia eccezione ({{opt:b}}); DiscardPolicy scarta silenziosamente ({{opt:c}}); DiscardOldest scarta il più vecchio in coda ({{opt:d}})."
+    },
+    {
+      "id": 92,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Thread Pool: Perché evitare Executors.newFixedThreadPool() in Produzione",
+      "topic": "concorrenza",
+      "question": "Perché le linee guida di produzione (es. Google, Alibaba) sconsigliano l'uso dei factory di <code>Executors.newFixedThreadPool(n)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Perché newFixedThreadPool alloca una LinkedBlockingQueue senza limite (Integer.MAX_VALUE); se i produttori sono più veloci dei consumatori, la coda cresce indefinitamente fino a causare java.lang.OutOfMemoryError nell'heap."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché non crea thread reali ma solo processi batch."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché newFixedThreadPool non supporta l'esecuzione di Runnable."
+        },
+        {
+          "origKey": "d",
+          "text": "Perché imposta una priorità di thread illegale nel sistema operativo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 3 (ThreadPool Memory Hazards)",
+      "explanation": [
+        "<code>Executors.newFixedThreadPool(n)</code> internamente chiama:",
+        "<code>new ThreadPoolExecutor(n, n, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>())</code>.",
+        "Il costruttore di default di <code>LinkedBlockingQueue</code> crea una coda di capacità <code>Integer.MAX_VALUE</code> (circa 2 miliardi di elementi).",
+        "Sotto carico elevato, l'accumulo ininterrotto di oggetti task provoca esaurimento di memoria e crash con <strong>OutOfMemoryError: Java heap space</strong>.",
+        "In ambienti critici si deve sempre specificare una coda bounded (es. <code>ArrayBlockingQueue(1000)</code>)."
+      ],
+      "wrongReasons": "Crea thread reali ({{opt:b}}); supporta perfettamente Runnable ({{opt:c}}); non imposta priorità illegali ({{opt:d}})."
+    },
+    {
+      "id": 93,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Concorrenza: Arresto Ordinato con shutdown() vs shutdownNow()",
+      "topic": "concorrenza",
+      "question": "Qual è la differenza fondamentale tra <code>executor.shutdown()</code> e <code>executor.shutdownNow()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "shutdown() non accetta nuovi task ma porta a termine tutti quelli già sottomessi e in coda; shutdownNow() tenta di fermare attivamente i task in esecuzione tramite Thread.interrupt(), svuota la coda e restituisce la lista dei task mai eseguiti."
+        },
+        {
+          "origKey": "b",
+          "text": "shutdown() distrugge immediatamente il processo; shutdownNow() attende 10 ore."
+        },
+        {
+          "origKey": "c",
+          "text": "shutdownNow() non può essere chiamato su thread pool."
+        },
+        {
+          "origKey": "d",
+          "text": "Non c'è alcuna differenza pratica."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 3 (Executor Lifecycle Management)",
+      "explanation": [
+        "- <strong><code>shutdown()</code> (Graceful Shutdown):</strong> avvia un arresto ordinato. Rifiuta nuovi inserimenti ma permette ai task già in esecuzione e a quelli pendenti nella coda di completarsi regolarmente.",
+        "- <strong><code>shutdownNow()</code> (Abrupt Shutdown):</strong> tenta di interrompere i task correnti inviando segnali di <code>interrupt()</code>, drena la coda e restituisce <code>List<Runnable></code> dei task scartati senza esecuzione.",
+        "Segue tipicamente una chiamata a <code>awaitTermination(timeout, unit)</code>."
+      ],
+      "wrongReasons": "Inverte i comportamenti ({{opt:b}}); si chiama proprio sugli ExecutorService ({{opt:c}}); la differenza è radicale ({{opt:d}})."
+    },
+    {
+      "id": 94,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Fork/Join Framework: Work-Stealing Algorithm",
+      "topic": "concorrenza",
+      "question": "Come funziona l'algoritmo di <strong>Work-Stealing</strong> impiegato dal <code>ForkJoinPool</code> in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Ogni worker thread possiede una propria coda a due estremità (double-ended queue - Deque); il proprietario inserisce ed estrae task in modalità LIFO dalla testa per massimizzare la località dei dati nella cache, mentre un thread che ha finito il proprio lavoro 'ruba' task in modalità FIFO dalla coda (tail) di un altro thread per minimizzare la contesa."
+        },
+        {
+          "origKey": "b",
+          "text": "Tutti i thread competono per estrarre task da una singola coda centralizzata protetta da un unico grande mutex globale."
+        },
+        {
+          "origKey": "c",
+          "text": "I thread 'rubano' cicli di clock alla GPU senza passare dalla memoria centrale."
+        },
+        {
+          "origKey": "d",
+          "text": "I task vengono cancellati se nessun thread li esegue entro 10 millisecondi."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 4 (ForkJoinPool & Work-Stealing Internals)",
+      "explanation": [
+        "Il <strong>ForkJoinPool</strong> (progettato da Doug Lea) massimizza l'efficienza per task ricorsivi:",
+        "Ogni thread gestisce la propria <code>WorkQueue</code> (Deque):",
+        "1. Il thread proprietario lavora sulla **testa (head)** della deque in modalità LIFO (Last-In, First-Out), riutilizzando i dati dei sotto-task ancora caldi nelle cache L1/L2 della CPU.",
+        "2. Quando un thread esaurisce i propri task, diventa un ladro (**thief**) e preleva compiti dalla **coda (tail)** della deque di un thread sovraccarico in modalità FIFO, riducendo quasi a zero la contesa tra ladro e proprietario."
+      ],
+      "wrongReasons": "Non usa una singola coda globale (ciò distruggerebbe la scalabilità) ({{opt:b}}); non c'entra la GPU ({{opt:c}}); non cancella task a caso ({{opt:d}})."
+    },
+    {
+      "id": 95,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "CompletableFuture: supplyAsync vs runAsync",
+      "topic": "concorrenza",
+      "question": "Qual è la differenza tra <code>CompletableFuture.supplyAsync()</code> e <code>CompletableFuture.runAsync()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "supplyAsync accetta un Supplier<U> e restituisce un CompletableFuture<U> contenente il valore calcolato; runAsync accetta un Runnable e restituisce CompletableFuture<Void> senza alcun valore di ritorno."
+        },
+        {
+          "origKey": "b",
+          "text": "runAsync è asincrono mentre supplyAsync blocca il thread principale in modo sincrono."
+        },
+        {
+          "origKey": "c",
+          "text": "supplyAsync richiede obbligatoriamente un database relazionale."
+        },
+        {
+          "origKey": "d",
+          "text": "runAsync può essere eseguito solo all'avvio del sistema operativo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 06 Sez. 1 (Asynchronous Programming with CompletableFuture)",
+      "explanation": [
+        "Entrambi avviano un task asincrono sul <code>ForkJoinPool.commonPool()</code> (o su un Executor personalizzato):",
+        "- <strong><code>supplyAsync(Supplier<U>)</code>:</strong> produce un risultato tipizzato <code>U</code> incapsulato in <code>CompletableFuture<U></code>.",
+        "- <strong><code>runAsync(Runnable)</code>:</strong> esegue un side-effect senza emettere risultato, restituendo <code>CompletableFuture<Void></code>."
+      ],
+      "wrongReasons": "Entrambi sono asincroni ({{opt:b}}); non richiedono database ({{opt:c}}); non c'entra il boot del SO ({{opt:d}})."
+    },
+    {
+      "id": 96,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "CompletableFuture: thenApply vs thenCompose",
+      "topic": "concorrenza",
+      "question": "Quando si deve preferire <code>thenCompose()</code> rispetto a <code>thenApply()</code> in una pipeline asincrona?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Quando la funzione di trasformazione restituisce a sua volta un altro CompletableFuture, evitando di ottenere un tipo annidato CompletableFuture<CompletableFuture<T>> (equivalente al flatMap monadico)."
+        },
+        {
+          "origKey": "b",
+          "text": "Quando si vogliono ordinare alfabeticamente i thread del sistema."
+        },
+        {
+          "origKey": "c",
+          "text": "thenCompose serve per le operazioni sincrone mentre thenApply è solo per stream di rete."
+        },
+        {
+          "origKey": "d",
+          "text": "Non esiste alcuna differenza: sono alias dello stesso metodo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 06 Sez. 1 (Monadic Chaining & thenCompose)",
+      "explanation": [
+        "Questa distinzione rispecchia quella tra <code>map</code> e <code>flatMap</code> negli Stream e negli Optional:",
+        "- <code>thenApply(Function<T, R>)</code>: mappa un valore <code>T</code> in un valore <code>R</code> (restituisce <code>CompletableFuture<R></code>).",
+        "- <strong><code>thenCompose(Function<T, CompletableFuture<R>>)</code>:</strong> accetta una funzione che restituisce a sua volta un <code>CompletableFuture</code> asincrono e ne appiattisce il risultato, restituendo direttamente <code>CompletableFuture<R></code> anziché <code>CompletableFuture<CompletableFuture<R>></code>."
+      ],
+      "wrongReasons": "Non ordina thread ({{opt:b}}); entrambi sono costrutti asincroni ({{opt:c}}); non sono alias ({{opt:d}})."
+    },
+    {
+      "id": 97,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "CompletableFuture: Composizione con allOf() e anyOf()",
+      "topic": "concorrenza",
+      "question": "Cosa restituiscono rispettivamente <code>CompletableFuture.allOf(c1, c2, c3)</code> e <code>CompletableFuture.anyOf(c1, c2, c3)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "allOf restituisce un CompletableFuture<Void> che si completa quando TUTTI i future forniti sono terminati; anyOf restituisce un CompletableFuture<Object> che si completa non appena il PRIMO tra i future completa con successo o eccezione."
+        },
+        {
+          "origKey": "b",
+          "text": "allOf restituisce una lista List<T> con tutti i valori; anyOf restituisce un booleano."
+        },
+        {
+          "origKey": "c",
+          "text": "Entrambi bloccano il thread corrente impedendo qualsiasi altra esecuzione."
+        },
+        {
+          "origKey": "d",
+          "text": "allOf fallisce se i future sono più di due."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 06 Sez. 2 (Fan-in & Fan-out Coordination)",
+      "explanation": [
+        "- <strong><code>CompletableFuture.allOf(...)</code>:</strong> funge da barriera asincrona (fan-in); si completa quando tutti i task passati terminano. Restituisce <code>CompletableFuture<Void></code>.",
+        "- <strong><code>CompletableFuture.anyOf(...)</code>:</strong> modella una corsa concorrente (race); si completa immediatamente con il risultato del primo future che conclude (restituisce <code>CompletableFuture<Object></code>)."
+      ],
+      "wrongReasons": "allOf restituisce CompletableFuture<Void>, non una lista direttamente ({{opt:b}}); sono metodi asincroni non bloccanti ({{opt:c}}); accettano varargs arbitrari ({{opt:d}})."
+    },
+    {
+      "id": 98,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "CompletableFuture: Gestione Eccezioni (exceptionally vs handle)",
+      "topic": "concorrenza",
+      "question": "Qual è la differenza fondamentale tra <code>future.exceptionally(fn)</code> e <code>future.handle(biFn)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "exceptionally viene invocato SOLO in caso di fallimento per fornire un valore di recovery alternativo; handle viene invocato SEMPRE sia in caso di successo che di fallimento, ricevendo sia il risultato (T) che l'eventuale Throwable (ex)."
+        },
+        {
+          "origKey": "b",
+          "text": "exceptionally termina il programma con System.exit(), handle lo riavvia."
+        },
+        {
+          "origKey": "c",
+          "text": "handle accetta solo eccezioni checked, exceptionally solo unchecked."
+        },
+        {
+          "origKey": "d",
+          "text": "Non esiste il metodo handle in Java."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 06 Sez. 2",
+      "explanation": [
+        "- <strong><code>exceptionally(Function<Throwable, T> fn)</code>:</strong> agisce come una clausola <code>catch</code> funzionale; se il future ha successo il metodo viene saltato.",
+        "- <strong><code>handle(BiFunction<T, Throwable, R> biFn)</code>:</strong> agisce come un blocco unificato <code>try-finally</code>; riceve <code>(result, ex)</code>. Se il task ha avuto successo, <code>ex</code> è <code>null</code>; se ha fallito, <code>result</code> è <code>null</code> ed <code>ex</code> contiene l'eccezione, consentendo trasformazioni flessibili."
+      ],
+      "wrongReasons": "Non termina il processo ({{opt:b}}); entrambi gestiscono qualsiasi Throwable ({{opt:c}}); handle esiste ed è fondamentale ({{opt:d}})."
+    },
+    {
+      "id": 99,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Collezioni Concorrenti: Architettura di ConcurrentHashMap (Java 8+)",
+      "topic": "concorrenza",
+      "question": "Come garantisce <code>ConcurrentHashMap</code> l'accesso thread-safe ad altissima concorrenza in Java 8+?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Elimina i vecchi Segment Lock di Java 7 a favore di nodi individuali: usa operazioni CAS per l'inserimento del primo nodo in un bucket vuoto, e synchronized fine-grained sul solo nodo di testa (head node) del bucket per gestire collisioni e alberi rosso-neri."
+        },
+        {
+          "origKey": "b",
+          "text": "Sincronizza ogni singola operazione con un unico lock globale synchronized su tutta la mappa come Hashtable."
+        },
+        {
+          "origKey": "c",
+          "text": "Clona l'intera tabella hash ad ogni operazione di put()."
+        },
+        {
+          "origKey": "d",
+          "text": "Usa solo file temporanei su disco protetti da file lock del sistema operativo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 5 (ConcurrentHashMap Evolution & Micro-locking)",
+      "explanation": [
+        "In Java 8+, l'architettura di <code>ConcurrentHashMap</code> è stata radicalmente ottimizzata:",
+        "1. Le letture (<code>get()</code>) sono completamente **lock-free** grazie all'uso di puntatori <code>volatile</code> sui nodi.",
+        "2. Se un bucket è vuoto, il primo elemento viene inserito tramite istruzione **CAS (Compare-And-Swap)** senza alcun lock.",
+        "3. Se c'è collisione, viene acquisito un lock intrinseco <code>synchronized</code> **esclusivamente sul nodo di testa del singolo bucket**, lasciando liberi tutti gli altri bucket della tabella hash.",
+        "4. Con più di 8 elementi per bucket, la catena si trasforma in un albero rosso-nero (TreeBin) bilanciato."
+      ],
+      "wrongReasons": "Il lock globale unico appartiene alla vecchia Hashtable legacy ({{opt:b}}); la copia integrale è il pattern di CopyOnWrite ({{opt:c}}); non usa dischi ({{opt:d}})."
+    },
+    {
+      "id": 100,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Collezioni Concorrenti: CopyOnWriteArrayList",
+      "topic": "concorrenza",
+      "question": "Qual è il meccanismo operativo di <code>CopyOnWriteArrayList</code> e in quale scenario risulta vantaggiosa?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Ad ogni operazione di scrittura (add, set, remove) crea una nuova copia dell'intero array sottostante; le letture non usano lock e sono velocissime. È ideale per scenari con letture frequentissime e scritture rarissime (es. liste di listener/osservatori)."
+        },
+        {
+          "origKey": "b",
+          "text": "È ottimizzata per scritture massive continue di milioni di elementi al secondo."
+        },
+        {
+          "origKey": "c",
+          "text": "Non consuma memoria heap ma usa esclusivamente memoria ROM del BIOS."
+        },
+        {
+          "origKey": "d",
+          "text": "Lancia eccezioni se più di un thread tenta di leggere contemporaneamente."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 5 (Copy-On-Write Semantics)",
+      "explanation": [
+        "In <code>CopyOnWriteArrayList</code>:",
+        "- Gli iteratori operano su uno **snapshot immutabile** dell'array al momento della creazione dell'iteratore; non lanciano mai <code>ConcurrentModificationException</code>.",
+        "- Ogni scrittura alloca e copia un nuovo array di dimensione N+1, rendendo le scritture molto costose ($O(N)$ di allocazione e copia memoria).",
+        "- È eccezionale per registri di observer/listener dove le letture dominano per il 99%."
+      ],
+      "wrongReasons": "È pessima per scritture massive continue per via delle allocazioni continue ({{opt:b}}); non usa ROM ({{opt:c}}); consente infinite letture simultanee ({{opt:d}})."
+    },
+    {
+      "id": 101,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Collezioni Concorrenti: BlockingQueue e Pattern Produttore-Consumatore",
+      "topic": "concorrenza",
+      "question": "Quali metodi di <code>java.util.concurrent.BlockingQueue</code> implementano l'attesa bloccante a tempo indeterminato per l'inserimento e l'estrazione?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "put(e) per l'inserimento bloccante (se la coda è piena) e take() per l'estrazione bloccante (se la coda è vuota)"
+        },
+        {
+          "origKey": "b",
+          "text": "add(e) e remove()"
+        },
+        {
+          "origKey": "c",
+          "text": "offer(e) e poll()"
+        },
+        {
+          "origKey": "d",
+          "text": "push(e) e pop()"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 05 Sez. 5 (BlockingQueue Contract)",
+      "explanation": [
+        "<code>BlockingQueue</code> fornisce 4 serie di metodi con semantiche distinte:",
+        "1. <strong>Lancia eccezione:</strong> <code>add(e)</code>, <code>remove()</code>, <code>element()</code>",
+        "2. <strong>Valore speciale (false/null):</strong> <code>offer(e)</code>, <code>poll()</code>, <code>peek()</code>",
+        "3. <strong>Bloccante a tempo indeterminato:</strong> <strong><code>put(e)</code></strong> (attende spazio) e <strong><code>take()</code></strong> (attende elementi).",
+        "4. <strong>Con timeout:</strong> <code>offer(e, timeout, unit)</code>, <code>poll(timeout, unit)</code>."
+      ],
+      "wrongReasons": "add e remove sollevano eccezioni (IllegalStateException / NoSuchElementException) ({{opt:b}}); offer e poll restituiscono false/null senza bloccare ({{opt:c}}); push e pop appartengono a Deque/Stack ({{opt:d}})."
+    },
+    {
+      "id": 102,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Concorrenza: ThreadLocal e Rischio Memory Leak nei Thread Pool",
+      "topic": "concorrenza",
+      "question": "Qual è il pericolo critico associato all'uso di <code>ThreadLocal</code> all'interno di applicazioni che impiegano thread pool (es. application server web)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Poiché i thread del pool non muoiono al termine della richiesta ma vengono riutilizzati, le istanze salvate nel ThreadLocalMap del thread rimangono trattenute in memoria, provocando Memory Leak e contaminazione di dati tra richieste diverse se non viene chiamato threadLocal.remove()."
+        },
+        {
+          "origKey": "b",
+          "text": "ThreadLocal fa crashare la scheda video in quanto usa registri grafici."
+        },
+        {
+          "origKey": "c",
+          "text": "Le variabili ThreadLocal vengono cancellate casualmente durante l'esecuzione del task."
+        },
+        {
+          "origKey": "d",
+          "text": "ThreadLocal non funziona se la JVM ha più di 1 GB di heap."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 5 (ThreadLocal Internals & ClassLoader Leaks)",
+      "explanation": [
+        "Ogni <code>Thread</code> possiede internamente una mappa <code>ThreadLocalMap</code>:",
+        "In un thread pool, il thread continua a vivere per giorni. Se un task inserisce un oggetto in <code>ThreadLocal</code> e non chiama <strong><code>remove()</code></strong> prima di terminare:",
+        "1. L'oggetto rimane referenziato nel thread, impedendo al Garbage Collector di liberarlo (Classloader leak / OutOfMemoryError).",
+        "2. Il client della richiesta successiva, eseguito sullo stesso thread riciclato, leggerà per errore i dati residui della sessione precedente."
+      ],
+      "wrongReasons": "Non riguarda la scheda video ({{opt:b}}); non vengono cancellate casualmente ({{opt:c}}); funziona con qualsiasi dimensione heap ({{opt:d}})."
+    },
+    {
+      "id": 103,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Concorrenza: Condizioni di Deadlock e Coffman Conditions",
+      "topic": "concorrenza",
+      "question": "Quali sono le 4 condizioni di Coffman che, verificandosi simultaneamente, causano un <strong>Deadlock</strong>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "1. Mutua Esclusione; 2. Possesso e Attesa (Hold and Wait); 3. Assenza di Prelazione (No Preemption); 4. Attesa Circolare (Circular Wait)."
+        },
+        {
+          "origKey": "b",
+          "text": "1. CPU saturata; 2. Memoria piena; 3. Disco rotto; 4. Rete disconnessa."
+        },
+        {
+          "origKey": "c",
+          "text": "1. Polimorfismo; 2. Ereditarietà; 3. Incapsulamento; 4. Astrazione."
+        },
+        {
+          "origKey": "d",
+          "text": "1. NullPointerException; 2. ClassCastException; 3. OutOfMemory; 4. StackOverflow."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 6 (Deadlock Theory & Coffman Conditions)",
+      "explanation": [
+        "Formalizzate da Edward G. Coffman Jr. nel 1971:",
+        "1. <strong>Mutual Exclusion:</strong> almeno una risorsa deve essere detenuta in modo non condivisibile.",
+        "2. <strong>Hold and Wait:</strong> un processo detiene risorse mentre attende di acquisirne altre.",
+        "3. <strong>No Preemption:</strong> le risorse non possono essere sottratte con la forza al detentore.",
+        "4. <strong>Circular Wait:</strong> esiste una catena chiusa di processi in cui ciascuno attende una risorsa detenuta dal successivo.",
+        "Per prevenire il deadlock è sufficiente rompere anche solo una di queste quattro condizioni (es. ordinamento globale dei lock per rompere l'attesa circolare)."
+      ],
+      "wrongReasons": "Non sono problemi hardware ({{opt:b}}); non sono i pilastri OOP ({{opt:c}}); non sono eccezioni runtime ({{opt:d}})."
+    },
+    {
+      "id": 104,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Concorrenza: Livelock vs Starvation",
+      "topic": "concorrenza",
+      "question": "Qual è la differenza concettuale tra <strong>Livelock</strong> e <strong>Starvation</strong>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Nel Livelock i thread sono attivi e continuano a cambiare stato in risposta l'uno all'altro senza compiere alcun progresso utile; nella Starvation un thread è perfettamente pronto ma non riesce mai ad accedere alla risorsa perché scavalcato costantemente da thread a priorità più elevata."
+        },
+        {
+          "origKey": "b",
+          "text": "Livelock avviene solo su un thread singolo, Starvation coinvolge sempre la scheda grafica."
+        },
+        {
+          "origKey": "c",
+          "text": "Starvation significa che il computer ha finito la corrente elettrica."
+        },
+        {
+          "origKey": "d",
+          "text": "Sono due termini identici che indicano un deadlock con eccezione."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 6 (Concurrency Pitfalls: Livelock, Starvation)",
+      "explanation": [
+        "- <strong>Livelock:</strong> i thread non sono bloccati nello stato <code>BLOCKED</code> o <code>WAITING</code> (la CPU è attiva anche al 100%), ma continuano a reagire ai cambiamenti dell'altro thread senza mai uscire dalla contesa (es. due gentiluomini che in un corridoio stretto continuano a farsi da parte nello stesso lato contemporaneamente).",
+        "- <strong>Starvation (inedia):</strong> un thread viene permanentemente privato della risorsa a causa di policy di scheduling non eque (es. barging nei lock non-fair o priorità scorrette)."
+      ],
+      "wrongReasons": "Non c'entra la scheda grafica ({{opt:b}}); non riguarda l'alimentazione ({{opt:c}}); non sono la stessa cosa ({{opt:d}})."
+    },
+    {
+      "id": 105,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Project Loom: Virtual Threads (Java 21+)",
+      "topic": "concorrenza",
+      "question": "Cosa caratterizza i <strong>Virtual Threads</strong> (Project Loom) rispetto ai tradizionali Platform Threads in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Sono thread leggeri gestiti interamente dalla JVM (nello heap) e non 1:1 dal kernel del SO; quando un virtual thread si blocca su un'operazione di I/O, la JVM lo smonta (unmount) dal carrier thread nativo assegnando la CPU ad un altro virtual thread, consentendo milioni di thread concorrenti con footprint minimo."
+        },
+        {
+          "origKey": "b",
+          "text": "Sono thread eseguiti esclusivamente dentro una macchina virtuale remota su cloud AWS."
+        },
+        {
+          "origKey": "c",
+          "text": "Non possono eseguire codice Java ma solo assembly x86."
+        },
+        {
+          "origKey": "d",
+          "text": "Sostituiscono la CPU fisica con un emulatore software a 8 bit."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 7 (Java 21 Project Loom & Virtual Threads)",
+      "explanation": [
+        "I thread tradizionali di Java (Platform Threads) mappano 1:1 sui thread del kernel del sistema operativo, con uno stack riservato di 1-2 MB che limita la scalabilità a qualche migliaio di thread.",
+        "I <strong>Virtual Threads</strong> (<code>Thread.ofVirtual().start(...)</code>):",
+        "1. Hanno stack frame residenti nell'heap che crescono e calano dinamicamente (pochi byte all'avvio).",
+        "2. Vengono schedulati su un piccolo pool di carrier threads (un <code>ForkJoinPool</code> nativo).",
+        "3. Quando incontrano chiamate bloccanti sincrone (es. socket read, HTTP request), vengono 'smontati' restituendo il carrier thread agli altri task."
+      ],
+      "wrongReasons": "Non risiedono su cloud remoti obbligatoriamente ({{opt:b}}); eseguono qualsiasi codice Java normale ({{opt:c}}); non emulano CPU a 8 bit ({{opt:d}})."
+    },
+    {
+      "id": 106,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Project Loom: Il Fenomeno del Thread Pinning",
+      "topic": "concorrenza",
+      "question": "In quali situazioni si verifica il <strong>Pinning</strong> di un Virtual Thread al suo Carrier Thread, impedendone lo smontaggio durante operazioni bloccanti?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Quando il virtual thread esegue un'operazione bloccante all'interno di un blocco/metodo synchronized o all'interno di una chiamata nativa JNI/Foreign Function."
+        },
+        {
+          "origKey": "b",
+          "text": "Quando si usano collezioni di tipo ArrayList."
+        },
+        {
+          "origKey": "c",
+          "text": "Quando il computer è connesso a una rete Wi-Fi instabile."
+        },
+        {
+          "origKey": "d",
+          "text": "Quando il Virtual Thread viene avviato con priorità MIN_PRIORITY."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 7 (Virtual Thread Pinning & Synchronized Hazards)",
+      "explanation": [
+        "In Java 21, quando un virtual thread è in uno stato di **pinning**, non può essere smontato dal carrier thread se si blocca su I/O, bloccando così anche il thread sottostante del SO:",
+        "Le due cause principali sono:",
+        "1. Esecuzione all'interno di blocchi o metodi <strong><code>synchronized</code></strong> (il monitor intrinseco nell'heap lega lo stack al carrier thread nativo).",
+        "2. Esecuzione all'interno di frame nativi (<strong>JNI</strong> o FFM API).",
+        "Per questo motivo nei moderni progetti Java si sostituiscono i blocchi <code>synchronized</code> con <code>ReentrantLock</code> nelle sezioni con I/O bloccante."
+      ],
+      "wrongReasons": "ArrayList non causa pinning ({{opt:b}}); Wi-Fi non c'entra con la JVM interna ({{opt:c}}); la priorità non produce pinning ({{opt:d}})."
+    },
+    {
+      "id": 107,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Project Loom: Structured Concurrency (Java 21+ Preview)",
+      "topic": "concorrenza",
+      "question": "Qual è il principio architetturale alla base della <strong>Structured Concurrency</strong> (es. <code>StructuredTaskScope</code>)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Trattare task concorrenti multipli derivati da una stessa operazione come una singola unità di lavoro coordinata, garantendo che i sotto-thread abbiano un ciclo di vita strettamente delimitato dal blocco sintattico genitore (evitando thread orfani o leak)."
+        },
+        {
+          "origKey": "b",
+          "text": "Vietare l'uso delle classi e consentire solo record immutabili."
+        },
+        {
+          "origKey": "c",
+          "text": "Eseguire tutti i task concorrenti obbligatoriamente su un singolo thread."
+        },
+        {
+          "origKey": "d",
+          "text": "Salvare automaticamente lo stato di tutti i thread su un database SQL in caso di eccezione."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 7 & Formulario Java (Structured Concurrency Patterns)",
+      "explanation": [
+        "Nella concorrenza tradizionale non strutturata, i thread avviati possono sopravvivere al metodo genitore diventando thread orfani (thread leak) in caso di errore.",
+        "<strong>Structured Concurrency</strong> adotta il principio della programmazione strutturata (stile blocchi <code>if/while</code> con un unico ingresso e una singola uscita):",
+        "Con <code>StructuredTaskScope</code>, i sotto-task (fork) devono tutti concludersi prima che il blocco (<code>scope.join()</code>) termini; se un sotto-task fallisce, tutti gli altri possono essere cancellati tempestivamente (short-circuit on failure)."
+      ],
+      "wrongReasons": "Non vieta le classi ({{opt:b}}); usa molti thread concorrenti ({{opt:c}}); non salva lo stato su database SQL ({{opt:d}})."
+    },
+    {
+      "id": 108,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Concorrenza: Priorità dei Thread (Thread.setPriority)",
+      "topic": "concorrenza",
+      "question": "Qual è il valore minimo, normale e massimo per la priorità di un Thread in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "MIN_PRIORITY = 1, NORM_PRIORITY = 5, MAX_PRIORITY = 10"
+        },
+        {
+          "origKey": "b",
+          "text": "MIN = 0, NORM = 50, MAX = 100"
+        },
+        {
+          "origKey": "c",
+          "text": "MIN = -128, NORM = 0, MAX = 127"
+        },
+        {
+          "origKey": "d",
+          "text": "MIN = 1, NORM = 2, MAX = 3"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 1",
+      "explanation": [
+        "In <code>java.lang.Thread</code>:",
+        "- <code>Thread.MIN_PRIORITY = 1</code>",
+        "- <code>Thread.NORM_PRIORITY = 5</code> (default per nuovi thread)",
+        "- <code>Thread.MAX_PRIORITY = 10</code>",
+        "Si noti che le priorità Java sono solo un suggerimento (hint) per lo scheduler del sistema operativo e non garantiscono un comportamento deterministico cross-platform."
+      ],
+      "wrongReasons": "Non sono su scala 0-100 ({{opt:b}}); non sono signed byte ({{opt:c}}); non sono 1, 2, 3 ({{opt:d}})."
+    },
+    {
+      "id": 109,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Concorrenza: Metodo Thread.yield()",
+      "topic": "concorrenza",
+      "question": "Qual è il comportamento formale del metodo statico <code>Thread.yield()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Informa lo scheduler del sistema operativo che il thread corrente è disposto a cedere l'uso corrente della CPU; lo scheduler è libero di ignorare il suggerimento o passare l'esecuzione a un altro thread RUNNABLE."
+        },
+        {
+          "origKey": "b",
+          "text": "Mette il thread in stato WAITING per esattamente 1 secondo."
+        },
+        {
+          "origKey": "c",
+          "text": "Uccide il thread corrente rilasciando tutti i monitor."
+        },
+        {
+          "origKey": "d",
+          "text": "Imposta la priorità del thread a MIN_PRIORITY."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 1",
+      "explanation": [
+        "<code>Thread.yield()</code> è un suggerimento euristico fornito allo scheduler nativo.",
+        "Il thread non abbandona lo stato <code>RUNNABLE</code> e non perde il possesso di alcun monitor o lock acquisito in precedenza.",
+        "L'effettivo effetto dipende interamente dall'implementazione dello scheduler dell'OS."
+      ],
+      "wrongReasons": "Non attende un secondo (quello è sleep) ({{opt:b}}); non termina il thread ({{opt:c}}); non modifica la priorità ({{opt:d}})."
+    },
+    {
+      "id": 110,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Concorrenza: Relazione Happens-Before nel JMM",
+      "topic": "concorrenza",
+      "question": "Quale delle seguenti azioni stabilisce formalmente una relazione di <strong>Happens-Before</strong> secondo la specifica del Java Memory Model (JSR-133)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Lo sblocco di un monitor (uscita da blocco/metodo synchronized o unlock) avviene prima di ogni successiva acquisizione dello stesso identico monitor da parte di qualsiasi thread."
+        },
+        {
+          "origKey": "b",
+          "text": "La dichiarazione di una variabile come private in una classe."
+        },
+        {
+          "origKey": "c",
+          "text": "La creazione di un array con operatore new."
+        },
+        {
+          "origKey": "d",
+          "text": "La conversione di un intero in stringa."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 04 Sez. 2 (JSR-133 Formal Happens-Before Rules)",
+      "explanation": [
+        "Le regole fondamentali di <em>Happens-Before</em> nel JMM includono:",
+        "1. <strong>Program Order Rule:</strong> in un singolo thread, ogni azione precede qualsiasi azione successiva nell'ordine del programma.",
+        "2. <strong>Monitor Lock Rule:</strong> l'uscita da un monitor (<code>unlock</code>) <em>happens-before</em> ogni successiva acquisizione (<code>lock</code>) del medesimo monitor.",
+        "3. <strong>Volatile Variable Rule:</strong> una scrittura su un campo <code>volatile</code> <em>happens-before</em> ogni successiva lettura dello stesso campo.",
+        "4. <strong>Thread Start Rule:</strong> la chiamata a <code>t.start()</code> <em>happens-before</em> qualsiasi azione nel thread avviato <code>t</code>.",
+        "5. <strong>Thread Join Rule:</strong> tutte le azioni in un thread <em>happens-before</em> il ritorno con successo da <code>t.join()</code> su quel thread.",
+        "6. <strong>Transitivity:</strong> se A <em>happens-before</em> B e B <em>happens-before</em> C, allora A <em>happens-before</em> C."
+      ],
+      "wrongReasons": "private non c'entra con il modello di memoria concorrente ({{opt:b}}); new non stabilisce sincronizzazione tra thread diversi di per sé ({{opt:c}}); le conversioni non sono regole JMM ({{opt:d}})."
+    },
+    {
+      "id": 111,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Swing: La Regola del Singolo Thread e l'EDT",
+      "topic": "gui_rete",
+      "question": "Qual è la regola fondamentale di threading che governa il framework Swing in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Swing non è thread-safe: tutti i componenti grafici devono essere creati, interrogati e modificati esclusivamente sull'Event Dispatch Thread (EDT)."
+        },
+        {
+          "origKey": "b",
+          "text": "Swing è completamente thread-safe e qualsiasi thread può modificare i pulsanti a piacere."
+        },
+        {
+          "origKey": "c",
+          "text": "La grafica Swing viene eseguita su un thread hardware interno alla GPU senza passare dalla JVM."
+        },
+        {
+          "origKey": "d",
+          "text": "Tutte le finestre devono essere create sul thread principale (main) e mai sull'EDT."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 07 Sez. 1 (Swing Single-Thread Rule & EDT)",
+      "explanation": [
+        "A differenza di altri framework grafici concorrenti, la stragrande maggioranza dei metodi dei componenti Swing non implementa sincronizzazione interna.",
+        "Tutti gli eventi grafici (pressione tasti, click mouse, ridisegno <code>paintComponent</code>) e tutte le manipolazioni dello stato visuale DEVONO avvenire sull'<strong>Event Dispatch Thread (EDT)</strong> per prevenire race condition e artefatti visivi."
+      ],
+      "wrongReasons": "Swing NON è thread-safe ({{opt:b}}); non gira solo su GPU bypassando la JVM ({{opt:c}}); le finestre vanno create sull'EDT tramite invokeLater ({{opt:d}})."
+    },
+    {
+      "id": 112,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Swing: invokeLater() vs invokeAndWait()",
+      "topic": "gui_rete",
+      "question": "Qual è la differenza fondamentale tra <code>SwingUtilities.invokeLater(r)</code> e <code>SwingUtilities.invokeAndWait(r)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "invokeLater accoda il Runnable nella coda degli eventi dell'EDT e ritorna immediatamente in modo asincrono; invokeAndWait accoda il Runnable e BLOCCA il thread chiamante finché l'EDT non ha completato l'esecuzione del task."
+        },
+        {
+          "origKey": "b",
+          "text": "invokeAndWait si può chiamare direttamente dall'EDT senza errori."
+        },
+        {
+          "origKey": "c",
+          "text": "invokeLater crea 5 nuovi thread per la grafica."
+        },
+        {
+          "origKey": "d",
+          "text": "Non c'è alcuna differenza pratica: entrambi ritornano subito."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 07 Sez. 1 (EDT Scheduling)",
+      "explanation": [
+        "- <strong><code>SwingUtilities.invokeLater(Runnable)</code>:</strong> asincrono e non bloccante. È il modo standard e sicuro per aggiornare la UI da un thread worker in background.",
+        "- <strong><code>SwingUtilities.invokeAndWait(Runnable)</code>:</strong> sincrono e bloccante. <strong>Attenzione critica:</strong> se invocato direttamente dall'EDT solleva immediatamente <code>Error: Cannot call invokeAndWait from the event dispatcher thread</code> (provocherebbe un auto-deadlock istantaneo!)."
+      ],
+      "wrongReasons": "Non si può chiamare invokeAndWait dall'EDT ({{opt:b}}); invokeLater non crea thread ma accoda nell'EDT ({{opt:c}}); uno è bloccante, l'altro no ({{opt:d}})."
+    },
+    {
+      "id": 113,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Swing: SwingWorker e Separazione del Carico (doInBackground vs done)",
+      "topic": "gui_rete",
+      "question": "Su quali thread vengono eseguiti rispettivamente i metodi <code>doInBackground()</code> e <code>done()</code> di un'istanza di <code>javax.swing.SwingWorker</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "doInBackground() viene eseguito su un thread worker in background (thread pool); done() viene eseguito tassativamente sull'Event Dispatch Thread (EDT)."
+        },
+        {
+          "origKey": "b",
+          "text": "Entrambi vengono eseguiti sull'EDT."
+        },
+        {
+          "origKey": "c",
+          "text": "Entrambi vengono eseguiti sul main thread del programma."
+        },
+        {
+          "origKey": "d",
+          "text": "doInBackground() gira sull'EDT mentre done() gira in background."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 07 Sez. 2 (SwingWorker Concurrency Architecture)",
+      "explanation": [
+        "<code>SwingWorker<T, V></code> è progettato appositamente per operazioni I/O o computazioni pesanti collegate a una GUI:",
+        "- <strong><code>doInBackground()</code>:</strong> esegue il calcolo pesante o la lettura socket fuori dall'EDT, evitando di 'congelare' l'interfaccia grafica.",
+        "- <strong><code>publish(V...)</code>:</strong> invia dati intermedi che il metodo <code>process(List<V>)</code> riceverà ed elaborerà sull'EDT.",
+        "- <strong><code>done()</code>:</strong> scatta automaticamente quando <code>doInBackground()</code> conclude; viene invocato sull'<strong>EDT</strong> per consentire l'aggiornamento sicuro dei componenti Swing (es. riattivare pulsanti, mostrare risultati con <code>get()</code>)."
+      ],
+      "wrongReasons": "Eseguire calcoli pesanti sull'EDT congela la UI ({{opt:b}}); non girano sul main ({{opt:c}}); inverte completamente i ruoli ({{opt:d}})."
+    },
+    {
+      "id": 114,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Swing: BorderLayout e Posizionamento Componenti",
+      "topic": "gui_rete",
+      "question": "Come si comporta <code>BorderLayout</code> se vengono aggiunti più componenti nella stessa area (ad esempio due volte in <code>BorderLayout.CENTER</code>)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il secondo componente aggiunto sostituisce graficamente il primo, rendendo visibile solo l'ultimo componente inserito in quella regione."
+        },
+        {
+          "origKey": "b",
+          "text": "Vengono affiancati orizzontalmente in modo automatico."
+        },
+        {
+          "origKey": "c",
+          "text": "Viene sollevata un'eccezione IllegalArgumentException a runtime."
+        },
+        {
+          "origKey": "d",
+          "text": "Il secondo componente viene spostato automaticamente in BorderLayout.NORTH."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 07 Sez. 3 (Layout Managers & Container Hierarchy)",
+      "explanation": [
+        "<code>BorderLayout</code> divide il container in 5 zone: <code>NORTH</code>, <code>SOUTH</code>, <code>EAST</code>, <code>WEST</code>, <code>CENTER</code>.",
+        "Ciascuna zona può contenere al massimo **un solo componente**.",
+        "Se si invoca due volte <code>add(comp, BorderLayout.CENTER)</code>, l'ultimo componente sovrascrive il riferimento del precedente nella mappa interna del layout manager. Per inserire più componenti in una zona, occorre racchiuderli preventivamente in un <code>JPanel</code> intermedio."
+      ],
+      "wrongReasons": "Non affianca orizzontalmente (quello è FlowLayout) ({{opt:b}}); non solleva eccezioni ({{opt:c}}); non sposta in altre aree ({{opt:d}})."
+    },
+    {
+      "id": 115,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Swing: Pattern Architetturale MVC (Model-View-Controller)",
+      "topic": "gui_rete",
+      "question": "Come si applica il pattern Model-View-Controller in un componente come <code>JTable</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "TableModel rappresenta il Model (dati e logica di accesso); JTable e i TableCellRenderer rappresentano la View; gli ActionListener, MouseListener e TableCellEditor fungono da Controller."
+        },
+        {
+          "origKey": "b",
+          "text": "JTable è il Model, il database SQL è la View, il monitor è il Controller."
+        },
+        {
+          "origKey": "c",
+          "text": "Swing non supporta MVC ma solo script procedurali."
+        },
+        {
+          "origKey": "d",
+          "text": "Il file di testo su disco è il Controller."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 07 Sez. 3 (MVC Separation in Swing)",
+      "explanation": [
+        "In Swing, i componenti complessi adottano una variante pragmatica di MVC (chiamata Model-Delegate):",
+        "- <strong>Model:</strong> <code>TableModel</code> (o <code>DefaultTableModel</code> / <code>AbstractTableModel</code>) gestisce lo stato dei dati indipendentemente dalla grafica.",
+        "- <strong>View:</strong> <code>JTable</code> orchestra la visualizzazione a griglia delegando il disegno delle singole celle ai <code>TableCellRenderer</code>.",
+        "- <strong>Controller:</strong> listener ed editor (<code>TableCellEditor</code>) intercettano gli input dell'utente e aggiornano il model."
+      ],
+      "wrongReasons": "JTable non è il model ma la view/ui delegate ({{opt:b}}); Swing è interamente basato su MVC ({{opt:c}}); i file non sono controller ({{opt:d}})."
+    },
+    {
+      "id": 116,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Swing: paintComponent() e super.paintComponent()",
+      "topic": "gui_rete",
+      "question": "Perché quando si esegue il custom painting sovrascrivendo <code>paintComponent(Graphics g)</code> è fondamentale invocare come prima istruzione <code>super.paintComponent(g)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Per consentire alla superclasse di ripulire lo sfondo del componente (evitando artefatti grafici 'fantasma') e inizializzare correttamente il contesto grafico."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché altrimenti la finestra si chiude automaticamente."
+        },
+        {
+          "origKey": "c",
+          "text": "Per convertire Graphics in uno stream TCP verso la rete."
+        },
+        {
+          "origKey": "d",
+          "text": "È un metodo obbligatorio solo sui sistemi Linux."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 07 Sez. 4 (Custom 2D Painting & Double Buffering)",
+      "explanation": [
+        "In Swing, <code>paintComponent</code> gestisce il rendering interno del componente.",
+        "L'invocazione di <strong><code>super.paintComponent(g)</code></strong> assicura che il componente venga ridisegnato pulito, cancellando i residui del frame precedente (rispettando il background e la trasparenza <code>isOpaque()</code>).",
+        "Omettere la chiamata provoca gravi difetti visivi (ghosting o mancato refresh durante il resize o lo scroll)."
+      ],
+      "wrongReasons": "Non chiude la finestra ({{opt:b}}); non c'entra TCP ({{opt:c}}); vale su tutti i sistemi operativi ({{opt:d}})."
+    },
+    {
+      "id": 117,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Socket TCP: ServerSocket e Chiamata accept()",
+      "topic": "gui_rete",
+      "question": "Qual è il comportamento formale del metodo <code>serverSocket.accept()</code> in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Blocca il thread chiamante finché un client remoto non stabilisce una connessione TCP (three-way handshake completato); a quel punto restituisce un nuovo oggetto Socket dedicato alla comunicazione con quel client specifico."
+        },
+        {
+          "origKey": "b",
+          "text": "Chiude il server e rilascia la porta di rete."
+        },
+        {
+          "origKey": "c",
+          "text": "Invia un pacchetto broadcast UDP a tutti i computer della LAN."
+        },
+        {
+          "origKey": "d",
+          "text": "Restituisce immediatamente null se nessun client è connesso nel microsecondo corrente."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 1 (TCP Sockets & Server Lifecycle)",
+      "explanation": [
+        "<code>ServerSocket</code> si mette in ascolto su una porta specifica.",
+        "Il metodo <strong><code>accept()</code></strong> è sincrono e bloccante:",
+        "Estrae la prima connessione completata dalla coda di backlog del sistema operativo.",
+        "Restituisce un nuovo <strong><code>Socket</code></strong> connesso con endpoint remoto <code>(IP_client, porta_client)</code>, lasciando il <code>ServerSocket</code> libero di continuare ad ascoltare nuove connessioni su <code>(IP_server, porta_server)</code>."
+      ],
+      "wrongReasons": "Non chiude il server ({{opt:b}}); non usa UDP broadcast ({{opt:c}}); è bloccante a tempo indeterminato, non restituisce subito null ({{opt:d}})."
+    },
+    {
+      "id": 118,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Socket TCP: Architettura Server Multi-Client Multithreaded",
+      "topic": "gui_rete",
+      "question": "Nel classico modello server multithreaded per socket TCP, come viene strutturata la gestione di molteplici client concorrenti?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il thread principale esegue un ciclo infinito while(true) con serverSocket.accept(); per ogni nuova connessione restituita, crea un nuovo thread worker (o delega a un ExecutorService) che gestirà i flussi di I/O di quel singolo client."
+        },
+        {
+          "origKey": "b",
+          "text": "Un singolo thread gestisce tutti i client leggendo un byte da ciascuno a turno con Thread.sleep(100)."
+        },
+        {
+          "origKey": "c",
+          "text": "Si aprono 100 ServerSocket distinti su porte diverse per ciascun client."
+        },
+        {
+          "origKey": "d",
+          "text": "I client comunicano direttamente tra loro senza passare dal server."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 1 (Concurrent Network Servers)",
+      "explanation": [
+        "Poiché le letture da socket (<code>read()</code> / <code>readLine()</code>) sono bloccanti, se un unico thread servisse tutti i client, un client lento o inattivo congelerebbe l'intero server per tutti gli altri utenti.",
+        "Nel pattern standard:",
+        "Il server thread cicla su <code>accept()</code>;",
+        "Ogni volta che una connessione arriva, il socket risultante viene incapsulato in un task ed eseguito in un thread separato (o virtual thread in Java 21) dedicato a quel client."
+      ],
+      "wrongReasons": "Il polling a turno con sleep è inefficiente e non scala ({{opt:b}}); la porta del servizio è unica (es. 8080) ({{opt:c}}); l'architettura è client-server, non P2P diretto puro ({{opt:d}})."
+    },
+    {
+      "id": 119,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "I/O Streams: Byte Stream vs Character Stream",
+      "topic": "gui_rete",
+      "question": "Qual è la differenza fondamentale tra la gerarchia di classi basata su <code>InputStream/OutputStream</code> e quella basata su <code>Reader/Writer</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "InputStream/OutputStream operano su byte grezzi a 8 bit (ideali per file binari, immagini, audio, socket di rete); Reader/Writer operano su caratteri Unicode a 16 bit tenendo conto del set di caratteri (Charset encoding, es. UTF-8)."
+        },
+        {
+          "origKey": "b",
+          "text": "Reader/Writer sono solo per la grafica Swing."
+        },
+        {
+          "origKey": "c",
+          "text": "InputStream è più lento di Reader del 500% in ogni circostanza."
+        },
+        {
+          "origKey": "d",
+          "text": "OutputStream non può essere chiuso con try-with-resources."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 2 (Java I/O Hierarchy)",
+      "explanation": [
+        "In Java:",
+        "- <strong>Byte Streams:</strong> classi astratte <code>InputStream</code> e <code>OutputStream</code>. Leggono e scrivono sequenze di byte a 8 bit (<code>byte[]</code>) senza alcuna interpretazione del testo.",
+        "- <strong>Character Streams:</strong> classi astratte <code>Reader</code> e <code>Writer</code>. Leggono e scrivono caratteri Unicode a 16 bit (<code>char</code>). Utilizzano internamente un <code>CharsetDecoder</code>/<code>Encoder</code> (es. UTF-8) per tradurre byte in caratteri.",
+        "Il ponte tra i due mondi è costituito da <code>InputStreamReader</code> e <code>OutputStreamWriter</code>."
+      ],
+      "wrongReasons": "Reader/Writer non sono per la grafica ({{opt:b}}); non c'entra un divario fisso di velocità ({{opt:c}}); OutputStream implementa AutoCloseable ({{opt:d}})."
+    },
+    {
+      "id": 120,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "I/O Streams: Pattern Decorator e BufferedReader",
+      "topic": "gui_rete",
+      "question": "Dato il codice <code>BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));</code>, quale design pattern strutturale viene applicato?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Decorator: ogni stream incapsula quello sottostante aggiungendo funzionalità (conversione byte->caratteri con charset e successivo buffering in memoria per abilitare readLine())."
+        },
+        {
+          "origKey": "b",
+          "text": "Singleton: esiste una sola istanza dello stream nel sistema."
+        },
+        {
+          "origKey": "c",
+          "text": "Flyweight: condivide oggetti immutabili a livello di sistema operativo."
+        },
+        {
+          "origKey": "d",
+          "text": "Observer: notifica la UI quando arriva un pacchetto di rete."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 2 (Decorator Pattern in java.io)",
+      "explanation": [
+        "L'intera libreria <code>java.io</code> è un'applicazione da manuale del <strong>Decorator Pattern</strong>:",
+        "1. <code>socket.getInputStream()</code> fornisce l'accesso al canale fisico a byte (Componente Base).",
+        "2. <code>InputStreamReader</code> fa da decoratore/adattatore traducendo i byte in caratteri secondo il charset specificato (es. UTF-8).",
+        "3. <code>BufferedReader</code> decora ulteriormente il reader dotandolo di un buffer di memoria interno e offrendo il metodo ad alto livello <code>readLine()</code>."
+      ],
+      "wrongReasons": "Non è Singleton ({{opt:b}}); non è Flyweight ({{opt:c}}); non è Observer ({{opt:d}})."
+    },
+    {
+      "id": 121,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "I/O Streams: Metodo flush() e Autoflush",
+      "topic": "gui_rete",
+      "question": "Perché quando si scrive su un socket di rete tramite uno stream bufferizzato (es. <code>BufferedWriter</code> o <code>PrintWriter</code>) è indispensabile invocare <code>flush()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Perché lo stream trattiene i byte in un buffer in memoria per ottimizzare il throughput; flush() forza lo svuotamento del buffer verso il socket del SO, evitando che il destinatario rimanga bloccato in attesa di dati."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché flush() cancella i dati inviati per motivi di sicurezza e crittografia."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché altrimenti la scheda di rete va in corto circuito."
+        },
+        {
+          "origKey": "d",
+          "text": "flush() serve solo per chiudere la connessione TCP."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 2 (Buffering & Flushing Semantics)",
+      "explanation": [
+        "Gli stream con buffer non trasmettono i dati al sistema operativo ad ogni singolo <code>write()</code>, ma attendono che il buffer interno (es. 8 KB) sia pieno.",
+        "In una comunicazione interattiva richiesta/risposta su socket, se il mittente invia una stringa di 20 caratteri senza chiamare <code>flush()</code>, la stringa rimane intrappolata nel buffer locale del mittente.",
+        "Il client remoto rimarrà in attesa indefinita (stallo da deadlock applicativo) finché il buffer non viene forzatamente svuotato con <strong><code>flush()</code></strong>."
+      ],
+      "wrongReasons": "Non cancella i dati inviati ({{opt:b}}); nessuna anomalia hardware ({{opt:c}}); per chiudere si usa close(), non flush() ({{opt:d}})."
+    },
+    {
+      "id": 122,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Serializzazione: Interfaccia Serializable e Parola Chiave transient",
+      "topic": "gui_rete",
+      "question": "Qual è l'effetto di marcare un campo di un oggetto come <code>transient</code> in una classe che implementa <code>java.io.Serializable</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il campo viene escluso dal processo di serializzazione standard (ObjectOutputStream) e ripristinato al suo valore di default per tipo (null, 0, false) durante la deserializzazione."
+        },
+        {
+          "origKey": "b",
+          "text": "Il campo può essere modificato solo da thread transienti."
+        },
+        {
+          "origKey": "c",
+          "text": "Rende il campo automaticamente crittografato con cifratura AES-256."
+        },
+        {
+          "origKey": "d",
+          "text": "Impedisce al Garbage Collector di cancellare il campo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 3 (Object Serialization & Transient Modifier)",
+      "explanation": [
+        "La parola chiave <strong><code>transient</code></strong> indica al meccanismo di serializzazione di Java che il campo non deve essere persistito:",
+        "Viene tipicamente usata per:",
+        "1. Dati sensibili che non devono transitare in chiaro sulla rete o file (es. password).",
+        "2. Campi che contengono riferimenti a risorse legate allo stato effimero del processo locale (es. file handle, thread, riferimenti a <code>Socket</code> o contesti grafici non serializzabili).",
+        "Alla deserializzazione, il campo riceve il valore predefinito JVM."
+      ],
+      "wrongReasons": "Non c'entrano thread transienti ({{opt:b}}); non cifra dati ({{opt:c}}); non altera il ciclo di vita del GC ({{opt:d}})."
+    },
+    {
+      "id": 123,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Serializzazione: serialVersionUID e InvalidClassException",
+      "topic": "gui_rete",
+      "question": "A cosa serve il campo <code>private static final long serialVersionUID</code> e cosa accade durante la deserializzazione se questo campo non corrisponde tra mittente e destinatario?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Funge da identificativo di versione della classe; se il serialVersionUID dello stream serializzato non coincide con quello caricato nella JVM ricevente, viene sollevata immediatamente una java.io.InvalidClassException."
+        },
+        {
+          "origKey": "b",
+          "text": "Identifica l'indirizzo IP del computer che ha salvato il file."
+        },
+        {
+          "origKey": "c",
+          "text": "Indica il numero di secondi trascorsi dall'avvio del computer."
+        },
+        {
+          "origKey": "d",
+          "text": "Serve a garantire che il file serializzato non superi 1 Megabyte."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 3 (Versioning & InvalidClassException)",
+      "explanation": [
+        "Durante la serializzazione di un oggetto viene impresso nello stream il <strong><code>serialVersionUID</code></strong> della classe.",
+        "Se la classe omette di dichiararlo esplicitamente, la JVM ne calcola uno automaticamente tramite hash SHA-1 della struttura della classe. Qualsiasi minima modifica (aggiunta di un metodo, variazione di un tipo) cambia l'hash calcolato.",
+        "Quando <code>ObjectInputStream</code> deserializza, confronta i due ID: se divergono, interrompe l'operazione lanciando <strong><code>InvalidClassException</code></strong> per evitare corruzione dello stato interno."
+      ],
+      "wrongReasons": "Non riguarda IP ({{opt:b}}); non riguarda timestamp di avvio ({{opt:c}}); non impone limiti di dimensione ({{opt:d}})."
+    },
+    {
+      "id": 124,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Serializzazione: readObject(), writeObject() e Serializzazione Custom",
+      "topic": "gui_rete",
+      "question": "Come può una classe personalizzare il proprio comportamento di serializzazione preservando al contempo i campi standard?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Dichiarando con visibilità private i metodi readObject(ObjectInputStream in) e writeObject(ObjectOutputStream out), invocando al loro interno rispettivamente in.defaultReadObject() e out.defaultWriteObject()."
+        },
+        {
+          "origKey": "b",
+          "text": "Sovrascrivendo i metodi pubblici toString() e parseString()."
+        },
+        {
+          "origKey": "c",
+          "text": "Implementando l'interfaccia Runnable con un blocco synchronized."
+        },
+        {
+          "origKey": "d",
+          "text": "Modificando i file sorgente della JVM HotSpot."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 3 (Custom Serialization Hooks)",
+      "explanation": [
+        "Java permette di intercettare il ciclo di vita della serializzazione definendo nelle classi due metodi con firma esatta:",
+        "- <code>private void writeObject(ObjectOutputStream out) throws IOException</code>",
+        "- <code>private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException</code>",
+        "Invocando <code>out.defaultWriteObject()</code> / <code>in.defaultReadObject()</code> la JVM serializza tutti i campi ordinari non-transient, dopodiché lo sviluppatore può aggiungere logica custom (es. calcolo manuale di campi derivati o validazione dello stato)."
+      ],
+      "wrongReasons": "toString() produce solo rappresentazioni testuali non serializzabili ({{opt:b}}); Runnable è per thread ({{opt:c}}); non serve modificare la JVM ({{opt:d}})."
+    },
+    {
+      "id": 125,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Socket UDP: DatagramSocket e DatagramPacket",
+      "topic": "gui_rete",
+      "question": "Quali classi vengono impiegate in Java per la comunicazione tramite protocollo non connesso UDP (User Datagram Protocol)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "DatagramSocket (per l'invio e la ricezione) e DatagramPacket (per incapsulare il payload di byte, l'indirizzo IP e la porta di destinazione)"
+        },
+        {
+          "origKey": "b",
+          "text": "ServerSocket e Socket"
+        },
+        {
+          "origKey": "c",
+          "text": "HttpURLConnection e URL"
+        },
+        {
+          "origKey": "d",
+          "text": "PipedInputStream e PipedOutputStream"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 4 (UDP Datagram Communications)",
+      "explanation": [
+        "A differenza di TCP che richiede una connessione continua basata su flussi di stream continui (<code>Socket</code> / <code>ServerSocket</code>):",
+        "UDP è un protocollo a pacchetti non connesso:",
+        "- <strong><code>DatagramPacket</code>:</strong> contiene l'array di byte (buffer), l'offset, la lunghezza e le coordinate di rete (<code>InetAddress</code> e porta).",
+        "- <strong><code>DatagramSocket</code>:</strong> punto di aggancio (porta UDP locale) che offre i metodi <code>send(packet)</code> e <code>receive(packet)</code>."
+      ],
+      "wrongReasons": "ServerSocket e Socket sono per stream TCP ({{opt:b}}); HttpURLConnection è per livello applicativo HTTP ({{opt:c}}); Piped streams sono per IPC intra-processo ({{opt:d}})."
+    },
+    {
+      "id": 126,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "Socket: Chiusura delle Risorse di Rete",
+      "topic": "gui_rete",
+      "question": "Cosa accade agli stream associati a un <code>Socket</code> (ossia getInputStream() e getOutputStream()) quando viene invocato il metodo <code>socket.close()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "La chiusura del Socket chiude automaticamente e a cascata sia il relativo InputStream sia l'OutputStream associati, rilasciando il descrittore di file del SO."
+        },
+        {
+          "origKey": "b",
+          "text": "Gli stream rimangono aperti e continuano a ricevere pacchetti."
+        },
+        {
+          "origKey": "c",
+          "text": "Viene sollevata un'eccezione se non si chiudono prima gli stream a mano."
+        },
+        {
+          "origKey": "d",
+          "text": "Il socket viene salvato su disco per un futuro riutilizzo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 1 (Socket Teardown)",
+      "explanation": [
+        "In Java <code>Socket</code> implementa <code>Closeable</code> (e quindi <code>AutoCloseable</code>):",
+        "Quando si invoca <code>socket.close()</code>, la JVM chiude automaticamente anche tutti i flussi di input/output derivati da quel socket.",
+        "Allo stesso modo, chiudere direttamente l'<code>InputStream</code> o l'<code>OutputStream</code> di un socket comporta la chiusura immediata del socket sottostante."
+      ],
+      "wrongReasons": "Non rimangono aperti ({{opt:b}}); non richiede obbligatoriamente chiusura preventiva manuale degli stream ({{opt:c}}); non viene salvato su disco ({{opt:d}})."
+    },
+    {
+      "id": 127,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Socket: Socket Timeout e setSoTimeout()",
+      "topic": "gui_rete",
+      "question": "A cosa serve il metodo <code>socket.setSoTimeout(int timeoutMillis)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Imposta il tempo massimo di attesa bloccante per le operazioni di lettura (read()); se nessun byte arriva entro il tempo specificato viene sollevata una java.net.SocketTimeoutException lasciando il socket ancora aperto e valido."
+        },
+        {
+          "origKey": "b",
+          "text": "Disconnette il computer da Internet dopo i millisecondi indicati."
+        },
+        {
+          "origKey": "c",
+          "text": "Limita la velocità di download dei dati a un numero fisso di kilobyte."
+        },
+        {
+          "origKey": "d",
+          "text": "Imposta il tempo di vita del socket prima che il file binario venga cancellato dal disco."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 1 (Socket Options & Timeouts)",
+      "explanation": [
+        "Di default, il timeout delle socket in Java è <code>0</code>, ossia attesa infinita bloccante su <code>read()</code>.",
+        "Invocando <strong><code>setSoTimeout(ms)</code></strong> con un valore $> 0$, se il peer remoto non invia dati entro quel tempo, la chiamata di lettura si sblocca sollevando <strong><code>SocketTimeoutException</code></strong>.",
+        "Cruciale: l'eccezione notifica un semplice timeout applicativo e il socket **rimane valido**, consentendo al programma di ritentare la lettura."
+      ],
+      "wrongReasons": "Non disconnette il computer ({{opt:b}}); non è un rate-limiter di banda ({{opt:c}}); non cancella file binari ({{opt:d}})."
+    },
+    {
+      "id": 128,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Socket: Half-Close con shutdownOutput() e shutdownInput()",
+      "topic": "gui_rete",
+      "question": "In quale scenario si impiega il metodo <code>socket.shutdownOutput()</code> anziché <code>socket.close()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Quando il client ha finito di inviare dati e vuole inviare un pacchetto FIN TCP al server per segnalare la fine della trasmissione (EOF), ma intende mantenere aperto il canale di ricezione per leggere la risposta del server."
+        },
+        {
+          "origKey": "b",
+          "text": "Quando si vuole aumentare la larghezza di banda del cavo di rete."
+        },
+        {
+          "origKey": "c",
+          "text": "Per convertire una connessione TCP in una connessione UDP."
+        },
+        {
+          "origKey": "d",
+          "text": "Per spegnere l'alimentazione della scheda di rete."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 08 Sez. 1 (TCP Half-Close Semantics)",
+      "explanation": [
+        "Il protocollo TCP è full-duplex e supporta la chiusura unilaterale (**Half-Close**):",
+        "Se un client chiama <code>socket.close()</code>, chiude *entrambe* le direzioni e non può più leggere.",
+        "Chiamando <strong><code>socket.shutdownOutput()</code></strong>, il socket trasmette il pacchetto FIN TCP:",
+        "- Il server riceve il segnale di EOF (la sua <code>read()</code> restituisce <code>-1</code> o <code>readLine()</code> restituisce <code>null</code>).",
+        "- Il canale di ingresso del client rimane perfettamente funzionante per ricevere la risposta elaborata dal server."
+      ],
+      "wrongReasons": "Non aumenta la banda fisica ({{opt:b}}); non converte in UDP ({{opt:c}}); non toglie corrente alla scheda ({{opt:d}})."
+    },
+    {
+      "id": 129,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "Swing: Gestione Eventi e Adapter Classes",
+      "topic": "gui_rete",
+      "question": "Perché le classi come <code>MouseAdapter</code> o <code>WindowAdapter</code> risultano utili rispetto all'implementazione diretta delle interfacce <code>MouseListener</code> o <code>WindowListener</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Forniscono implementazioni vuote (noop) di tutti i metodi dell'interfaccia, consentendo allo sviluppatore di sovrascrivere solo il singolo metodo di interesse (es. solo mouseClicked()) senza dover implementare decine di metodi inutilizzati."
+        },
+        {
+          "origKey": "b",
+          "text": "Aumentano la velocità di rendering del cursore del mouse."
+        },
+        {
+          "origKey": "c",
+          "text": "Permettono di usare il mouse anche se la tastiera è scollegata."
+        },
+        {
+          "origKey": "d",
+          "text": "Convertono gli eventi del mouse in pacchetti di rete JSON."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 07 Sez. 5 (Event Delegation & Adapter Pattern)",
+      "explanation": [
+        "Interfacce come <code>MouseListener</code> o <code>WindowListener</code> contengono molti metodi astratti (es. <code>mouseEntered</code>, <code>mouseExited</code>, <code>mousePressed</code>, <code>mouseReleased</code>, <code>mouseClicked</code>).",
+        "Implementando l'interfaccia direttamente, una classe sarebbe costretta a definire corpi vuoti per tutti i metodi non utilizzati.",
+        "Le classi astratte <strong>Adapter</strong> (es. <code>MouseAdapter</code>) implementano tutti i metodi con corpo vuoto: lo sviluppatore estende l'adapter e sovrascrive esclusivamente i metodi di cui ha effettivamente bisogno."
+      ],
+      "wrongReasons": "Non velocizzano il cursore fisico ({{opt:b}}); non riguarda hardware della tastiera ({{opt:c}}); non inviano JSON in rete ({{opt:d}})."
+    },
+    {
+      "id": 130,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "Swing: Problema del Freezing della GUI e Best Practice",
+      "topic": "gui_rete",
+      "question": "Si consideri il seguente frammento eseguito dentro l'<code>actionPerformed</code> di un pulsante Swing:\n<pre><code>button.addActionListener(e -> {\n    Socket s = new Socket(\"192.168.1.50\", 9000);\n    BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));\n    String resp = in.readLine();\n    label.setText(resp);\n});</code></pre>Quale grave anomalia architetturale presenta questo codice?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Esegue una connessione di rete e una lettura bloccante direttamente sull'Event Dispatch Thread (EDT); se il server è irraggiungibile o lento, l'intera interfaccia grafica si congela (freezing), smette di rispondere ai click e il SO mostra la finestra come 'Non risponde'."
+        },
+        {
+          "origKey": "b",
+          "text": "Il codice è perfetto e raccomandato dalla documentazione Swing."
+        },
+        {
+          "origKey": "c",
+          "text": "label.setText() non può essere invocato con una stringa."
+        },
+        {
+          "origKey": "d",
+          "text": "provoca un corto circuito del router Wi-Fi."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 07 Sez. 1 & Cap. 08 Sez. 1 (GUI Responsiveness & I/O Threading)",
+      "explanation": [
+        "Tutti i listener registrati sui componenti Swing (come <code>actionPerformed</code>) vengono eseguiti **sull'Event Dispatch Thread (EDT)**.",
+        "Se all'interno del listener si esegue un'operazione di I/O sincrona e bloccante (creazione socket, handshake TCP, attesa <code>readLine()</code>):",
+        "L'EDT non può prelevare nuovi eventi grafici dalla coda di sistema:",
+        "- I pulsanti non mostrano animazioni di click;",
+        "- La finestra non si ridisegna durante il trascinamento;",
+        "- Il sistema operativo contrassegna il processo come bloccato (*Application Not Responding*).",
+        "La soluzione corretta è delegare l'I/O a uno <code>SwingWorker</code> o un thread in background e rientrare sull'EDT solo per invocare <code>label.setText()</code>."
+      ],
+      "wrongReasons": "Non è affatto raccomandato, è l'anti-pattern più grave di Swing ({{opt:b}}); setText accetta stringhe ({{opt:c}}); non c'entra il router ({{opt:d}})."
+    },
+    {
+      "id": 131,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C Memoria: Segmenti di Memoria di un Processo C",
+      "topic": "c_memory",
+      "question": "Come è suddiviso lo spazio di indirizzamento virtuale di un processo C nello standard di sistema?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Segmento Text/Code (istruzioni in sola lettura), Data (.data, variabili globali/statiche inizializzate), BSS (globali/statiche non inizializzate azzerate a 0), Heap (allocazione dinamica che cresce verso l'alto), Stack (frame di chiamate a funzione e variabili locali che cresce verso il basso)."
+        },
+        {
+          "origKey": "b",
+          "text": "La memoria C è un unico blocco continuo non suddiviso senza stack né heap."
+        },
+        {
+          "origKey": "c",
+          "text": "Text, Heap, Stack, ROM, EEPROM."
+        },
+        {
+          "origKey": "d",
+          "text": "Solo Stack e Cache L1; le variabili dinamiche vengono scritte sulla scheda madre."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (Virtual Memory Layout of a C Process)",
+      "explanation": [
+        "Lo spazio di indirizzamento di un processo C è strutturato in zone distinte:",
+        "- <strong>Text (Code):</strong> codice macchina eseguibile, protetto in sola lettura per evitare auto-modifiche.",
+        "- <strong>Data segment (.data):</strong> variabili globali e statiche con valore iniziale esplicito (es. <code>int x = 42;</code>).",
+        "- <strong>BSS (.bss):</strong> variabili globali e statiche non inizializzate, inizializzate a zero dal loader del SO.",
+        "- <strong>Heap:</strong> gestito a runtime da <code>malloc/free</code>, si espande verso indirizzi crescenti tramite <code>brk/sbrk</code> o <code>mmap</code>.",
+        "- <strong>Stack:</strong> gestisce i frame di chiamata e variabili locali automatiche; tipicamente cresce verso indirizzi decrescenti."
+      ],
+      "wrongReasons": "La memoria è rigorosamente segmentata ({{opt:b}}); ROM ed EEPROM sono memorie fisiche hardware, non segmenti di processo virtuale ({{opt:c}}); non vengono scritte su scheda madre ({{opt:d}})."
+    },
+    {
+      "id": 132,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C Puntatori: Operatori di Indirizzo (&) e Dereferenziazione (*)",
+      "topic": "c_memory",
+      "question": "Dato il frammento <code>int a = 10; int *p = &a; *p = 25;</code>, quale sarà il valore finale della variabile <code>a</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "25 (l'operatore di dereferenziazione *p accede alla cella di memoria puntata da p e ne sovrascrive il valore)."
+        },
+        {
+          "origKey": "b",
+          "text": "10"
+        },
+        {
+          "origKey": "c",
+          "text": "L'indirizzo di memoria di p"
+        },
+        {
+          "origKey": "d",
+          "text": "0"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 2 (Pointer Basics & Indirection)",
+      "explanation": [
+        "<code>&a</code> estrae l'indirizzo esadecimale di memoria della variabile <code>a</code>.",
+        "Il puntatore <code>p</code> memorizza questo indirizzo.",
+        "L'istruzione <code>*p = 25;</code> applica la dereferenziazione (indirection): accede alla locazione di memoria puntata da <code>p</code> (che è proprio la cella di <code>a</code>) e vi scrive il valore <code>25</code>."
+      ],
+      "wrongReasons": "Il valore di a viene sovrascritto a 25 ({{opt:b}}); non restituisce l'indirizzo ({{opt:c}}); non azzera il valore ({{opt:d}})."
+    },
+    {
+      "id": 133,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Puntatori: Aritmetica dei Puntatori e sizeof del Tipo Puntato",
+      "topic": "c_memory",
+      "question": "Se un puntatore <code>int *ptr</code> contiene l'indirizzo di memoria <code>0x1000</code> e su un'architettura a 64-bit <code>sizeof(int) == 4</code>, quale sarà il valore numerico dell'indirizzo calcolato dall'espressione <code>ptr + 3</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "0x100C (0x1000 + 3 * sizeof(int) = 0x1000 + 12 byte)"
+        },
+        {
+          "origKey": "b",
+          "text": "0x1003 (aggiunge 3 byte grezzi)"
+        },
+        {
+          "origKey": "c",
+          "text": "0x1018 (0x1000 + 24 byte)"
+        },
+        {
+          "origKey": "d",
+          "text": "0x3000"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 2 (Pointer Arithmetic Semantics)",
+      "explanation": [
+        "In linguaggio C l'aritmetica dei puntatori non opera sui singoli byte, ma è scalata automaticamente sul tipo di dato puntato:",
+        "<code>ptr + n</code> equivale all'indirizzo fisico:",
+        "$\\text{address} = \\text{ptr} + (n \\times \\text{sizeof}(*\\text{ptr}))$.",
+        "Poiché $n = 3$ e $\\text{sizeof}(\\text{int}) = 4$, abbiamo $3 \\times 4 = 12$ byte ($0\\text{xC}$ in esadecimale).",
+        "Quindi $0\\text{x}1000 + 0\\text{xC} = 0\\text{x}100\\text{C}$."
+      ],
+      "wrongReasons": "Non aggiunge 3 byte puri a meno che non fosse char* ({{opt:b}}); non moltiplica per 8 ({{opt:c}}); non moltiplica la base ({{opt:d}})."
+    },
+    {
+      "id": 134,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Puntatori: Array Decay e Differenza tra sizeof(arr) e sizeof(ptr)",
+      "topic": "c_memory",
+      "question": "Dato il codice:\n<pre><code>int arr[10];\nint *p = arr;\nprintf(\"%zu %zu\", sizeof(arr), sizeof(p));</code></pre>Cosa stampa il programma su una piattaforma a 64 bit (dove sizeof(int) == 4 e sizeof(puntatore) == 8)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "40 8 (sizeof(arr) calcola la dimensione totale dell'array in memoria: 10 * 4 = 40; sizeof(p) calcola la dimensione della variabile puntatore: 8 byte)."
+        },
+        {
+          "origKey": "b",
+          "text": "40 40"
+        },
+        {
+          "origKey": "c",
+          "text": "8 8"
+        },
+        {
+          "origKey": "d",
+          "text": "10 1"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (Array Decay & sizeof Operator)",
+      "explanation": [
+        "In C, il nome di un array <code>arr</code> non è una variabile puntatore autonoma:",
+        "- Quando applicato direttamente all'array, <code>sizeof(arr)</code> restituisce la memoria totale allocata: $10 \\times 4 = 40$ byte.",
+        "- Quando <code>arr</code> viene assegnato a <code>p</code> o passato a una funzione, subisce il fenomeno di **array decay** decadendo a un semplice puntatore al primo elemento (<code>&arr[0]</code>).",
+        "- <code>sizeof(p)</code> valuta la dimensione del puntatore stesso, che su architettura a 64 bit è pari a 8 byte."
+      ],
+      "wrongReasons": "p non è l'array ma solo un puntatore ({{opt:b}}); arr non decade a puntatore dentro l'operatore sizeof ({{opt:c}}); non restituisce il numero di elementi ({{opt:d}})."
+    },
+    {
+      "id": 135,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Puntatori: Puntatori a Costanti vs Puntatori Costanti",
+      "topic": "c_memory",
+      "question": "Qual è la differenza fondamentale tra <code>const int *p</code> e <code>int * const p</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "const int *p è un puntatore a intero costante (non si può modificare il valore puntato *p = 10 ma si può cambiare l'indirizzo p = &altro); int * const p è un puntatore costante a intero (non si può cambiare l'indirizzo p ma si può modificare il valore *p = 10)."
+        },
+        {
+          "origKey": "b",
+          "text": "const int *p alloca nello heap, int * const p nello stack."
+        },
+        {
+          "origKey": "c",
+          "text": "Sono perfettamente identici e interscambiabili per il compilatore."
+        },
+        {
+          "origKey": "d",
+          "text": "int * const p rende l'intero programma in sola lettura."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 2 (Const Correctness with Pointers)",
+      "explanation": [
+        "Si applica la regola di lettura 'da destra verso sinistra':",
+        "- <strong><code>const int *p</code></strong> (o <code>int const *p</code>): 'p è un puntatore a un intero costante'. Il dato puntato è in sola lettura; il puntatore <code>p</code> può essere riassegnato ad altri indirizzi.",
+        "- <strong><code>int * const p</code></strong>: 'p è un puntatore costante a un intero'. Il puntatore è vincolato permanentemente alla locazione iniziale; il valore intero puntato può essere modificato liberamente."
+      ],
+      "wrongReasons": "Non riguarda stack vs heap ({{opt:b}}); la semantica di compilazione è completamente diversa ({{opt:c}}); non blocca l'intero programma ({{opt:d}})."
+    },
+    {
+      "id": 136,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Puntatori: Puntatori a Funzione e Firma",
+      "topic": "c_memory",
+      "question": "Come si dichiara correttamente un puntatore a funzione di nome <code>func_ptr</code> che accetta due parametri <code>int</code> e <code>double</code> e restituisce un <code>int</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "int (*func_ptr)(int, double);"
+        },
+        {
+          "origKey": "b",
+          "text": "int *func_ptr(int, double);"
+        },
+        {
+          "origKey": "c",
+          "text": "int func_ptr*(int, double);"
+        },
+        {
+          "origKey": "d",
+          "text": "function<int(int, double)> func_ptr;"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 4 (Function Pointers Syntax & Callbacks)",
+      "explanation": [
+        "Le parentesi tonde attorno a <code>(*func_ptr)</code> sono obbligatorie:",
+        "- <strong><code>int (*func_ptr)(int, double);</code></strong> dichiara un puntatore a funzione.",
+        "- <code>int *func_ptr(int, double);</code> (senza parentesi) dichiarerebbe invece una normale funzione che restituisce un puntatore a intero (<code>int*</code>).",
+        "- <code>function<...></code> è sintassi C++ standard (<code>std::function</code>), non C puro."
+      ],
+      "wrongReasons": "int *func_ptr(...) dichiara una funzione che restituisce int* ({{opt:b}}); sintassi non valida ({{opt:c}}); function<> è C++, non C ({{opt:d}})."
+    },
+    {
+      "id": 137,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Funzioni: Callback di qsort() e Firma del Comparatore",
+      "topic": "c_memory",
+      "question": "Qual è la firma esatta della funzione di confronto richiesta dalla funzione standard <code>qsort()</code> della libreria <code>&lt;stdlib.h&gt;</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "int compare(const void *a, const void *b)"
+        },
+        {
+          "origKey": "b",
+          "text": "int compare(int a, int b)"
+        },
+        {
+          "origKey": "c",
+          "text": "bool compare(void *a, void *b)"
+        },
+        {
+          "origKey": "d",
+          "text": "void compare(const void *a, const void *b)"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 4 (Generic Sorting with qsort & Callbacks)",
+      "explanation": [
+        "La firma di <code>qsort</code> è:\n<pre><code>void qsort(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *));</code></pre>",
+        "La funzione comparatore riceve due puntatori a costanti generiche (<code>const void *</code>) e deve restituire:",
+        "- Un valore $< 0$ se il primo elemento precede il secondo;",
+        "- $0$ se sono considerati equivalenti;",
+        "- Un valore $> 0$ se il primo elemento segue il secondo."
+      ],
+      "wrongReasons": "Non usa tipi concreti int (è generica per qualsiasi tipo) ({{opt:b}}); restituisce un int di tri-stato, non bool ({{opt:c}}); deve restituire un int per esprimere l'ordine ({{opt:d}})."
+    },
+    {
+      "id": 138,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Manual OOP: Vtable Manuale e Parametro this Esplicito",
+      "topic": "c_memory",
+      "question": "Come si emula l'orientamento agli oggetti e il polimorfismo dinamico in linguaggio C puro (pattern Vtable manuale)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Definendo una struct contenente puntatori a funzione (Vtable) e passando manualmente un puntatore alla struct di dati come primo argomento (esplicito 'this' pointer) ad ogni invocazione."
+        },
+        {
+          "origKey": "b",
+          "text": "Utilizzando la parola chiave class di C."
+        },
+        {
+          "origKey": "c",
+          "text": "Modificando i registri EIP della CPU tramite assembly inline prima di ogni if."
+        },
+        {
+          "origKey": "d",
+          "text": "In C puro è tecnicamente impossibile emulare il comportamento degli oggetti."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 5 (Manual Object-Oriented C & Vtables)",
+      "explanation": [
+        "In C non esiste supporto nativo alle classi o al dynamic dispatch.",
+        "I motori di basso livello (es. Linux Kernel, driver, runtime COM) emulano il polimorfismo:",
+        "1. Creano una <code>struct VTable</code> contenente puntatori a funzione (es. <code>void (*draw)(struct Shape* this);</code>).",
+        "2. L'oggetto <code>Shape</code> include un puntatore <code>const struct VTable *vptr;</code>.",
+        "3. L'invocazione polimorfa avviene con: <code>shape->vptr->draw(shape);</code>."
+      ],
+      "wrongReasons": "C non ha la parola chiave class ({{opt:b}}); non richiede hack assembly inline sui registri ({{opt:c}}); è un pattern comunissimo e consolidato ({{opt:d}})."
+    },
+    {
+      "id": 139,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C Memoria Dinamica: malloc() vs calloc()",
+      "topic": "c_memory",
+      "question": "Qual è la differenza fondamentale tra <code>malloc(num * sizeof(int))</code> e <code>calloc(num, sizeof(int))</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "malloc alloca memoria grezza lasciando i byte non inizializzati (valori spazzatura residui); calloc azzera esplicitamente a 0 tutti i byte allocati e controlla internamente l'eventuale integer overflow della moltiplicazione."
+        },
+        {
+          "origKey": "b",
+          "text": "malloc alloca nello stack, calloc nello heap."
+        },
+        {
+          "origKey": "c",
+          "text": "calloc non richiede di invocare free()."
+        },
+        {
+          "origKey": "d",
+          "text": "malloc è solo per numeri interi, calloc per stringhe."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 1 (Dynamic Memory: malloc vs calloc)",
+      "explanation": [
+        "- <strong><code>malloc(size_t size)</code>:</strong> alloca <code>size</code> byte nell'heap. Non modifica il contenuto della memoria (contiene byte casuali lasciati da precedenti utilizzi).",
+        "- <strong><code>calloc(size_t num, size_t size)</code>:</strong> alloca memoria per un array di <code>num</code> elementi e inizializza tutti i bit a zero (zero-fill). Inoltre verifica che $num \\times size$ non generi overflow prima di richiedere memoria al kernel."
+      ],
+      "wrongReasons": "Entrambi allocano nello heap ({{opt:b}}); entrambi richiedono rigorosamente free() ({{opt:c}}); entrambi sono generici su qualsiasi tipo ({{opt:d}})."
+    },
+    {
+      "id": 140,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Memoria Dinamica: Anti-Pattern ptr = realloc(ptr, new_size)",
+      "topic": "c_memory",
+      "question": "Perché l'istruzione <code>ptr = realloc(ptr, new_size);</code> è considerata un grave bug di programmazione (Memory Leak hazard)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Se realloc fallisce restituisce NULL: assegnando il ritorno direttamente a ptr, il puntatore originale al blocco di memoria precedente viene sovrascritto e perso per sempre, rendendo impossibile invocare free() e causando un memory leak certo."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché realloc cancella automaticamente il disco rigido in caso di errore."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché realloc non può mai modificare la dimensione di un blocco esistente."
+        },
+        {
+          "origKey": "d",
+          "text": "Perché è un errore di sintassi rifiutato da tutti i compilatori C."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 1 (realloc Memory Leak Vulnerability)",
+      "explanation": [
+        "In caso di fallimento per memoria esaurita, <strong><code>realloc</code> restituisce <code>NULL</code>, MA il blocco originario puntato da <code>ptr</code> rimane allocato e intatto nell'heap</strong>.",
+        "Se si scrive <code>ptr = realloc(ptr, new_size);</code> e la chiamata fallisce:",
+        "<code>ptr</code> diventa <code>NULL</code>; l'indirizzo originale è perso e il blocco non potrà mai più essere deallocato con <code>free</code> (memory leak garantito).",
+        "La forma corretta prevede una variabile temporanea:\n<pre><code>void *temp = realloc(ptr, new_size);\nif (!temp) { /* Gestione errore, ptr è ancora valido! */ }\nelse { ptr = temp; }</code></pre>"
+      ],
+      "wrongReasons": "Non cancella dischi ({{opt:b}}); realloc ridimensiona blocchi estendendoli o riallocandoli ({{opt:c}}); compila regolarmente senza warning sintattici ({{opt:d}})."
+    },
+    {
+      "id": 141,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C Memoria Dinamica: free() e Dangling Pointer",
+      "topic": "c_memory",
+      "question": "Cos'è un <strong>dangling pointer</strong> (puntatore pendente) e come si previene dopo la chiamata a <code>free(p)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "È un puntatore che continua a contenere l'indirizzo di memoria di un blocco già deallocato; si previene assegnando immediatamente p = NULL subito dopo la chiamata a free(p)."
+        },
+        {
+          "origKey": "b",
+          "text": "È un puntatore che punta all'inizio dello stack frame."
+        },
+        {
+          "origKey": "c",
+          "text": "È un puntatore dichiarato dentro una funzione ricorsiva."
+        },
+        {
+          "origKey": "d",
+          "text": "È un puntatore che può memorizzare solo numeri float."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 2 (Dangling Pointers & Defensive Free)",
+      "explanation": [
+        "La funzione <code>free(p)</code> restituisce la memoria al sistema di gestione dell'heap, ma **NON modifica il valore numerico contenuto nella variabile puntatore <code>p</code>**.",
+        "Il puntatore continua a puntare a quell'indirizzo ormai non più valido (dangling pointer).",
+        "Se il programma tenta di leggere o scrivere tramite <code>*p</code> in seguito (Use-After-Free), si generano corruzioni di memoria occulte o crash improvvisi.",
+        "Assegnare <code>p = NULL;</code> garantisce che un eventuale accesso futuro causi un crash deterministico immediato (SIGSEGV) e protegge da Double Free (poiché <code>free(NULL)</code> è un'operazione sicura e valida)."
+      ],
+      "wrongReasons": "Non punta all'inizio dello stack frame ({{opt:b}}); non riguarda la ricorsione ({{opt:c}}); non riguarda i numeri float ({{opt:d}})."
+    },
+    {
+      "id": 142,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Memoria: Ritorno di Indirizzo di Variabile Locale sullo Stack",
+      "topic": "c_memory",
+      "question": "Cosa accade se una funzione C esegue il codice:\n<pre><code>int* get_val() {\n    int num = 42;\n    return &num;\n}</code></pre>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Comportamento indefinito (Undefined Behavior): num è allocata nello stack frame locale della funzione, che viene distrutto e sovrascritto al momento del return; il puntatore restituito è invalido."
+        },
+        {
+          "origKey": "b",
+          "text": "Funziona perfettamente perché la JVM preserva la variabile nell'heap."
+        },
+        {
+          "origKey": "c",
+          "text": "Il compilatore sposta automaticamente la variabile nel segmento .data."
+        },
+        {
+          "origKey": "d",
+          "text": "Il numero 42 viene stampato sul terminale di sistema."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 & Cap. 10 Sez. 2 (Stack Lifetime Pitfalls)",
+      "explanation": [
+        "Le variabili locali dichiarate senza il modificatore <code>static</code> possiedono durata di memorizzazione automatica (**automatic storage duration**) e risiedono nello stack frame corrente.",
+        "Quando la funzione termina, lo stack pointer viene ripristinato e quel frame viene invalidato.",
+        "L'indirizzo restituito punta a una locazione di memoria che verrà sovrascritta dalla successiva chiamata a funzione, generando bug catastrofici (Undefined Behavior).",
+        "Per restituire dati da una funzione occorre allocarli dinamicamente con <code>malloc()</code> o dichiararli <code>static</code>."
+      ],
+      "wrongReasons": "In C non c'è JVM ({{opt:b}}); il compilatore non sposta variabili automatiche nel .data ({{opt:c}}); non stampa a video ({{opt:d}})."
+    },
+    {
+      "id": 143,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Puntatori: Doppi Puntatori e Allocazione Matrice 2D",
+      "topic": "c_memory",
+      "question": "Qual è la differenza fondamentale di layout di memoria tra allocare una matrice 2D con un array di puntatori (<code>int **m = malloc(R * sizeof(int*)); ...</code>) rispetto a un singolo blocco contiguo (<code>int *m = malloc(R * C * sizeof(int));</code>)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "L'array di puntatori frammenta le righe in locazioni heap non contigue con overhead di puntatori e cache miss elevati; il singolo blocco contiguo alloca tutti gli elementi linearmente in memoria massimizzando i cache hit della CPU ed è indicizzabile come m[r * C + c]."
+        },
+        {
+          "origKey": "b",
+          "text": "Il singolo blocco contiguo è illegale nello standard ANSI C."
+        },
+        {
+          "origKey": "c",
+          "text": "L'array di puntatori consuma meno memoria rispetto al blocco contiguo."
+        },
+        {
+          "origKey": "d",
+          "text": "Non esiste alcuna differenza di layout fisico."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 3 (2D Arrays Memory Layout & Cache Locality)",
+      "explanation": [
+        "- <strong>Array di puntatori (<code>int **m</code>):</strong> richiede $R$ allocazioni distinte per le righe più un array di $R$ puntatori. Le righe sono sparse nell'heap: scorrere le celle provoca continui cache miss per mancanza di località spaziale.",
+        "- <strong>Buffer lineare contiguo:</strong> un'unica <code>malloc(R * C * sizeof(int))</code> garantisce che tutti gli elementi siano fisicamente adiacenti in memoria. La CPU carica intere cache lines consecutive aumentando drasticamente le prestazioni; l'accesso alla cella $(r, c)$ avviene via aritmetica di puntatori: <code>m[r * C + c]</code>."
+      ],
+      "wrongReasons": "Il blocco lineare è perfettamente standard ed è il pattern raccomandato ({{opt:b}}); l'array di puntatori consuma più memoria per via dei puntatori intermedi ({{opt:c}}); il layout è radicalmente diverso ({{opt:d}})."
+    },
+    {
+      "id": 144,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C Stringhe: Terminatore Nullo e Differenza tra sizeof e strlen",
+      "topic": "c_memory",
+      "question": "Data la dichiarazione <code>char str[] = \"Hello\";</code>, cosa restituiscono rispettivamente <code>strlen(str)</code> e <code>sizeof(str)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "strlen = 5 (conta i caratteri fino al terminatore nullo '\\0' escluso); sizeof = 6 (conta tutti i byte dell'array compreso il terminatore '\\0')."
+        },
+        {
+          "origKey": "b",
+          "text": "strlen = 6, sizeof = 6"
+        },
+        {
+          "origKey": "c",
+          "text": "strlen = 5, sizeof = 5"
+        },
+        {
+          "origKey": "d",
+          "text": "strlen = 8, sizeof = 4"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (C Strings & Null Terminator)",
+      "explanation": [
+        "In C i letterali stringa sono terminati dal carattere nullo <code>'\\0'</code> (codice ASCII 0):",
+        "- <code>strlen(str)</code> scorre la stringa a runtime e conta i caratteri visibili: <code>'H','e','l','l','o'</code> = 5.",
+        "- <code>sizeof(str)</code> valuta la dimensione statica dell'array di caratteri allocato nello stack: 5 caratteri più il byte per <code>'\\0'</code> = 6 byte."
+      ],
+      "wrongReasons": "strlen non include il terminatore nullo ({{opt:b}}); sizeof deve includere '\\0' nell'array ({{opt:c}}); valori casuali errati ({{opt:d}})."
+    },
+    {
+      "id": 145,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Stringhe: Buffer Overflow con strcpy() vs snprintf()",
+      "topic": "c_memory",
+      "question": "Perché le funzioni storiche come <code>strcpy()</code> e <code>gets()</code> sono considerate gravi vulnerabilità di sicurezza e vanno sostituite con <code>snprintf()</code> o <code>fgets()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Perché non controllano la dimensione del buffer di destinazione: se la sorgente supera la capacità del buffer, sovrascrivono la memoria adiacente nello stack corrompendo il Return Address e permettendo attacchi di esecuzione remota di codice (Buffer Overflow)."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché rallentano la velocità della CPU del 90%."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché funzionano solo su macchine a 16 bit."
+        },
+        {
+          "origKey": "d",
+          "text": "Perché crittografano il testo rendendolo illeggibile."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (Memory Safety & Stack Smashing)",
+      "explanation": [
+        "<code>strcpy(dest, src)</code> e <code>gets(dest)</code> continuano a copiare byte finché non incontrano <code>'\\0'</code>, ignorando la dimensione di <code>dest</code>.",
+        "Se <code>src</code> è più lunga, si verifica uno **Stack-based Buffer Overflow**:",
+        "I byte in eccesso sovrascrivono i registri salvati nello stack (frame pointer e return address). Un attaccante può sovrascrivere l'indirizzo di ritorno per deviare il flusso di esecuzione verso shellcode arbitrario.",
+        "Funzioni sicure come <strong><code>snprintf(dest, sizeof(dest), \"%s\", src)</code></strong> impongono il limite massimo inderogabile dei byte da scrivere."
+      ],
+      "wrongReasons": "Non rallentano la CPU ({{opt:b}}); funzionano su tutti i bit ({{opt:c}}); non applicano crittografia ({{opt:d}})."
+    },
+    {
+      "id": 146,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Allineamento: Strutture e Data Padding",
+      "topic": "c_memory",
+      "question": "Dati i tipi standard a 64 bit (sizeof(char)=1, sizeof(int)=4, sizeof(double)=8), quale sarà la dimensione restituita da <code>sizeof(struct Sample)</code> per la struct:\n<pre><code>struct Sample {\n    char a;\n    int b;\n    double c;\n};</code></pre>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "16 byte (a occupa 1 byte + 3 byte di padding interno per allineare b a un multiplo di 4; b occupa 4 byte; c occupa 8 byte già allineato a multiplo di 8. Totale: 1 + 3 + 4 + 8 = 16 byte)."
+        },
+        {
+          "origKey": "b",
+          "text": "13 byte (1 + 4 + 8 senza alcun allineamento)"
+        },
+        {
+          "origKey": "c",
+          "text": "24 byte"
+        },
+        {
+          "origKey": "d",
+          "text": "8 byte"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 4 (Hardware Alignment & Struct Padding)",
+      "explanation": [
+        "Le architetture moderne richiedono che i tipi di dato siano allocati a indirizzi multipli della propria dimensione naturale (Natural Alignment):",
+        "1. <code>char a</code> offset 0, dimensione 1 byte.",
+        "2. <code>int b</code> richiede allineamento a 4 byte: il compilatore inserisce 3 byte di padding (offset 1, 2, 3). <code>b</code> viene allocato a offset 4 (dimensione 4 byte: occupa 4..7).",
+        "3. <code>double c</code> richiede allineamento a 8 byte: l'offset corrente è 8 (già multiplo di 8!). <code>c</code> occupa da 8 a 15 (8 byte).",
+        "La dimensione totale della struct deve essere multiplo del membro più grande (8 byte): 16 è multiplo di 8.",
+        "Totale: <strong>16 byte</strong>."
+      ],
+      "wrongReasons": "13 byte ignorerebbe l'allineamento hardware provocando unaligned memory access ({{opt:b}}); 24 byte eccederebbe il necessario ({{opt:c}}); 8 byte non conterrebbe nemmeno i campi ({{opt:d}})."
+    },
+    {
+      "id": 147,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Allineamento: Tail Padding e Ottimizzazione dei Campi",
+      "topic": "c_memory",
+      "question": "Se invertiamo l'ordine dei campi come segue:\n<pre><code>struct BadSample {\n    double c; // 8 byte\n    char a;   // 1 byte\n    int b;    // 4 byte\n};</code></pre>e\n<pre><code>struct WorstSample {\n    char a;   // 1 byte\n    double c; // 8 byte\n    char d;   // 1 byte\n};</code></pre>Quanto valgono rispettivamente <code>sizeof(struct BadSample)</code> e <code>sizeof(struct WorstSample)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "BadSample = 16 byte; WorstSample = 24 byte (in WorstSample: a ha 1 byte + 7 byte padding; c ha 8 byte; d ha 1 byte + 7 byte tail padding per allineare l'intera struct a multiplo di 8)."
+        },
+        {
+          "origKey": "b",
+          "text": "Entrambe 10 byte"
+        },
+        {
+          "origKey": "c",
+          "text": "BadSample = 13 byte; WorstSample = 10 byte"
+        },
+        {
+          "origKey": "d",
+          "text": "Entrambe 32 byte"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 4 (Tail Padding & Field Reordering)",
+      "explanation": [
+        "- In <code>BadSample</code>: <code>c</code> (0..7), <code>a</code> (offset 8), padding (9..11 per allineare int a 4), <code>b</code> (12..15). Totale 16 byte.",
+        "- In <code>WorstSample</code>: <code>a</code> (offset 0), padding di 7 byte (offset 1..7 per allineare double a 8), <code>c</code> (offset 8..15), <code>d</code> (offset 16).",
+        "Poiché un array di struct <code>WorstSample arr[2]</code> deve garantire che il membro <code>c</code> del secondo elemento sia allineato a 8, la struct intera necessita di **7 byte di tail padding** (offset 17..23).",
+        "Dimensione totale: <strong>24 byte</strong> (per soli 10 byte effettivi di dati utile, con oltre il 58% di memoria sprecata per cattivo ordinamento!)."
+      ],
+      "wrongReasons": "Ignorano il padding e le regole di allineamento hardware ({{opt:b}}, {{opt:c}}, {{opt:d}})."
+    },
+    {
+      "id": 148,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Allineamento: Direttiva __attribute__((packed)) e #pragma pack",
+      "topic": "c_memory",
+      "question": "Qual è lo scopo e il potenziale costo prestazionale dell'istruzione <code>__attribute__((packed))</code> in GCC/Clang?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Elimina ogni byte di padding forzando i campi ad essere contigui; riduce al minimo l'occupazione di memoria (ideale per pacchetti di rete e protocolli hardware), ma su molte architetture causa pesanti penalità prestazionali o crash da SIGBUS per accessi a indirizzi non allineati."
+        },
+        {
+          "origKey": "b",
+          "text": "Comprime la struct usando l'algoritmo GZIP in tempo reale."
+        },
+        {
+          "origKey": "c",
+          "text": "Rende la struct accessibile solo tramite protocolli HTTP."
+        },
+        {
+          "origKey": "d",
+          "text": "Aumenta la frequenza di clock del bus di memoria."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 4 (Packed Structures & Network Headers)",
+      "explanation": [
+        "Con <code>__attribute__((packed))</code> o <code>#pragma pack(push, 1)</code> il compilatore disabilita completamente il padding:",
+        "I dati occupano esattamente la somma dei byte dei tipi (es. 1 + 4 + 8 = 13 byte).",
+        "Tuttavia, accedere a un intero a 32 bit situato a un indirizzo dispari non multiplo di 4 costringe la CPU a compiere due accessi di memoria distinti e bit-shifting nel registro di memoria, oppure genera eccezioni hardware (Bus Error su CPU ARM o SPARC)."
+      ],
+      "wrongReasons": "Non usa GZIP ({{opt:b}}); non riguarda protocolli HTTP ({{opt:c}}); non altera il clock hardware ({{opt:d}})."
+    },
+    {
+      "id": 149,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C Macro: offsetof() di &lt;stddef.h&gt;",
+      "topic": "c_memory",
+      "question": "Cosa calcola la macro standard <code>offsetof(type, member)</code> definita nell'header <code>&lt;stddef.h&gt;</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il numero di byte di offset dall'inizio della struct 'type' al campo 'member'."
+        },
+        {
+          "origKey": "b",
+          "text": "La dimensione in byte del campo member."
+        },
+        {
+          "origKey": "c",
+          "text": "Il numero totale di campi presenti nella struct."
+        },
+        {
+          "origKey": "d",
+          "text": "L'indirizzo IP del socket associato."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 4 (offsetof Macro & Structure Introspection)",
+      "explanation": [
+        "<code>offsetof(type, member)</code> è definita tipicamente come:",
+        "<code>((size_t) &(((type *)0)->member))</code>",
+        "Simula la presenza di una struct all'indirizzo virtuale 0 e restituisce l'indirizzo numerico del campo, che coincide esattamente con l'<strong>offset in byte</strong> del membro dall'inizio della struct."
+      ],
+      "wrongReasons": "La dimensione del membro è sizeof(member) ({{opt:b}}); non conta i campi ({{opt:c}}); non riguarda socket IP ({{opt:d}})."
+    },
+    {
+      "id": 150,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Union: Sovrapposizione di Memoria e Dimensione",
+      "topic": "c_memory",
+      "question": "Qual è la caratteristica di layout di una <code>union</code> in C e da cosa è determinata la sua dimensione (<code>sizeof</code>)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Tutti i membri condividono la stessa identica locazione iniziale di memoria (possono contenere solo un valore alla volta); la dimensione della union è pari alla dimensione del suo membro più grande (eventualmente arrotondata per l'allineamento)."
+        },
+        {
+          "origKey": "b",
+          "text": "I membri sono sequenziali come in una struct e la dimensione è la somma di tutti."
+        },
+        {
+          "origKey": "c",
+          "text": "Una union non alloca memoria finché non viene salvata su file."
+        },
+        {
+          "origKey": "d",
+          "text": "La dimensione di qualsiasi union è sempre fissa a 4 byte."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 11 Sez. 1 (Unions & Memory Overlapping)",
+      "explanation": [
+        "In una <code>union</code>:",
+        "<pre><code>union Data {\n    int i;    // 4 byte\n    double d; // 8 byte\n    char c;   // 1 byte\n};</code></pre>",
+        "Tutti i campi iniziano all'offset 0.",
+        "Scrivere su <code>d</code> sovrascrive i byte di <code>i</code> e <code>c</code>.",
+        "La dimensione deve essere sufficiente a contenere il membro più grande: in questo caso <code>sizeof(union Data) == 8</code> byte."
+      ],
+      "wrongReasons": "Non sono sequenziali (quella è la struct) ({{opt:b}}); alloca memoria regolarmente ({{opt:c}}); non è fissa a 4 byte ({{opt:d}})."
+    },
+    {
+      "id": 151,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Bitwise: Bitfields e Impacchettamento Dati",
+      "topic": "c_memory",
+      "question": "Data la definizione di struct con <strong>bitfields</strong>:\n<pre><code>struct Flags {\n    unsigned int is_ready : 1;\n    unsigned int is_error : 1;\n    unsigned int mode     : 3;\n    unsigned int priority : 2;\n};</code></pre>Cosa significano i numeri dopo i due punti e quanto spazio occupano logicamente?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Indicano il numero esatto di bit allocati per ciascun campo (1 bit per i flag booleani, 3 bit per mode [valori 0-7], 2 bit per priority [valori 0-3]); i 7 bit totali vengono impacchettati in una singola word di memoria."
+        },
+        {
+          "origKey": "b",
+          "text": "Indicano il numero di byte di memoria per ciascun campo."
+        },
+        {
+          "origKey": "c",
+          "text": "Indicano il numero massimo di thread che possono accedere alla variabile."
+        },
+        {
+          "origKey": "d",
+          "text": "Definiscono la priorità di interrupt hardware della scheda madre."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 11 Sez. 2 (Bitfields & Compact Hardware Registers)",
+      "explanation": [
+        "I **bitfields** in C consentono di specificare la larghezza in bit di ciascun membro intero.",
+        "In questo esempio:",
+        "- <code>is_ready</code>: 1 bit ($0$ o $1$);",
+        "- <code>is_error</code>: 1 bit ($0$ o $1$);",
+        "- <code>mode</code>: 3 bit ($2^3 = 8$ stati, da $0$ a $7$);",
+        "- <code>priority</code>: 2 bit ($2^2 = 4$ stati, da $0$ a $3$).",
+        "Somma totale: $1 + 1 + 3 + 2 = 7$ bit, che vengono agevolmente compattati all'interno di una singola unità di memorizzazione <code>unsigned int</code> (tipicamente 4 byte)."
+      ],
+      "wrongReasons": "Non sono byte (sono esplicitamente bit!) ({{opt:b}}); non riguarda i thread ({{opt:c}}); non riguarda interrupt hardware direttamente ({{opt:d}})."
+    },
+    {
+      "id": 152,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Bitwise: Operazioni di Setting, Clearing e Toggling di Bit",
+      "topic": "c_memory",
+      "question": "Quali sono le tre operazioni bitwise corrette per rispettivamente: 1. Impostare a 1 l'n-esimo bit; 2. Azzerare a 0 l'n-esimo bit; 3. Invertire (toggle) l'n-esimo bit di una variabile <code>reg</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "1. reg |= (1U << n); 2. reg &= ~(1U << n); 3. reg ^= (1U << n);"
+        },
+        {
+          "origKey": "b",
+          "text": "1. reg &= (1U << n); 2. reg |= ~(1U << n); 3. reg += (1U << n);"
+        },
+        {
+          "origKey": "c",
+          "text": "1. reg = 1 << n; 2. reg = 0; 3. reg = ~reg;"
+        },
+        {
+          "origKey": "d",
+          "text": "1. reg >> n; 2. reg << n; 3. reg % n;"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 11 Sez. 3 & Formulario C (Bit Manipulation Idioms)",
+      "explanation": [
+        "Gli idiomi bitwise standard sono:",
+        "- <strong>SET (1):</strong> <code>reg |= (1U << n)</code> (OR logico accende il bit senza toccare gli altri).",
+        "- <strong>CLEAR (0):</strong> <code>reg &= ~(1U << n)</code> (maschera con NOT azzera il bit lasciando gli altri inalterati).",
+        "- <strong>TOGGLE:</strong> <code>reg ^= (1U << n)</code> (XOR inverte il valore corrente del bit).",
+        "- <strong>TEST:</strong> <code>(reg & (1U << n)) != 0</code> (verifica se il bit è impostato)."
+      ],
+      "wrongReasons": "Inverte OR e AND ({{opt:b}}); sovrascrive l'intera variabile azzerando gli altri bit ({{opt:c}}); shift puro senza assegnamento logico ({{opt:d}})."
+    },
+    {
+      "id": 153,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Bitwise: Verifica Potenza di Due",
+      "topic": "c_memory",
+      "question": "Cosa verifica l'espressione <code>(n > 0) && ((n & (n - 1)) == 0)</code> in C?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Verifica se il numero intero positivo n è una potenza esatta di 2 (es. 1, 2, 4, 8, 16...)."
+        },
+        {
+          "origKey": "b",
+          "text": "Verifica se il numero n è un numero primo."
+        },
+        {
+          "origKey": "c",
+          "text": "Verifica se n è un numero dispari."
+        },
+        {
+          "origKey": "d",
+          "text": "Restituisce sempre true per qualsiasi intero."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 11 Sez. 3 (Bit-Hacks & Fast Arithmetic)",
+      "explanation": [
+        "In rappresentazione binaria, una potenza di 2 possiede esattamente un solo bit impostato a <code>1</code> (es. $8 = 00001000_2$).",
+        "Il numero precedente $n - 1$ ha quel bit a <code>0</code> e tutti i bit meno significativi a <code>1</code> ($7 = 00000111_2$).",
+        "Eseguendo il bitwise AND: $n \\,\\&\\, (n - 1)$ produce esattamente <code>0</code> se e solo se $n$ possiede un unico bit attivo.",
+        "La condizione $n > 0$ esclude il caso limite $n = 0$."
+      ],
+      "wrongReasons": "Non calcola numeri primi ({{opt:b}}); non verifica la disparità (quello è n & 1) ({{opt:c}}); non restituisce sempre true ({{opt:d}})."
+    },
+    {
+      "id": 154,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Endianness: Little-Endian vs Big-Endian",
+      "topic": "c_memory",
+      "question": "Dato il numero esadecimale a 32 bit <code>0x12345678</code>, come viene memorizzato nei 4 byte consecutivi di memoria su un'architettura **Little-Endian** (come Intel x86/x64) a partire dall'indirizzo più basso?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "0x78, 0x56, 0x34, 0x12 (il byte meno significativo [LSB] è memorizzato all'indirizzo più basso)."
+        },
+        {
+          "origKey": "b",
+          "text": "0x12, 0x34, 0x56, 0x78 (il byte più significativo [MSB] è memorizzato all'indirizzo più basso)."
+        },
+        {
+          "origKey": "c",
+          "text": "0x56, 0x78, 0x12, 0x34"
+        },
+        {
+          "origKey": "d",
+          "text": "I byte vengono memorizzati al contrario bit per bit."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 11 Sez. 4 (Byte Ordering: Little vs Big Endian)",
+      "explanation": [
+        "- <strong>Little-Endian (Intel, AMD, ARM default):</strong> il byte *meno significativo* (Least Significant Byte - LSB, qui <code>0x78</code>) viene collocato all'indirizzo di memoria più basso, seguito da <code>0x56</code>, <code>0x34</code> e infine <code>0x12</code> (MSB).",
+        "- <strong>Big-Endian (Network Byte Order, TCP/IP):</strong> memorizza per primo il byte più significativo (<code>0x12, 0x34, 0x56, 0x78</code>)."
+      ],
+      "wrongReasons": "La sequenza 0x12, 0x34, 0x56, 0x78 è tipica del Big-Endian ({{opt:b}}); non inverte le coppie ({{opt:c}}); non inverte i bit internamente ai singoli byte ({{opt:d}})."
+    },
+    {
+      "id": 155,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Rete: Funzioni di Conversione Endianness (htons, ntohs, htonl, ntohl)",
+      "topic": "c_memory",
+      "question": "A cosa servono le funzioni standard <code>htons()</code> e <code>ntohl()</code> della libreria socket?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "htons converte un intero a 16 bit da Host Byte Order a Network Byte Order (Big-Endian); ntohl converte un intero a 32 bit da Network Byte Order a Host Byte Order."
+        },
+        {
+          "origKey": "b",
+          "text": "Convertono le stringhe in numeri esadecimali."
+        },
+        {
+          "origKey": "c",
+          "text": "Servono per calcolare l'hash crittografico SHA-256 dei pacchetti."
+        },
+        {
+          "origKey": "d",
+          "text": "Inizializzano la scheda di rete del computer."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 11 Sez. 4 & Cap. 08 Sez. 1",
+      "explanation": [
+        "La convenzione di denominazione è mnemotecnica:",
+        "- <code>h</code> = Host, <code>to</code> = verso, <code>n</code> = Network, <code>s</code> = short (16 bit, es. porte TCP/UDP).",
+        "- <code>n</code> = Network, <code>to</code> = verso, <code>h</code> = Host, <code>l</code> = long (32 bit, es. indirizzi IPv4).",
+        "Poiché il protocollo di rete TCP/IP richiede tassativamente Big-Endian mentre i computer host sono in maggioranza Little-Endian, queste funzioni assicurano la corretta interpretazione dei campi di intestazione."
+      ],
+      "wrongReasons": "Non convertono stringhe in esadecimale ({{opt:b}}); non fanno crittografia ({{opt:c}}); non inizializzano schede ({{opt:d}})."
+    },
+    {
+      "id": 156,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C Preprocessore: Include Guards (#ifndef / #define / #endif)",
+      "topic": "c_memory",
+      "question": "A cosa servono le direttive <strong>Include Guards</strong> poste all'inizio e alla fine dei file header (.h) in C?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Impediscono che lo stesso file header venga incluso più volte durante la compilazione della stessa unità di traduzione (.c), evitando errori di ridefinizione di tipi, struct ed enum."
+        },
+        {
+          "origKey": "b",
+          "text": "Proteggono il file header da virus informatici e malware."
+        },
+        {
+          "origKey": "c",
+          "text": "Impediscono che il codice venga letto da altri programmatori."
+        },
+        {
+          "origKey": "d",
+          "text": "Servono a crittografare il codice sorgente C."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (Preprocessor Directives & Modular C)",
+      "explanation": [
+        "Se un file <code>main.c</code> include sia <code>a.h</code> sia <code>b.h</code>, ed entrambi includono <code>common.h</code>, senza include guards il contenuto di <code>common.h</code> verrebbe copiato due volte nello stesso file preprocessato, generando l'errore: <code>redefinition of 'struct Foo'</code>.",
+        "L'idioma:\n<pre><code>#ifndef COMMON_H\n#define COMMON_H\n/* Dichiarazioni */\n#endif</code></pre>\ngarantisce che il preprocessore salti il file alle inclusioni successive."
+      ],
+      "wrongReasons": "Non è un antivirus ({{opt:b}}); non nasconde il codice ({{opt:c}}); non crittografa ({{opt:d}})."
+    },
+    {
+      "id": 157,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Preprocessore: Trabocchetto delle Macro con Parametri",
+      "topic": "c_memory",
+      "question": "Data la macro <code>#define SQUARE(x) x * x</code>, cosa restituisce l'espressione <code>SQUARE(2 + 3)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "11 (il preprocessore esegue una sostituzione puramente testuale: 2 + 3 * 2 + 3 = 2 + 6 + 3 = 11, anziché (2+3)*(2+3) = 25)."
+        },
+        {
+          "origKey": "b",
+          "text": "25"
+        },
+        {
+          "origKey": "c",
+          "text": "Errore di compilazione"
+        },
+        {
+          "origKey": "d",
+          "text": "0"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (Macro Side-effects & Parenthesization)",
+      "explanation": [
+        "Il preprocessore C non conosce la sintassi né le regole matematiche di precedenza degli operatori:",
+        "Sostituisce testualmente <code>x</code> con <code>2 + 3</code>:",
+        "<code>2 + 3 * 2 + 3</code>.",
+        "Poiché la moltiplicazione ha precedenza più alta dell'addizione, viene calcolato: $2 + (3 \\times 2) + 3 = 2 + 6 + 3 = 11$.",
+        "Per evitare questo grave bug le macro devono sempre racchiudere tra parentesi ogni argomento e l'intera espressione: <code>#define SQUARE(x) ((x) * (x))</code>."
+      ],
+      "wrongReasons": "Non restituisce 25 per mancanza di parentesi ({{opt:b}}); compila regolarmente ({{opt:c}}); non azzera ({{opt:d}})."
+    },
+    {
+      "id": 158,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Puntatori: void* e Assenza di Aritmetica nello Standard ANSI",
+      "topic": "c_memory",
+      "question": "Perché lo standard ANSI C (ISO C99/C11) vieta l'aritmetica dei puntatori direttamente su un puntatore di tipo <code>void *ptr</code> (es. <code>ptr + 1</code>)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Perché void rappresenta un tipo incompleto di dimensione non definita (sizeof(void) è indefinito nello standard); non è possibile determinare di quanti byte avanzare senza un cast esplicito a un tipo concreto come char* o uint8_t*."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché void* risiede esclusivamente nella memoria video."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché ptr + 1 cancellerebbe la memoria puntata."
+        },
+        {
+          "origKey": "d",
+          "text": "Perché i puntatori generici non possono contenere indirizzi reali."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 2 (Generic Pointers & Pointer Arithmetic Standards)",
+      "explanation": [
+        "L'aritmetica dei puntatori scala l'offset moltiplicandolo per <code>sizeof(*ptr)</code>.",
+        "Poiché <code>void</code> non ha dimensione definita (è un tipo incompleto), lo standard ISO C non consente l'operazione (anche se GCC supporta per estensione GNU <code>sizeof(void) == 1</code> come estensione non standard).",
+        "In codice rigoroso e portabile si deve effettuare il cast: <code>((char*)ptr) + offset</code> o <code>((uint8_t*)ptr) + offset</code>."
+      ],
+      "wrongReasons": "Non riguarda la memoria video ({{opt:b}}); non cancella memoria ({{opt:c}}); contiene normali indirizzi fisici ({{opt:d}})."
+    },
+    {
+      "id": 159,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Memoria: Stack Overflow e Frame di Chiamata",
+      "topic": "c_memory",
+      "question": "Quale tra le seguenti situazioni provoca tipicamente un crash per <strong>Stack Overflow</strong> (SIGSEGV / segfault) in un programma C?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Una funzione ricorsiva priva di condizione di arresto (ricorsione infinita) o l'allocazione di un array locale enorme sullo stack (es. int big_arr[10000000];), che oltrepassa la dimensione massima dello stack allocata dal SO (tipicamente 1-8 MB)."
+        },
+        {
+          "origKey": "b",
+          "text": "L'allocazione di 1 GB tramite malloc() nell'heap."
+        },
+        {
+          "origKey": "c",
+          "text": "L'apertura di troppi file con fopen()."
+        },
+        {
+          "origKey": "d",
+          "text": "L'uso di troppe variabili di tipo float."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (Stack Exhaustion & Guard Pages)",
+      "explanation": [
+        "Lo stack di un thread ha dimensioni fisse prefissate dal sistema operativo (es. 1 MB su Windows, 8 MB su Linux).",
+        "Ogni chiamata a funzione consuma spazio per i registri salvati, l'indirizzo di ritorno e le variabili locali.",
+        "Se la ricorsione è infinita o si alloca una struttura locale troppo grande (<code>int arr[10000000]</code> richiede circa 40 MB), lo stack pointer sconfina oltre la **Guard Page** dello stack, generando un'eccezione hardware intercettata dal kernel come <code>Segmentation fault (core dumped)</code>."
+      ],
+      "wrongReasons": "malloc alloca nello heap, non nello stack ({{opt:b}}); fopen esaurisce file descriptors ({{opt:c}}); le variabili float occupano normali 4 byte ({{opt:d}})."
+    },
+    {
+      "id": 160,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Memoria: Frammentazione dell'Heap Interna vs Esterna",
+      "topic": "c_memory",
+      "question": "Cos'è la <strong>frammentazione esterna</strong> dell'heap e per quale motivo può causare il fallimento di <code>malloc()</code> anche se la memoria totale libera è sufficiente?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Si verifica quando la memoria libera è spezzettata in molteplici piccoli blocchi non contigui distribuiti nell'heap; se viene richiesta una singola allocazione di grandi dimensioni, malloc fallisce non trovando alcun blocco libero contiguo sufficientemente grande."
+        },
+        {
+          "origKey": "b",
+          "text": "È quando il disco fisso del computer è pieno al 100%."
+        },
+        {
+          "origKey": "c",
+          "text": "È lo spreco di byte dovuto al padding all'interno delle singole celle allocate."
+        },
+        {
+          "origKey": "d",
+          "text": "Accade quando due programmi tentano di allocare lo stesso indirizzo IP."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 1 (Heap Fragmentation Mechanics)",
+      "explanation": [
+        "- <strong>Frammentazione Interna:</strong> memoria allocata ma non utilizzata all'interno del blocco restituito all'applicazione (dovuta a quantizzazione o allineamento dei chunk di memoria).",
+        "- <strong>Frammentazione Esterna:</strong> memoria libera complessiva sufficiente (es. 50 MB liberi totali), ma divisa in migliaia di frammenti sparsi di 4 KB l'uno separati da blocchi ancora occupati.",
+        "Una richiesta di <code>malloc(10 * 1024 * 1024)</code> (10 MB contigui) fallisce e restituisce <code>NULL</code> perché non esiste un unico segmento contiguo disponibile."
+      ],
+      "wrongReasons": "Non riguarda il disco fisso ({{opt:b}}); la memoria interna al blocco è frammentazione interna ({{opt:c}}); non c'entrano indirizzi IP ({{opt:d}})."
+    },
+    {
+      "id": 161,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Stringhe: strncpy() e il Pericolo del Mancato Terminatore",
+      "topic": "c_memory",
+      "question": "Qual è il pericoloso difetto della funzione standard <code>strncpy(dest, src, n)</code> se la lunghezza di <code>src</code> è maggiore o uguale a <code>n</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "NON appende il terminatore nullo '\\0' alla fine di dest; la stringa risultante non è null-terminated e successive letture (es. strlen, printf) oltrepassano il buffer corrompendo la memoria."
+        },
+        {
+          "origKey": "b",
+          "text": "Causa un blocco permanente della scheda madre."
+        },
+        {
+          "origKey": "c",
+          "text": "Cancella l'intero array src rendendolo vuoto."
+        },
+        {
+          "origKey": "d",
+          "text": "Restituisce sempre un puntatore a NULL."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (strncpy Gotchas & Safer Alternatives)",
+      "explanation": [
+        "La specifica storica di <code>strncpy</code> stabilisce che se <code>strlen(src) >= n</code>, vengono copiati esattamente <code>n</code> caratteri senza inserire il terminatore nullo <code>'\\0'</code>.",
+        "Il buffer di destinazione <code>dest</code> non è quindi una stringa C valida!",
+        "Chiamare successivamente <code>printf(\"%s\", dest)</code> o <code>strlen(dest)</code> provoca una lettura fuori limite che cerca il primo zero arbitrario in memoria.",
+        "Buona prassi impone di forzare manualmente: <code>dest[n - 1] = '\\0';</code> subito dopo."
+      ],
+      "wrongReasons": "Nessun danno hardware ({{opt:b}}); src non viene alterato ({{opt:c}}); restituisce dest, non NULL ({{opt:d}})."
+    },
+    {
+      "id": 162,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C Argomenti: argc e argv nel main()",
+      "topic": "c_memory",
+      "question": "Dato il prototipo <code>int main(int argc, char *argv[])</code>, cosa rappresentano <code>argc</code> e <code>argv[0]</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "argc è il numero totale di argomenti passati da riga di comando (compreso il comando stesso); argv[0] contiene per convenzione la stringa con il nome o il percorso dell'eseguibile lanciato."
+        },
+        {
+          "origKey": "b",
+          "text": "argc è l'identificativo del processo (PID); argv[0] è la memoria RAM disponibile."
+        },
+        {
+          "origKey": "c",
+          "text": "argc conta solo gli argomenti opzionali escludendo il nome del programma."
+        },
+        {
+          "origKey": "d",
+          "text": "argv[0] è sempre una stringa vuota \"\"."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (Command Line Arguments & Environment)",
+      "explanation": [
+        "- <code>argc</code> (argument count): intero $\\ge 1$ indicante il numero di parametri.",
+        "- <code>argv</code> (argument vector): array di puntatori a stringhe (<code>char**</code>).",
+        "- <code>argv[0]</code> contiene il nome del programma invocato dalla shell.",
+        "- Gli argomenti utente effettivi partono da <code>argv[1]</code> fino a <code>argv[argc - 1]</code>; <code>argv[argc]</code> è garantito essere <code>NULL</code>."
+      ],
+      "wrongReasons": "Non è il PID ({{opt:b}}); include sempre il nome del programma (argc è almeno 1) ({{opt:c}}); argv[0] contiene il path/nome dell'eseguibile ({{opt:d}})."
+    },
+    {
+      "id": 163,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Variabili Statiche: Visibilità File-Scope vs Variabili Interne",
+      "topic": "c_memory",
+      "question": "Cosa significa applicare il modificatore <code>static</code> rispettivamente a una funzione globale (file-scope) e a una variabile locale interna a una funzione in C?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Funzione file-scope: limita la visibilità (internal linkage) al solo file .c corrente impedendo che altri moduli la richiamino; Variabile locale: preserva il proprio valore tra chiamate successive alla funzione mantenendo la memoria nel segmento Data/BSS per l'intera durata del programma."
+        },
+        {
+          "origKey": "b",
+          "text": "Rende la funzione e la variabile automaticamente non modificabili (costanti)."
+        },
+        {
+          "origKey": "c",
+          "text": "Alloca la memoria della variabile nello stack per essere deallocata all'uscita."
+        },
+        {
+          "origKey": "d",
+          "text": "Permette alla funzione di essere invocata solo da un singolo thread."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (Storage Duration & Linkage)",
+      "explanation": [
+        "In C la parola chiave <code>static</code> ha due ruoli profondamente distinti:",
+        "1. <strong>Internal Linkage (a livello globale/modulo):</strong> una funzione o variabile globale marcata <code>static</code> non viene esportata nella tabella dei simboli del linker. Non può causare collisioni con simboli omonimi in altri file <code>.c</code>.",
+        "2. <strong>Static Storage Duration (a livello locale):</strong> una variabile locale marcata <code>static</code> viene allocata una sola volta nel segmento <code>.data</code> o <code>.bss</code> (anziché nello stack frame), conservando il proprio stato tra una chiamata e l'altra."
+      ],
+      "wrongReasons": "Costante è const, non static ({{opt:b}}); alloca nel data/bss, non nello stack ({{opt:c}}); non limita ai singoli thread ({{opt:d}})."
+    },
+    {
+      "id": 164,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Preprocessore: Stringificazione (#) e Concatenazione di Token (##)",
+      "topic": "c_memory",
+      "question": "Cosa compiono gli operatori <code>#</code> e <code>##</code> all'interno delle macro del preprocessore C?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "# trasforma l'argomento in una stringa racchiusa tra doppi apici (stringification); ## unisce (concatena) due token lessicali in un unico nuovo identificatore valido a compile-time."
+        },
+        {
+          "origKey": "b",
+          "text": "# calcola la radice quadrata; ## calcola il quadrato."
+        },
+        {
+          "origKey": "c",
+          "text": "# apre un file su disco; ## lo chiude."
+        },
+        {
+          "origKey": "d",
+          "text": "Servono solo per scrivere commenti nel codice sorgente."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (Macro Metaprogramming & Token Pasting)",
+      "explanation": [
+        "- <strong>Operatore <code>#</code> (Stringizing):</strong> <code>#define STR(x) #x</code>; la chiamata <code>STR(test)</code> viene espansa nella stringa <code>\"test\"</code>.",
+        "- <strong>Operatore <code>##</code> (Token Pasting):</strong> <code>#define CONCAT(a, b) a ## b</code>; la chiamata <code>CONCAT(var, 1)</code> produce l'identificatore <code>var1</code>.",
+        "Sono diffusissimi per generare boilerplate tipizzato e dispatcher di registri in C."
+      ],
+      "wrongReasons": "Non calcolano funzioni matematiche ({{opt:b}}); non aprono file ({{opt:c}}); i commenti in C usano // o /* */ ({{opt:d}})."
+    },
+    {
+      "id": 165,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Memoria: Aliasing e Parola Chiave restrict (C99+)",
+      "topic": "c_memory",
+      "question": "Quale garanzia fornisce al compilatore la parola chiave <code>restrict</code> applicata a un puntatore (es. <code>int * restrict ptr</code>)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Garantisce che per l'intera durata del blocco l'oggetto puntato sarà accessibile esclusivamente tramite quel puntatore (nessun puntatore alias); permette al compilatore ottimizzazioni aggressive mantenendo i valori nei registri CPU e vettorializzando i cicli."
+        },
+        {
+          "origKey": "b",
+          "text": "Impedisce la scrittura nella memoria puntata rendendola di sola lettura."
+        },
+        {
+          "origKey": "c",
+          "text": "Impedisce al Garbage Collector di spostare l'oggetto."
+        },
+        {
+          "origKey": "d",
+          "text": "Restringe la dimensione del puntatore a 16 bit."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 2 (Pointer Aliasing & Restrict Qualifier)",
+      "explanation": [
+        "In assenza di <code>restrict</code>, il compilatore deve sempre ipotizzare che due puntatori dello stesso tipo possano puntare alla stessa area di memoria (<strong>Pointer Aliasing</strong>). Di conseguenza, dopo ogni scrittura tramite <code>*p</code>, è costretto a ricaricare dalla memoria il valore di <code>*q</code>.",
+        "Dichiarando <code>restrict</code>, lo sviluppatore certifica formalmente che non esistono puntatori alias:",
+        "L'ottimizzatore del compilatore può mantenere i valori caricati direttamente nei registri della CPU ed emettere istruzioni vettoriali SIMD senza continui accessi lenti alla memoria RAM."
+      ],
+      "wrongReasons": "Sola lettura è const ({{opt:b}}); C non ha Garbage Collector ({{opt:c}}); la dimensione dei puntatori resta invariata ({{opt:d}})."
+    },
+    {
+      "id": 166,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Buffer: memcpy() vs memmove() e Sovrapposizione di Memoria",
+      "topic": "c_memory",
+      "question": "Qual è la differenza critica tra <code>memcpy(dest, src, n)</code> e <code>memmove(dest, src, n)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "memcpy assume che i blocchi di memoria sorgente e destinazione non si sovrappongano; se c'è overlap il comportamento è indefinito (corruzione dei dati). memmove gestisce correttamente e in sicurezza qualsiasi sovrapposizione di buffer (eseguendo la copia da destra o da sinistra)."
+        },
+        {
+          "origKey": "b",
+          "text": "memmove sposta i file sul disco fisso, memcpy li copia in memoria RAM."
+        },
+        {
+          "origKey": "c",
+          "text": "memcpy è per stringhe con terminatore '\\0', memmove è solo per numeri float."
+        },
+        {
+          "origKey": "d",
+          "text": "Non c'è alcuna differenza pratica: memmove è solo un alias obsoleto di memcpy."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 5 (Buffer Manipulation & Overlapping Hazard)",
+      "explanation": [
+        "In <code>memcpy</code>, il compilatore genera istruzioni assembly vettoriali ad alta velocità assumendo che <code>src</code> e <code>dest</code> siano disgiunti.",
+        "Se i buffer si sovrappongono parzialmente (es. shift di un array verso sinistra o destra sullo stesso blocco di memoria), <code>memcpy</code> sovrascrive byte di <code>src</code> prima di averli letti, corrompendo l'output.",
+        "<strong><code>memmove</code></strong> rileva la direzione della sovrapposizione e copia temporaneamente in un buffer ausiliario o inverte la direzione di scansione garantendo una copia perfetta."
+      ],
+      "wrongReasons": "Non riguarda il disco fisso ({{opt:b}}); entrambi operano su byte grezzi generici (void*) ({{opt:c}}); non sono alias ({{opt:d}})."
+    },
+    {
+      "id": 167,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Buffer: Il Trabocchetto di memset() con Interi non Nulli",
+      "topic": "c_memory",
+      "question": "Cosa accade se si esegue il codice:\n<pre><code>int arr[5];\nmemset(arr, 1, sizeof(arr));</code></pre>Ciascun elemento dell'array conterrà il numero intero 1?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "NO: memset imposta ciascun singolo BYTE a 0x01; poiché un int a 32 bit è formato da 4 byte, ciascun elemento varrà 0x01010101 (in decimale 16.843.009)."
+        },
+        {
+          "origKey": "b",
+          "text": "SÌ: tutti gli elementi conterranno esattamente il valore intero 1."
+        },
+        {
+          "origKey": "c",
+          "text": "Il codice solleva un'eccezione IllegalArgumentException a runtime."
+        },
+        {
+          "origKey": "d",
+          "text": "Solo il primo elemento varrà 1, gli altri 0."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 5 (memset Byte-Granularity Gotcha)",
+      "explanation": [
+        "<code>memset(void *s, int c, size_t n)</code> converte <code>c</code> in <code>unsigned char</code> e scrive quel byte per <code>n</code> volte consecutive.",
+        "In un <code>int</code> a 32 bit (4 byte), scrivere il byte <code>0x01</code> in tutte le 4 posizioni produce la sequenza esadecimale:",
+        "<code>0x01010101</code>, che convertita in decimale equivale a **16.843.009**!",
+        "<code>memset</code> è sicuro per inizializzare a <code>0</code> (tutti i byte a zero) o <code>-1</code> (in complemento a due, tutti i byte a <code>0xFF</code> producono -1), ma NON per altri numeri interi."
+      ],
+      "wrongReasons": "Non scrive interi a 32 bit ma singoli byte ({{opt:b}}); C non ha eccezioni a runtime ({{opt:c}}); tutti i 5 elementi subiscono la stessa scrittura byte-per-byte ({{opt:d}})."
+    },
+    {
+      "id": 168,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C Stringhe: Modifica di String Literal e Segmentation Fault",
+      "topic": "c_memory",
+      "question": "Cosa accade all'esecuzione del codice:\n<pre><code>char *s = \"universita\";\ns[0] = 'U';</code></pre>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Segmentation fault (crash immediato): i letterali stringa in C sono allocati nel segmento di memoria in sola lettura (.rodata); tentare di modificarli genera una violazione di accesso protetto da parte dell'MMU."
+        },
+        {
+          "origKey": "b",
+          "text": "La stringa viene modificata regolarmente in \"Universita\"."
+        },
+        {
+          "origKey": "c",
+          "text": "Viene stampato un warning ma l'esecuzione continua."
+        },
+        {
+          "origKey": "d",
+          "text": "La stringa viene copiata nello stack automaticamente."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (String Literals & Read-Only Memory)",
+      "explanation": [
+        "In C, <code>\"universita\"</code> è un letterale stringa memorizzato nel segmento di codice/costanti in sola lettura (<strong>.rodata</strong> / Text segment).",
+        "La variabile <code>s</code> è un puntatore nello stack che punta a quell'indirizzo protetto in memoria.",
+        "Quando l'istruzione tenta di eseguire <code>s[0] = 'U'</code>, l'hardware MMU (Memory Management Unit) della CPU rileva una scrittura su una pagina marcata <em>Read-Only</em> e solleva una trap di protezione, convertita dal kernel in segnale <strong>SIGSEGV (Segmentation Fault)</strong>.",
+        "Per avere una stringa modificabile occorre allocare un array nello stack: <code>char s[] = \"universita\";</code>."
+      ],
+      "wrongReasons": "Non modifica la stringa ({{opt:b}}); non è un semplice warning, è un crash hardware ({{opt:c}}); il puntatore non duplica nello stack ({{opt:d}})."
+    },
+    {
+      "id": 169,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Struct: Assegnazione per Valore (Shallow Copy)",
+      "topic": "c_memory",
+      "question": "Dato il codice:\n<pre><code>struct Node { int id; char *name; };\nstruct Node a = {1, strdup(\"Test\")};\nstruct Node b = a;</code></pre>Cosa accade alla memoria con l'assegnazione <code>b = a</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "C esegue una shallow copy bit a bit: b.id riceve il valore 1, ma b.name riceve una copia del solo puntatore, puntando allo stesso identico blocco heap allocato per a.name (rischio di Double Free se entrambi chiamano free)."
+        },
+        {
+          "origKey": "b",
+          "text": "C esegue una deep copy automatica clonando anche la memoria puntata da name."
+        },
+        {
+          "origKey": "c",
+          "text": "Il codice non compila perché le struct non possono essere assegnate direttamente con =."
+        },
+        {
+          "origKey": "d",
+          "text": "La struct a viene svuotata e azzerata (move semantics di C++)."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 4 (Struct Copy Semantics & Pointer Aliasing)",
+      "explanation": [
+        "In C l'operatore di assegnamento tra struct (<code>b = a;</code>) è una copia superficiale (**shallow copy**) equivalente a un <code>memcpy(&b, &a, sizeof(struct Node))</code>.",
+        "I valori scalari vengono copiati direttamente.",
+        "Tuttavia, per i puntatori viene copiato solo l'indirizzo numerico: sia <code>a.name</code> sia <code>b.name</code> puntano alla stessa identica cella heap.",
+        "Se il programmatore invoca <code>free(a.name)</code> e successivamente <code>free(b.name)</code>, si verifica una grave vulnerabilità di **Double Free**."
+      ],
+      "wrongReasons": "C non fa mai deep copy automatica ({{opt:b}}); l'assegnazione di struct è perfettamente legale in ANSI C ({{opt:c}}); C puro non possiede move semantics ({{opt:d}})."
+    },
+    {
+      "id": 170,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C File I/O: fopen() e Controllo di Fallimento",
+      "topic": "c_memory",
+      "question": "Cosa restituisce la funzione standard <code>fopen(\"dati.txt\", \"r\")</code> se il file non esiste o i permessi sono negati?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Restituisce il puntatore NULL e imposta la variabile globale errno con il codice dell'errore."
+        },
+        {
+          "origKey": "b",
+          "text": "Crea automaticamente un file vuoto."
+        },
+        {
+          "origKey": "c",
+          "text": "Solleva una FileNotFoundException bloccando il programma."
+        },
+        {
+          "origKey": "d",
+          "text": "Restituisce un puntatore all'inizio dell'hard disk."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 5 (Standard I/O Streams & fopen)",
+      "explanation": [
+        "In C le funzioni della libreria standard non usano eccezioni:",
+        "Se <code>fopen()</code> non riesce ad aprire il file (es. file inesistente con modalità <code>\"r\"</code> o permessi insufficienti):",
+        "Restituisce <strong><code>NULL</code></strong> e imposta la variabile <strong><code>errno</code></strong> (es. <code>ENOENT</code> per no such file, <code>EACCES</code> per permission denied).",
+        "Verificare sempre <code>if (fp == NULL)</code> prima di qualsiasi operazione."
+      ],
+      "wrongReasons": "La modalità \"r\" non crea file (lo fa \"w\" o \"a\") ({{opt:b}}); C non possiede eccezioni ({{opt:c}}); non restituisce puntatori a dischi grezzi ({{opt:d}})."
+    },
+    {
+      "id": 171,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C File I/O: fread() e fwrite() su File Binari",
+      "topic": "c_memory",
+      "question": "Quali sono i 4 parametri richiesti dalla funzione <code>size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "1. Buffer di destinazione; 2. Dimensione in byte del singolo elemento; 3. Numero di elementi da leggere; 4. Puntatore al descrittore FILE aperto."
+        },
+        {
+          "origKey": "b",
+          "text": "1. Nome file; 2. Password; 3. Offset; 4. Timeout."
+        },
+        {
+          "origKey": "c",
+          "text": "1. Socket; 2. Porta; 3. IP; 4. Buffer."
+        },
+        {
+          "origKey": "d",
+          "text": "1. Indirizzo RAM; 2. Indirizzo ROM; 3. Checksum; 4. Flag."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 5 (Binary I/O Operations)",
+      "explanation": [
+        "<code>fread</code> legge blocchi binari di dimensione fissa:",
+        "- <code>ptr</code>: puntatore al blocco di memoria in cui scrivere i dati;",
+        "- <code>size</code>: dimensione in byte di ciascun record (es. <code>sizeof(struct Student)</code>);",
+        "- <code>nmemb</code>: numero massimo di record da leggere;",
+        "- <code>stream</code>: stream aperto con <code>fopen()</code> (preferibilmente con flag binario <code>\"rb\"</code>).",
+        "Restituisce il numero effettivo di elementi (non di byte!) letti con successo."
+      ],
+      "wrongReasons": "Non accetta nomi o password ({{opt:b}}); non riguarda parametri socket ({{opt:c}}); non riguarda ROM o checksum ({{opt:d}})."
+    },
+    {
+      "id": 172,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C File I/O: fseek() e Calcolo Dimensione File con ftell()",
+      "topic": "c_memory",
+      "question": "Qual è il pattern standard in C per calcolare la dimensione esatta in byte di un file aperto?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "fseek(fp, 0, SEEK_END); long size = ftell(fp); rewind(fp);"
+        },
+        {
+          "origKey": "b",
+          "text": "sizeof(fp)"
+        },
+        {
+          "origKey": "c",
+          "text": "strlen(fp)"
+        },
+        {
+          "origKey": "d",
+          "text": "fseek(fp, 0, SEEK_SET); long size = ftell(fp);"
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 5 (File Seeking & Size Measurement)",
+      "explanation": [
+        "Il pattern classico di misura dimensione file è:",
+        "1. <code>fseek(fp, 0, SEEK_END);</code> sposta il cursore di lettura alla fine del file.",
+        "2. <code>long size = ftell(fp);</code> restituisce la posizione corrente in byte rispetto all'inizio del file.",
+        "3. <code>rewind(fp);</code> (o <code>fseek(fp, 0, SEEK_SET)</code>) riposiziona il cursore all'inizio per consentire successive letture."
+      ],
+      "wrongReasons": "sizeof(fp) restituisce solo la dimensione del puntatore FILE* (8 byte) ({{opt:b}}); strlen non si applica a FILE* ({{opt:c}}); SEEK_SET è all'inizio, ftell restituirebbe 0 ({{opt:d}})."
+    },
+    {
+      "id": 173,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Parola Chiave volatile: Significato in C vs Java",
+      "topic": "c_memory",
+      "question": "Cosa indica la parola chiave <code>volatile</code> in C a differenza di quanto avviene in Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "In C indica all'ottimizzatore del compilatore di NON memorizzare il valore nei registri CPU ma di rileggerlo/riscriverlo in memoria fisica ad ogni accesso (per registri hardware memory-mapped o signal handler); NON fornisce barriere di memoria né sincronizzazione concorrente multithread come in Java."
+        },
+        {
+          "origKey": "b",
+          "text": "In C rende le variabili automaticamente protette da mutex lock-free."
+        },
+        {
+          "origKey": "c",
+          "text": "In C garantisce che il programma sia immune da buffer overflow."
+        },
+        {
+          "origKey": "d",
+          "text": "In C e in Java hanno esattamente le stesse identiche garanzie di thread safety del JMM."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 & Cap. 04 Sez. 2 (Volatile: C Hardware vs Java JMM)",
+      "explanation": [
+        "Questo è uno dei più diffusi fraintendimenti di architettura del software:",
+        "- <strong>In C:</strong> <code>volatile</code> è nato per l'interazione con l'hardware (I/O mappato in memoria) o interrupt/signal handlers. Dice al compilatore: 'questa locazione può cambiare al di fuori del flusso del codice'. NON impone Memory Barriers sulla CPU e NON garantisce atomicità o visibilità inter-thread nei sistemi multicore!",
+        "- <strong>In Java:</strong> <code>volatile</code> ha un contratto formale nel Java Memory Model (JSR-133), emette barriere hardware e garantisce la relazione di *happens-before*."
+      ],
+      "wrongReasons": "Non aggiunge mutex ({{opt:b}}); non protegge da buffer overflow ({{opt:c}}); i contratti formali sono diversi ({{opt:d}})."
+    },
+    {
+      "id": 174,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Type Punning: Strict Aliasing Rule e Violazioni",
+      "topic": "c_memory",
+      "question": "Perché il seguente codice viola la **Strict Aliasing Rule** in C e produce Undefined Behavior negli standard moderni?\n<pre><code>int i = 42;\nfloat *f = (float *)&i;\nprintf(\"%f\", *f);</code></pre>",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Perché lo standard vieta di accedere alla memoria di un oggetto attraverso un puntatore a un tipo incompatibile (tranne char* o tramite union); l'ottimizzatore può riordinare o eliminare gli accessi ipotizzando che puntatori di tipo diverso non puntino mai alla stessa memoria."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché float occupa 16 byte mentre int occupa solo 1 byte."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché printf non supporta il formato %f per numeri convertiti."
+        },
+        {
+          "origKey": "d",
+          "text": "Perché in C è vietato fare cast tra puntatori."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 2 (Strict Aliasing Rule & Type Punning)",
+      "explanation": [
+        "La **Strict Aliasing Rule** (ISO C99 6.5§7) consente al compilatore di assumere che puntatori a tipi incompatibili (es. <code>int*</code> e <code>float*</code>) non puntino alla stessa locazione di memoria.",
+        "Il casting forzato per interpretare i bit di un tipo come un altro (Type Punning) tramite puntatori viola la regola e causa bug sottili quando vengono abilitate le ottimizzazioni del compilatore (<code>-O2</code> o <code>-O3</code>).",
+        "Il modo standard e sicuro al 100% per eseguire type punning in C moderno è utilizzare <strong><code>memcpy</code></strong> o una <strong><code>union</code></strong>."
+      ],
+      "wrongReasons": "int e float sono entrambi a 32 bit (4 byte) ({{opt:b}}); printf supporta %f ({{opt:c}}); i cast esistono ma devono rispettare l'aliasing ({{opt:d}})."
+    },
+    {
+      "id": 175,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Dynamic Array: Strategia di Ridimensionamento Geometrico",
+      "topic": "c_memory",
+      "question": "Nel progettare un array dinamico in C (simile a std::vector di C++ o ArrayList di Java), perché si raddoppia la capacità (capacity *= 2) ad ogni esaurimento anziché aumentarla di una quantità fissa costante (es. capacity += 10)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Perché l'incremento geometrico (raddoppio) garantisce un costo ammortizzato O(1) per l'operazione di inserimento (append), mentre l'incremento lineare costante causerebbe una complessità degenerata O(N^2) dovuta a continue realloc e copie di memoria."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché la funzione realloc() accetta solo potenze di 2 come argomenti."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché la memoria RAM fisica può essere allocata solo a blocchi pari."
+        },
+        {
+          "origKey": "d",
+          "text": "Perché raddoppiare riduce del 100% il consumo totale di memoria heap."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 3 (Dynamic Array Amortized Analysis)",
+      "explanation": [
+        "Analisi ammortizzata classica:",
+        "- Con incremento costante $+K$, per inserire $N$ elementi servono $O(N/K)$ riallocazioni. Ciascuna copia $O(i)$ elementi, con un costo totale di copie $\\sum i \\approx O(N^2)$ (costo per inserimento $O(N)$).",
+        "- Con fattore geometrico $\\times 2$, le riallocazioni avvengono solo $\\log_2 N$ volte. Il numero totale di copie è $1 + 2 + 4 + ... + N \\approx 2N = O(N)$.",
+        "Dividendo per gli $N$ inserimenti, il costo medio ammortizzato per singolo inserimento risulta **$O(1)$**."
+      ],
+      "wrongReasons": "realloc accetta qualsiasi numero di byte ({{opt:b}}); la RAM non ha vincoli di soli blocchi pari ({{opt:c}}); consuma più memoria momentanea (over-provisioning) ({{opt:d}})."
+    },
+    {
+      "id": 176,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Bitwise: Algoritmo di Brian Kernighan per Conta dei Bit (Popcount)",
+      "topic": "c_memory",
+      "question": "Cosa compie il seguente ciclo in C?\n<pre><code>int count = 0;\nwhile (n) {\n    n &= (n - 1);\n    count++;\n}</code></pre>",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Conta il numero esatto di bit impostati a 1 (Hamming weight / popcount) nel numero n, eseguendo un numero di iterazioni pari esclusivamente ai bit accesi anziché scorrere tutti i 32 o 64 bit."
+        },
+        {
+          "origKey": "b",
+          "text": "Calcola il logaritmo in base 10 del numero n."
+        },
+        {
+          "origKey": "c",
+          "text": "Inverte l'ordine dei bit del numero n."
+        },
+        {
+          "origKey": "d",
+          "text": "Verifica se il numero è negativo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 11 Sez. 3 (Brian Kernighan's Algorithm & Popcount)",
+      "explanation": [
+        "L'operazione <code>n &= (n - 1)</code> spegne (azzera) tassativamente il bit impostato a <code>1</code> meno significativo del numero ad ogni singolo passo.",
+        "Di conseguenza, il ciclo termina non appena tutti i bit a 1 sono stati azzerati.",
+        "La complessità temporale è $O(k)$ dove $k$ è il numero di bit a <code>1</code> (se un intero a 64 bit ha solo 3 bit accesi, il ciclo compie solo 3 iterazioni!), rendendolo molto più veloce del ciclo ingenuo a 32/64 step."
+      ],
+      "wrongReasons": "Non calcola logaritmi ({{opt:b}}); non inverte bit ({{opt:c}}); non controlla la negatività ({{opt:d}})."
+    },
+    {
+      "id": 177,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Bitwise: Estrazione del Bit Meno Significativo (n & -n)",
+      "topic": "c_memory",
+      "question": "In un'architettura in complemento a due, cosa isola l'espressione <code>n & (-n)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Isola il bit impostato a 1 più a destra (meno significativo), azzerando tutti gli altri bit del numero (es. per 12 = 0b1100 restituisce 4 = 0b0100)."
+        },
+        {
+          "origKey": "b",
+          "text": "Restituisce sempre 0 per qualsiasi valore di n."
+        },
+        {
+          "origKey": "c",
+          "text": "Calcola il valore assoluto del numero n."
+        },
+        {
+          "origKey": "d",
+          "text": "Restituisce il bit più significativo (segno)."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 11 Sez. 3 & Formulario C (Bit-Twiddling Hacks)",
+      "explanation": [
+        "In complemento a due, l'opposto di un numero è calcolato come: <code>-n = ~n + 1</code>.",
+        "L'inversione <code>~n</code> inverte tutti i bit; aggiungendo <code>1</code>, tutti i bit a destra del bit a 1 più basso (che erano zeri) tornano a 0, il bit a 1 più basso rimane a 1, e tutti i bit a sinistra risultano invertiti.",
+        "Eseguendo <code>n & (-n)</code>, tutti i bit a sinistra si annullano (poiché $b \\,\\&\\, \\sim b = 0$), isolando esclusivamente il **lowest set bit** (fondamentale per strutture come i Fenwick Tree/Binary Indexed Trees)."
+      ],
+      "wrongReasons": "Non restituisce sempre 0 (tranne per n=0) ({{opt:b}}); non calcola abs ({{opt:c}}); non estrae il MSB ({{opt:d}})."
+    },
+    {
+      "id": 178,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C99: Variable Length Arrays (VLA) e Rischi Architetturali",
+      "topic": "c_memory",
+      "question": "Cos'è un **VLA** (Variable Length Array) introdotto in C99 (es. <code>void foo(int n) { int arr[n]; ... }</code>) e perché è stato reso opzionale in C11?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "È un array allocato a runtime sullo stack la cui dimensione dipende da una variabile; se n è arbitrariamente grande o negativo causa uno Stack Overflow non intercettabile dal programma (non esiste valore di ritorno come in malloc per verificare il fallimento)."
+        },
+        {
+          "origKey": "b",
+          "text": "È un array che può risiedere solo nei registri della scheda video."
+        },
+        {
+          "origKey": "c",
+          "text": "È un array che si dealloca automaticamente con free()."
+        },
+        {
+          "origKey": "d",
+          "text": "È stato rimosso perché non supporta numeri interi."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (VLA Security Hazards & C11 Annex F)",
+      "explanation": [
+        "I Variable Length Arrays consentono di dichiarare array con dimensione determinata a runtime sullo stack.",
+        "Criticità di sicurezza e architettura:",
+        "1. L'allocazione avviene decrementando lo stack pointer (<code>esp/rsp</code>). Se <code>n</code> è molto grande (es. input utente non sanitizzato di 10.000.000), il programma va in crash per **Stack Overflow** senza alcuna possibilità di gestire l'errore.",
+        "2. Per questo motivo il Linux Kernel ne ha bandito totalmente l'uso e lo standard ISO C11 li ha declassati a funzionalità opzionale."
+      ],
+      "wrongReasons": "Non riguarda la scheda video ({{opt:b}}); risiede nello stack e non richiede free() ({{opt:c}}); supporta qualsiasi tipo ({{opt:d}})."
+    },
+    {
+      "id": 179,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Memoria: alloca() vs malloc()",
+      "topic": "c_memory",
+      "question": "Qual è la particolarità della funzione <code>alloca(size_t size)</code> rispetto a <code>malloc()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Alloca memoria direttamente nello stack frame della funzione chiamante (velocissima tramite semplice decremento del puntatore di stack); la memoria viene deallocata automaticamente all'uscita dalla funzione senza dover invocare free()."
+        },
+        {
+          "origKey": "b",
+          "text": "Alloca memoria nella ROM del computer."
+        },
+        {
+          "origKey": "c",
+          "text": "alloca() richiede obbligatoriamente di chiamare free() prima del return."
+        },
+        {
+          "origKey": "d",
+          "text": "alloca() è una funzione esclusiva di Java Virtual Machine."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 1 (Stack Allocation with alloca)",
+      "explanation": [
+        "<code>alloca</code> alloca spazio nello stack frame della funzione corrente.",
+        "Vantaggi: rapidissima (una sola istruzione assembly di manipolazione dello stack pointer), zero frammentazione dell'heap, deallocazione implicita al ritorno della funzione.",
+        "Svantaggi e pericoli: se la dimensione supera lo spazio dello stack provoca Stack Overflow fatale; <strong>non deve mai essere passata a <code>free()</code></strong> (genererebbe un crash immediato per corruzione dell'heap)."
+      ],
+      "wrongReasons": "Non riguarda la ROM ({{opt:b}}); invocare free su memoria allocata con alloca è un bug gravissimo ({{opt:c}}); è una funzione C/POSIX, non di Java ({{opt:d}})."
+    },
+    {
+      "id": 180,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Puntatori: Accesso agli Elementi di un Array e Notazione Equivalente",
+      "topic": "c_memory",
+      "question": "Dato un array <code>int a[5] = {10, 20, 30, 40, 50};</code>, per quale motivo l'espressione apparentemente bizzarra <code>2[a]</code> è perfettamente valida in C e a cosa equivale?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Equivale a *(2 + a), che per la proprietà commutativa dell'addizione coincide esattamente con *(a + 2) e quindi con a[2] (valore 30)."
+        },
+        {
+          "origKey": "b",
+          "text": "È un errore di sintassi che non compila su nessun compilatore moderno."
+        },
+        {
+          "origKey": "c",
+          "text": "Moltiplica il valore dell'array per 2."
+        },
+        {
+          "origKey": "d",
+          "text": "Restituisce l'indirizzo del secondo elemento moltiplicato per sizeof(int)."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (Subscript Operator Commutativity)",
+      "explanation": [
+        "Nello standard C, l'operatore parentesi quadra <code>x[y]</code> è formalmente definito come:",
+        "<code>*( (x) + (y) )</code>.",
+        "Poiché l'addizione è commutativa:",
+        "<code>a[2] == *(a + 2) == *(2 + a) == 2[a]</code>.",
+        "Entrambe le notazioni accedono all'elemento all'indice 2, che ha valore <code>30</code>."
+      ],
+      "wrongReasons": "Compila perfettamente ed è rigorosamente conforme allo standard ANSI C ({{opt:b}}); non fa moltiplicazioni ({{opt:c}}); restituisce il valore (lvalue), non l'indirizzo ({{opt:d}})."
+    },
+    {
+      "id": 181,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Calling Convention: cdecl vs stdcall e Stack Cleanup",
+      "topic": "c_memory",
+      "question": "Qual è la differenza fondamentale tra le convenzioni di chiamata <strong>__cdecl</strong> e <strong>__stdcall</strong> su architetture x86 a 32 bit?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "In __cdecl la pulizia dello stack (stack cleanup) è a carico della funzione chiamante (caller), consentendo funzioni a numero variabile di argomenti come printf; in __stdcall la pulizia dello stack è a carico della funzione chiamata (callee), producendo binari più compatti ma impedendo funzioni variadiche."
+        },
+        {
+          "origKey": "b",
+          "text": "__cdecl usa registri della GPU, __stdcall usa la RAM."
+        },
+        {
+          "origKey": "c",
+          "text": "__stdcall passa i parametri da sinistra a destra, __cdecl li passa alfabeticamente."
+        },
+        {
+          "origKey": "d",
+          "text": "Non esiste alcuna differenza nelle convenzioni di chiamata dei compilatori."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (x86 Calling Conventions & Stack Frames)",
+      "explanation": [
+        "- <strong><code>__cdecl</code> (default in C):</strong> gli argomenti vengono spinti sullo stack da destra verso sinistra. Poiché solo il chiamante sa quanti argomenti ha effettivamente passato, il **caller** si occupa di ripulire lo stack (<code>add esp, 12</code>). Questo abilita le funzioni variadiche (<code>printf(...)</code>).",
+        "- <strong><code>__stdcall</code> (standard Win32 API):</strong> gli argomenti sono spinti da destra verso sinistra, ma è la funzione **callee** a ripulire lo stack prima di ritornare (<code>ret 12</code>). Il codice è più piccolo poiché l'istruzione di cleanup è presente una sola volta."
+      ],
+      "wrongReasons": "Non riguarda la GPU ({{opt:b}}); entrambi spingono da destra a sinistra ({{opt:c}}); le calling convention sono fondamentali nei binari ({{opt:d}})."
+    },
+    {
+      "id": 182,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C x64 ABI: System V AMD64 vs Microsoft x64 Calling Convention",
+      "topic": "c_memory",
+      "question": "Come vengono passati i primi parametri interi/puntatori su architetture a 64 bit rispettivamente in Linux (System V AMD64 ABI) e in Windows (Microsoft x64)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Linux (System V): primi 6 argomenti nei registri RDI, RSI, RDX, RCX, R8, R9; Windows: primi 4 argomenti nei registri RCX, RDX, R8, R9 con 32 byte di Shadow Space (Home Space) obbligatorio sullo stack."
+        },
+        {
+          "origKey": "b",
+          "text": "Vengono sempre passati tutti sullo stack senza usare alcun registro della CPU."
+        },
+        {
+          "origKey": "c",
+          "text": "Linux usa lo stack, Windows usa solo la memoria cache L1."
+        },
+        {
+          "origKey": "d",
+          "text": "Entrambi usano esattamente gli stessi 8 registri in ordine inverso."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (64-bit ABI Register Allocation)",
+      "explanation": [
+        "A differenza delle vecchie architetture a 32 bit basate su stack:",
+        "- <strong>System V AMD64 ABI (Linux, macOS, BSD):</strong> passa i primi 6 argomenti interi/puntatori nei registri <code>RDI, RSI, RDX, RCX, R8, R9</code>.",
+        "- <strong>Microsoft x64 Calling Convention (Windows):</strong> passa i primi 4 argomenti in <code>RCX, RDX, R8, R9</code> e impone che il chiamante allochi sempre almeno 32 byte (4 slot da 8 byte) di **Shadow Space (Home Space)** sullo stack immediatamente prima dell'istruzione <code>CALL</code>."
+      ],
+      "wrongReasons": "Le ABI a 64 bit usano intensivamente i registri per massimizzare la velocità ({{opt:b}}); non usano solo stack ({{opt:c}}); registri e convenzioni sono diversi ({{opt:d}})."
+    },
+    {
+      "id": 183,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Funzioni Inline: Significato e static inline negli Header",
+      "topic": "c_memory",
+      "question": "Perché le funzioni definite con corpo all'interno dei file header (.h) in C devono essere contrassegnate come <code>static inline</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "static limita la visibilità alla singola unità di compilazione evitando errori di simboli duplicati (multiple definition) in fase di linking se l'header è incluso in più file .c; inline suggerisce al compilatore di sostituire la chiamata con il corpo della funzione per eliminare l'overhead di chiamata."
+        },
+        {
+          "origKey": "b",
+          "text": "inline serve a impedire l'uso di variabili puntatore."
+        },
+        {
+          "origKey": "c",
+          "text": "static forza la memorizzazione della funzione sul disco rigido."
+        },
+        {
+          "origKey": "d",
+          "text": "Serve a far compilare il codice con un compilatore Fortran."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 4 (Inline Functions & Header Hygiene)",
+      "explanation": [
+        "Se una funzione non-static viene definita con corpo in un header <code>util.h</code>, ogni file <code>.c</code> che include l'header genera un simbolo globale identico nel proprio file oggetto <code>.o</code>.",
+        "In fase di link, il linker fallirà con: <code>multiple definition of 'foo'</code>.",
+        "Dichiarandola <strong><code>static inline</code></strong>:",
+        "- <code>static</code> conferisce *internal linkage* (ogni file <code>.c</code> ha la propria copia locale senza collisioni nel linker).",
+        "- <code>inline</code> incoraggia l'ottimizzatore a incorporare il codice eliminando le istruzioni <code>CALL</code> e <code>RET</code>."
+      ],
+      "wrongReasons": "Non impedisce i puntatori ({{opt:b}}); non riguarda il disco ({{opt:c}}); non c'entra il Fortran ({{opt:d}})."
+    },
+    {
+      "id": 184,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Sicurezza: Vulnerabilità di Format String Attack",
+      "topic": "c_memory",
+      "question": "Quale grave falla di sicurezza introduce il codice <code>printf(user_input);</code> anziché <code>printf(\"%s\", user_input);</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Format String Vulnerability: se user_input contiene specificatori come %x o %p, l'attaccante può leggere lo stack; con lo specificatore %n può scrivere byte arbitrari in memoria (sovrascrittura del Return Address per esecuzione di codice arbitrario)."
+        },
+        {
+          "origKey": "b",
+          "text": "Nessuna, sono due istruzioni identiche e perfettamente equivalenti."
+        },
+        {
+          "origKey": "c",
+          "text": "Rallenta la velocità del monitor di sistema."
+        },
+        {
+          "origKey": "d",
+          "text": "Cancella i file dell'utente se la stringa contiene la parola 'delete'."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (Format String Attacks & Memory Exploitation)",
+      "explanation": [
+        "Se una stringa fornita dall'utente viene passata come primo argomento (format string) a <code>printf</code>:",
+        "La funzione interpreta le sequenze di formattazione:",
+        "- Con <code>%x</code> o <code>%p</code> stampa i valori presenti nei registri e nello stack (information leak di canarini dello stack, puntatori e indirizzi di memoria ASLR).",
+        "- Con lo specificatore <strong><code>%n</code></strong>, <code>printf</code> **scrive** il numero di caratteri stampati finora nella memoria puntata dall'argomento nello stack, consentendo ad un attaccante di riscrivere tabelle GOT (Global Offset Table) o indirizzi di ritorno e assumere il controllo del processo."
+      ],
+      "wrongReasons": "È una vulnerabilità critica di sicurezza nota da decenni ({{opt:b}}); non riguarda monitor ({{opt:c}}); non cancella file a comando ({{opt:d}})."
+    },
+    {
+      "id": 185,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Strumenti: AddressSanitizer (ASan) e Valgrind Memcheck",
+      "topic": "c_memory",
+      "question": "Cosa individuano a runtime strumenti diagnostici avanzati come <strong>AddressSanitizer (ASan)</strong> e <strong>Valgrind Memcheck</strong>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Out-of-bounds (buffer overflow su stack, heap e globali), Use-After-Free, Double Free, Memory Leaks, e utilizzo di variabili non inizializzate."
+        },
+        {
+          "origKey": "b",
+          "text": "Errori di battitura ortografica nei commenti del codice."
+        },
+        {
+          "origKey": "c",
+          "text": "Rilevano se il computer è connesso a una presa elettrica a 220V o 110V."
+        },
+        {
+          "origKey": "d",
+          "text": "Misurano esclusivamente la dimensione in pixel delle finestre grafiche."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 2 (Memory Debugging: ASan & Valgrind)",
+      "explanation": [
+        "- <strong>AddressSanitizer (-fsanitize=address):</strong> compila il codice inserendo 'redzones' attorno ai buffer e monitora gli accessi tramite una mappa di Shadow Memory con overhead bassissimo (circa 2x). Intercetta istantaneamente out-of-bounds e use-after-free.",
+        "- <strong>Valgrind Memcheck:</strong> esegue il binario su una CPU emulata (JIT), tracciando ogni singolo byte di memoria per individuare memory leaks (blocchi mai liberati con <code>free</code>) e letture di memoria non inizializzata."
+      ],
+      "wrongReasons": "Non sono correttori ortografici ({{opt:b}}); non misurano tensioni elettriche ({{opt:c}}); non riguardano pixel ({{opt:d}})."
+    },
+    {
+      "id": 186,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Heap Exploitation: Double Free e Heap Corruption",
+      "topic": "c_memory",
+      "question": "Cosa accade internamente nell'allocatore dell'heap (es. ptmalloc in glibc) quando si esegue un <strong>Double Free</strong> (due chiamate a free(p) sullo stesso puntatore)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il chunk di memoria viene inserito due volte nella lista dei blocchi liberi (fastbins o tcache); le allocazioni successive restituiranno lo stesso identico puntatore a due richieste diverse, corrompendo i metadati dell'heap e consentendo l'arbitrary write exploit."
+        },
+        {
+          "origKey": "b",
+          "text": "La seconda free() viene ignorata silenziosamente senza alcun effetto."
+        },
+        {
+          "origKey": "c",
+          "text": "La memoria viene raddoppiata automaticamente."
+        },
+        {
+          "origKey": "d",
+          "text": "Il sistema operativo riavvia il computer dopo 5 minuti."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 2 (Heap Internals & Double Free Vulnerabilities)",
+      "explanation": [
+        "Gli allocatori dell'heap gestiscono la memoria libera tramite liste collegate di chunk (es. tcache, fastbins, unsorted bins):",
+        "Liberare due volte lo stesso blocco inserisce il chunk in un ciclo nella lista libera.",
+        "Due chiamate a <code>malloc()</code> successive riceveranno lo stesso identico indirizzo di memoria.",
+        "Se un componente scrive dati in quella cella e un altro scrive puntatori, i metadati di controllo dell'allocatore vengono avvelenati (**tcache poisoning**), aprendo la strada a vulnerabilità critiche di sicurezza (crash o heap exploitation)."
+      ],
+      "wrongReasons": "Non viene ignorata silenziosamente (le versioni moderne sollevano crash da abort() per doppio free) ({{opt:b}}); non raddoppia memoria ({{opt:c}}); non riavvia il SO ({{opt:d}})."
+    },
+    {
+      "id": 187,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Memoria: Comportamento di malloc(0)",
+      "topic": "c_memory",
+      "question": "Cosa stabilisce lo standard C sul comportamento dell'invocazione <code>malloc(0)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il comportamento è implementation-defined: può restituire un puntatore NULL oppure un puntatore non-NULL univoco che NON deve essere dereferenziato ma che deve comunque essere liberato tramite free()."
+        },
+        {
+          "origKey": "b",
+          "text": "È un errore di sintassi vietato dallo standard ANSI C."
+        },
+        {
+          "origKey": "c",
+          "text": "Alloca esattamente 1 Gigabyte di memoria."
+        },
+        {
+          "origKey": "d",
+          "text": "Formatta la memoria heap cancellando tutti i dati precedentemente allocati."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 1 (malloc(0) Standard Semantics)",
+      "explanation": [
+        "Nello standard ISO C (7.22.3):",
+        "'Se la dimensione della memoria richiesta è zero, il comportamento è definito dall'implementazione: il valore restituito è o un puntatore nullo, o un comportamento tale come se la dimensione fosse diversa da zero, tranne che il puntatore restituito non deve essere usato per accedere a un oggetto.'",
+        "In glibc (Linux), <code>malloc(0)</code> restituisce un puntatore non-nullo a un chunk minimo valido che può essere tranquillamente passato a <code>free()</code>."
+      ],
+      "wrongReasons": "Non è errore di sintassi ({{opt:b}}); non alloca 1 GB ({{opt:c}}); non cancella dati preesistenti ({{opt:d}})."
+    },
+    {
+      "id": 188,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Allineamento: Funzione posix_memalign() e aligned_alloc() (C11)",
+      "topic": "c_memory",
+      "question": "A cosa servono funzioni come <code>aligned_alloc(alignment, size)</code> (C11) o <code>posix_memalign()</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Allocano blocchi di memoria nell'heap garantendo che l'indirizzo di partenza sia un multiplo esatto di un valore di allineamento prefissato (es. 64 byte per allineamento a Cache Line della CPU o registri vettoriali AVX-512)."
+        },
+        {
+          "origKey": "b",
+          "text": "Allineano le finestre grafiche sullo schermo del monitor."
+        },
+        {
+          "origKey": "c",
+          "text": "Servono per ordinare alfabeticamente gli array."
+        },
+        {
+          "origKey": "d",
+          "text": "Allineano la data e l'ora del sistema con un server NTP."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 4 (Cache-Line Alignment & SIMD Optimization)",
+      "explanation": [
+        "La normale <code>malloc</code> garantisce solo l'allineamento per il tipo di dato scalare più grande (tipicamente 8 o 16 byte).",
+        "In calcolo ad alte prestazioni (High Performance Computing, DSP, SIMD AVX2/AVX-512):",
+        "I registri vettoriali richiedono che i dati siano allineati a 32 o 64 byte.",
+        "<strong><code>aligned_alloc(64, size)</code></strong> alloca memoria contigua il cui indirizzo fisico è un multiplo esatto di 64, prevenendo penalità di caricamento unaligned e falsi allineamenti nelle linee di cache L1."
+      ],
+      "wrongReasons": "Non riguarda finestre grafiche ({{opt:b}}); non ordina array ({{opt:c}}); non sincronizza orologi NTP ({{opt:d}})."
+    },
+    {
+      "id": 189,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Errori: Gestione di errno e perror()",
+      "topic": "c_memory",
+      "question": "Come funziona la variabile globale <code>errno</code> e quando è consentito leggerla in sicurezza?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Viene impostata dalle funzioni di libreria C in caso di errore; è significativo controllarla SOLO immediatamente dopo che una chiamata di sistema o libreria ha restituito un valore sentinella di fallimento (es. NULL o -1), poiché le funzioni riuscite non la resettano a 0."
+        },
+        {
+          "origKey": "b",
+          "text": "Viene resettata a 0 all'inizio di ogni funzione automaticamente dalla CPU."
+        },
+        {
+          "origKey": "c",
+          "text": "errno può essere letta solo dal processo init del sistema operativo."
+        },
+        {
+          "origKey": "d",
+          "text": "perror() converte errno in un numero intero casuale."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 5 (Errno Protocol & Diagnostics)",
+      "explanation": [
+        "Regole auree di <code>errno</code>:",
+        "1. Nessuna chiamata di libreria azzera <code>errno</code> a zero in caso di successo! Un valore residuo di un errore precedente può rimanere registrato per ore.",
+        "2. Non si deve mai testare <code>errno</code> da sola prima di aver verificato il valore di ritorno della funzione (es. <code>if (fp == NULL) { perror(\"fopen fallita\"); }</code>).",
+        "3. Nei sistemi operativi moderni multithread, <code>errno</code> è implementata come macro che accede a una locazione *thread-local* specifica per ciascun thread, garantendo la thread safety."
+      ],
+      "wrongReasons": "La CPU non la resetta a 0 ({{opt:b}}); è accessibile da qualsiasi thread applicativo ({{opt:c}}); perror stampa la descrizione testuale dell'errore su stderr ({{opt:d}})."
+    },
+    {
+      "id": 190,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Puntatori: Differenza tra NULL e NUL ('\\0')",
+      "topic": "c_memory",
+      "question": "Qual è la differenza formale tra <code>NULL</code> e <code>'\\0'</code> (NUL) in C?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "NULL è una macro che rappresenta una costante puntatore nullo (tipicamente ((void*)0)); '\\0' (NUL con una sola L) è una costante carattere di tipo char avente valore numerico intero 0 usata per terminare le stringhe."
+        },
+        {
+          "origKey": "b",
+          "text": "NULL e NUL sono esattamente la stessa identica cosa senza alcuna differenza."
+        },
+        {
+          "origKey": "c",
+          "text": "NULL è per i float, '\\0' è per i double."
+        },
+        {
+          "origKey": "d",
+          "text": "'\\0' è allocato nello heap, NULL nello stack."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 2 (NULL Pointer vs NUL Character)",
+      "explanation": [
+        "- <strong><code>NULL</code>:</strong> puntatore nullo definito in <code>&lt;stddef.h&gt;</code> / <code>&lt;stdlib.h&gt;</code>, utilizzato per indicare che un puntatore non fa riferimento ad alcuna locazione di memoria valida.",
+        "- <strong><code>'\\0'</code> (NUL):</strong> singolo carattere letterale avente codice ASCII 0. Occupa 1 byte di memoria (o <code>sizeof(int)</code> come costante intera in C) ed è impiegato come marcatore di terminazione delle stringhe di testo."
+      ],
+      "wrongReasons": "Non sono identici (uno è un puntatore, l'altro un carattere/intero) ({{opt:b}}); non riguarda float o double ({{opt:c}}); non c'entra stack vs heap ({{opt:d}})."
+    },
+    {
+      "id": 191,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Puntatori: Puntatori a Matrici vs Array di Puntatori",
+      "topic": "c_memory",
+      "question": "Qual è la differenza fondamentale tra la dichiarazione <code>int (*p)[5];</code> e la dichiarazione <code>int *p[5];</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "int (*p)[5] è un singolo puntatore a un array di 5 interi (p + 1 avanza di 5 * sizeof(int) byte); int *p[5] è un array di 5 puntatori a intero (occupa 5 puntatori in memoria)."
+        },
+        {
+          "origKey": "b",
+          "text": "int (*p)[5] alloca 5 matrici separate, int *p[5] alloca una stringa."
+        },
+        {
+          "origKey": "c",
+          "text": "Sono due scritture identiche per via delle parentesi superflue."
+        },
+        {
+          "origKey": "d",
+          "text": "int *p[5] è vietato dallo standard ANSI C."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (Pointer to Array vs Array of Pointers)",
+      "explanation": [
+        "La precedenza degli operatori in C è fondamentale (le parentesi quadre <code>[]</code> hanno precedenza rispetto alla dereferenziazione <code>*</code>):",
+        "- <strong><code>int *p[5];</code>:</strong> 'array di 5 elementi di tipo puntatore a intero'. Occupa $5 \\times 8 = 40$ byte su macchine a 64 bit.",
+        "- <strong><code>int (*p)[5];</code>:</strong> le parentesi forzano la lettura: 'p è un puntatore a un array di 5 interi'. Occupa solo 8 byte (la dimensione di un singolo puntatore). Avanzare con <code>p + 1</code> salta un intero blocco di 5 interi (20 byte)."
+      ],
+      "wrongReasons": "Non alloca 5 matrici ({{opt:b}}); le parentesi non sono affatto superflue, cambiano completamente il tipo ({{opt:c}}); è sintassi comunissima ({{opt:d}})."
+    },
+    {
+      "id": 192,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Strutture Dati: Implementazione di una Coda con Lista Collegata",
+      "topic": "c_memory",
+      "question": "In una lista semplicemente collegata (singly linked list), come si garantisce l'inserimento in coda (enqueue) e l'estrazione in testa (dequeue) entrambi in tempo costante O(1)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Mantenendo due puntatori espliciti: head (punta al primo nodo per dequeue O(1)) e tail (punta all'ultimo nodo per enqueue O(1) con tail->next = new_node; tail = new_node)."
+        },
+        {
+          "origKey": "b",
+          "text": "Scorrendo l'intera lista dal principio con un ciclo while ad ogni singolo inserimento."
+        },
+        {
+          "origKey": "c",
+          "text": "Utilizzando un array statico di 10 elementi."
+        },
+        {
+          "origKey": "d",
+          "text": "Invertendo l'intera lista dopo ogni operazione."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 3 (Linked List Queue O(1) Operations)",
+      "explanation": [
+        "Se si mantiene solo il puntatore <code>head</code>, l'estrazione in testa è $O(1)$, ma l'inserimento in coda richiederebbe di scorrere tutti gli $N$ nodi con un ciclo ($O(N)$).",
+        "Mantenendo una struct contenitore con entrambi i puntatori:",
+        "<pre><code>struct Queue {\n    struct Node *head;\n    struct Node *tail;\n};</code></pre>",
+        "L'enqueue inserisce direttamente in <code>tail->next</code> e aggiorna <code>tail</code> in $O(1)$ immediato senza alcun ciclo."
+      ],
+      "wrongReasons": "Scorrere con un ciclo rende l'operazione O(N), non O(1) ({{opt:b}}); l'array statico non è una linked list ({{opt:c}}); invertire la lista costa O(N) ({{opt:d}})."
+    },
+    {
+      "id": 193,
+      "custom": true,
+      "difficulty": "facile",
+      "title": "C File I/O: EOF e Tipo Restituito da fgetc()",
+      "topic": "c_memory",
+      "question": "Perché la funzione <code>fgetc(FILE *stream)</code> restituisce un valore di tipo <code>int</code> e non di tipo <code>char</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Per poter distinguere tutti i 256 possibili valori validi di un byte (0..255) dal valore speciale di errore o fine file EOF (tipicamente -1), che un tipo char unsigned o con segno potrebbe confondere con un carattere reale."
+        },
+        {
+          "origKey": "b",
+          "text": "Perché il tipo char è stato eliminato dal linguaggio C nel 1999."
+        },
+        {
+          "origKey": "c",
+          "text": "Perché le chiamate di sistema supportano solo numeri a 64 bit."
+        },
+        {
+          "origKey": "d",
+          "text": "Per convertire automaticamente i caratteri in maiuscolo."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 5 (fgetc Return Type & EOF Distinction)",
+      "explanation": [
+        "Un byte letto da un file binario può avere qualsiasi valore numerico da <code>0x00</code> a <code>0xFF</code> (compreso il valore <code>0xFF</code> che in un <code>signed char</code> a 8 bit coincide con -1).",
+        "Se <code>fgetc</code> restituisse <code>char</code>, la lettura del byte <code>0xFF</code> verrebbe erroneamente scambiata per la costante <strong><code>EOF</code></strong> (-1), interrompendo prematuramente la lettura del file!",
+        "Restituendo un <code>int</code> a 32 bit, i caratteri validi occupano l'intervallo <code>0..255</code> mentre <code>EOF</code> vale <code>-1</code> (<code>0xFFFFFFFF</code>), rendendo la distinzione matematicamente univoca."
+      ],
+      "wrongReasons": "char esiste ed è fondamentale in C ({{opt:b}}); fgetc restituisce int (32 bit), non 64 bit ({{opt:c}}); non altera maiuscole ({{opt:d}})."
+    },
+    {
+      "id": 194,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Puntatori: Aritmetica tra Due Puntatori (ptr2 - ptr1)",
+      "topic": "c_memory",
+      "question": "Cosa restituisce la sottrazione tra due puntatori <code>ptr2 - ptr1</code> che puntano a elementi dello stesso array, e di quale tipo standard è il risultato?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Restituisce il numero di ELEMENTI compresi tra i due puntatori (non la differenza grezza di byte) ed è di tipo signed standard ptrdiff_t (definito in <stddef.h>)."
+        },
+        {
+          "origKey": "b",
+          "text": "Restituisce la differenza grezza in byte di tipo float."
+        },
+        {
+          "origKey": "c",
+          "text": "La sottrazione tra puntatori è un'operazione vietata dal compilatore."
+        },
+        {
+          "origKey": "d",
+          "text": "Restituisce un nuovo puntatore allocato nello heap."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 2 (Pointer Subtraction & ptrdiff_t)",
+      "explanation": [
+        "In C la differenza tra due puntatori dello stesso tipo <code>T*</code> calcola:",
+        "$\\text{risultato} = \\frac{\\text{indirizzo}(ptr2) - \\text{indirizzo}(ptr1)}{\\text{sizeof}(T)}$.",
+        "Esprime esattamente quanti elementi distanziano i due puntatori.",
+        "Il tipo formale del risultato è <strong><code>ptrdiff_t</code></strong>, un tipo intero con segno in grado di esprimere anche differenze negative se <code>ptr2 < ptr1</code>."
+      ],
+      "wrongReasons": "Non restituisce i byte grezzi (divide per sizeof(T)) ({{opt:b}}); non è vietata, è comunissima ({{opt:c}}); non alloca puntatori ({{opt:d}})."
+    },
+    {
+      "id": 195,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Memoria: Stack Frame e Ruolo di RBP/EBP e RSP/ESP",
+      "topic": "c_memory",
+      "question": "Qual è il ruolo dei registri <strong>RBP</strong> (Base/Frame Pointer) e <strong>RSP</strong> (Stack Pointer) nella gestione dello stack frame di una funzione C?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "RSP traccia l'estremità superiore (top) corrente dello stack e si sposta con push/pop; RBP fornisce un punto di riferimento fisso e immutabile all'interno del frame corrente da cui accedere a parametri e variabili locali tramite offset costanti."
+        },
+        {
+          "origKey": "b",
+          "text": "RBP contiene l'indirizzo IP della scheda di rete, RSP il clock della CPU."
+        },
+        {
+          "origKey": "c",
+          "text": "RSP è usato solo per le funzioni ricorsive, RBP per quelle iterative."
+        },
+        {
+          "origKey": "d",
+          "text": "Servono solo per gestire le chiamate ai database MySQL."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (Stack Frame Layout: Prologue & Epilogue)",
+      "explanation": [
+        "All'ingresso di una funzione (Function Prologue):",
+        "1. <code>push rbp</code> (salva il base pointer del chiamante);",
+        "2. <code>mov rbp, rsp</code> (fissa RBP alla base del nuovo stack frame);",
+        "3. <code>sub rsp, N</code> (alloca N byte di spazio per le variabili locali spostando RSP).",
+        "Durante l'esecuzione, <strong>RSP</strong> oscilla liberamente per calcoli ed espressioni temporanee, mentre <strong>RBP</strong> rimane ancorato: le variabili locali si leggono con <code>[rbp - offset]</code> e i parametri con <code>[rbp + offset]</code>."
+      ],
+      "wrongReasons": "Non riguarda IP di rete o clock ({{opt:b}}); entrambi operano su qualsiasi funzione ({{opt:c}}); non riguardano database SQL ({{opt:d}})."
+    },
+    {
+      "id": 196,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Preprocessore: Direttive Condizionali e Debug Macro",
+      "topic": "c_memory",
+      "question": "Come si definisce una macro di log in C che viene compilata solo in modalità debug e completamente rimossa (zero footprint) nei binari di release?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "#ifdef DEBUG\n#define LOG(...) printf(__VA_ARGS__)\n#else\n#define LOG(...)\n#endif"
+        },
+        {
+          "origKey": "b",
+          "text": "#define LOG(...) if (false) printf(__VA_ARGS__)"
+        },
+        {
+          "origKey": "c",
+          "text": "#define LOG(...) system(\"pause\")"
+        },
+        {
+          "origKey": "d",
+          "text": "Non è possibile rimuovere codice tramite preprocessore."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (Conditional Compilation & Variadic Macros)",
+      "explanation": [
+        "Sfruttando la compilazione condizionale del preprocessore e le macro variadiche (<code>__VA_ARGS__</code> introdotte in C99):",
+        "Se la costante <code>DEBUG</code> è definita durante la compilazione (es. <code>gcc -DDEBUG</code>), la macro si espande nella chiamata a <code>printf</code>.",
+        "In release (senza <code>-DDEBUG</code>), la macro si espande in una riga completamente vuota: il compilatore non genera alcuna istruzione assembly e non include stringhe nel binario."
+      ],
+      "wrongReasons": "L'if (false) lascia comunque le stringhe letterali allocate nel segmento .rodata del binario ({{opt:b}}); system(\"pause\") blocca il terminale ({{opt:c}}); il preprocessore serve specificamente a questo ({{opt:d}})."
+    },
+    {
+      "id": 197,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Signal: Async-Signal-Safe Functions e volatile sig_atomic_t",
+      "topic": "c_memory",
+      "question": "Quale tipo di variabile e quali funzioni è consentito utilizzare in sicurezza all'interno di un gestore di segnali (Signal Handler) in C?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Variabili di tipo volatile sig_atomic_t per i flag di stato, ed esclusivamente funzioni dichiarate 'Async-Signal-Safe' (come write()); è severamente proibito invocare printf() o malloc() per prevenire deadlock sul lock dell'heap o dell'I/O."
+        },
+        {
+          "origKey": "b",
+          "text": "Si può chiamare tranquillamente printf() e qualsiasi funzione di rete."
+        },
+        {
+          "origKey": "c",
+          "text": "Solo funzioni scritte in linguaggio Java."
+        },
+        {
+          "origKey": "d",
+          "text": "I signal handler possono usare solo variabili di tipo double."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 (Signal Handling & Reentrancy Hazards)",
+      "explanation": [
+        "Un segnale POSIX (es. <code>SIGINT</code>, <code>SIGTERM</code>) può interrompere il thread principale in un istante arbitrario:",
+        "Se il thread principale si trovava a metà dell'acquisizione di un mutex interno a <code>malloc()</code> o <code>printf()</code> e il signal handler chiama a sua volta <code>malloc()</code> o <code>printf()</code>, il programma va istantaneamente in **Deadlock irrisolvibile**.",
+        "Lo standard POSIX specifica che nei signal handler si possono richiamare solo funzioni <strong>reentranti (Async-Signal-Safe)</strong> come <code>write()</code>, e modificare variabili atomiche dichiarate come <strong><code>volatile sig_atomic_t</code></strong>."
+      ],
+      "wrongReasons": "printf e malloc sono categoricamente vietate nei signal handler ({{opt:b}}); Java non c'entra ({{opt:c}}); double non è atomico e rischia letture corrotte ({{opt:d}})."
+    },
+    {
+      "id": 198,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Puntatori: Casting e Type Erasure in Container Generici",
+      "topic": "c_memory",
+      "question": "In che modo una libreria C pura implementa una struttura dati generica (es. una tabella hash o una lista doppiamente concatenata generica)?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Memorizzando i payload come puntatori generici void *data, e delegando al chiamante la fornitura di puntatori a funzione per il calcolo dell'hash, il confronto di uguaglianza e la deallocazione (Type Erasure a puntatori)."
+        },
+        {
+          "origKey": "b",
+          "text": "Utilizzando i Java Generics con sintassi <T>."
+        },
+        {
+          "origKey": "c",
+          "text": "Duplicando il file sorgente 1000 volte con uno script Bash."
+        },
+        {
+          "origKey": "d",
+          "text": "In C puro le collezioni generiche non possono esistere."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 10 Sez. 3 (Generic Data Structures in C & Type Erasure)",
+      "explanation": [
+        "Non esistendo template C++ né generics Java in C puro, le librerie storiche (es. GLib, Linux Kernel) adottano due pattern:",
+        "1. <strong>Void Pointer Container:</strong> il nodo contiene <code>void *payload</code>. La struct riceve callback personalizzate: <code>int (*cmp)(const void*, const void*)</code> e <code>void (*free_payload)(void*)</code>.",
+        "2. <strong>Intrusive Linked List (Linux Kernel style):</strong> la struct del nodo della lista è incorporata direttamente all'interno dell'oggetto utente, e si risale alla struttura contenitore tramite la macro <code>container_of()</code> basata su <code>offsetof()</code>."
+      ],
+      "wrongReasons": "C non possiede la sintassi generica <T> ({{opt:b}}); non si duplicano file a caso ({{opt:c}}); è un pattern onnipresente nel software di sistema ({{opt:d}})."
+    },
+    {
+      "id": 199,
+      "custom": true,
+      "difficulty": "medio",
+      "title": "C Stringhe: sprintf() vs snprintf() e Troncamento",
+      "topic": "c_memory",
+      "question": "Cosa restituisce la funzione <code>int snprintf(char *str, size_t size, const char *format, ...)</code>?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "Il numero di caratteri che SAREBBERO stati scritti se il buffer fosse stato sufficientemente grande (escluso '\\0'); se il valore restituito è >= size, significa che l'output è stato troncato."
+        },
+        {
+          "origKey": "b",
+          "text": "Restituisce sempre esattamente il valore del parametro size."
+        },
+        {
+          "origKey": "c",
+          "text": "Restituisce -1 in qualsiasi circostanza."
+        },
+        {
+          "origKey": "d",
+          "text": "Restituisce un puntatore alla stringa generata."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 3 (snprintf Truncation Detection)",
+      "explanation": [
+        "La firma e il comportamento di <code>snprintf</code> sono finemente calibrati per la sicurezza:",
+        "Scrive al massimo <code>size - 1</code> caratteri nel buffer e inserisce sempre il terminatore nullo <code>'\\0'</code> (se <code>size > 0</code>).",
+        "Il valore intero restituito è la lunghezza totale del testo formattato teorico:",
+        "Se <code>res >= size</code>, lo sviluppatore può rilevare con certezza che si è verificato un troncamento e ridimensionare dinamicamente il buffer per ripeterlo."
+      ],
+      "wrongReasons": "Non restituisce sempre size ({{opt:b}}); restituisce -1 solo su errori di codifica gravi ({{opt:c}}); restituisce un int, non un puntatore ({{opt:d}})."
+    },
+    {
+      "id": 200,
+      "custom": true,
+      "difficulty": "difficile",
+      "title": "C Architettura: Valutazione Integrata Memory Safety e C vs Java",
+      "topic": "c_memory",
+      "question": "Quale tra le seguenti affermazioni sintetizza con rigore scientifico il modello di sicurezza della memoria di C rispetto a quello di Java?",
+      "options": [
+        {
+          "origKey": "a",
+          "text": "C offre accesso diretto all'hardware e massima velocità senza overhead ma è privo di Memory Safety (il programmatore è interamente responsabile di bounds check, lifetime dell'heap e prevenzione di dangling pointers/segfault); Java impone la piena Memory Safety a runtime tramite Garbage Collector automatico, controlli obbligatori dei limiti degli array (ArrayIndexOutOfBoundsException) e assenza di aritmetica dei puntatori grezzi."
+        },
+        {
+          "origKey": "b",
+          "text": "C è più sicuro di Java perché non usa il Garbage Collector."
+        },
+        {
+          "origKey": "c",
+          "text": "Java non usa la memoria RAM ma solo dischi a stato solido NVMe."
+        },
+        {
+          "origKey": "d",
+          "text": "In C tutti i puntatori sono controllati a runtime dal sistema operativo prima di ogni singola operazione."
+        }
+      ],
+      "correctKey": "a",
+      "refs": "PAJC - Cap. 09 Sez. 1 & Cap. 01 Sez. 1 (Architectural Comparison: C Manual vs Java Managed)",
+      "explanation": [
+        "Questa domanda sintetizza l'intero nucleo tematico di Programmazione Avanzata (PAJC):",
+        "- <strong>C:</strong> progettato per efficienza estrema e programmazione di sistema (kernel, motori HFT, runtime). Zero allocazioni nascoste, layout contiguo trasparente, ma totale assenza di safety rete: buffer overflow, use-after-free e corruzioni di memoria sono minacce costanti.",
+        "- <strong>Java:</strong> ambiente gestito (managed runtime). La JVM incapsula la memoria, impedisce accessi a puntatori arbitrari e gestisce il ciclo di vita degli oggetti con GC deterministico e type-safety formale a fronte di un modesto footprint di astrazione."
+      ],
+      "wrongReasons": "C non è memory safe ({{opt:b}}); Java usa normalmente la memoria RAM ({{opt:c}}); il SO non controlla i puntatori ad ogni istruzione utente in C ({{opt:d}})."
+    }
+  ]
+};
