@@ -137,11 +137,12 @@
     }
 
     let appState = loadState();
-    function saveState() {
+    function saveState(immediate = false) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        localStorage.setItem("quiz_local_last_edit_ts", String(Date.now()));
         if (window.QuizCloudSync) {
-          window.QuizCloudSync.schedulePush();
+          window.QuizCloudSync.schedulePush(immediate);
         }
       } catch (e) {
         console.warn("Impossibile salvare in localStorage:", e);
@@ -642,7 +643,7 @@
       if (!s) return;
       const st = getQStat(s.items[s.currentIndex].qid);
       st.bookmarked = !st.bookmarked;
-      saveState();
+      saveState(true);
       renderQuizQuestion();
     });
 
@@ -1013,7 +1014,7 @@
         `;
         div.querySelector(".browse-bm-btn").addEventListener("click", () => {
           st.bookmarked = !st.bookmarked;
-          saveState();
+          saveState(true);
           renderBrowse();
         });
         list.appendChild(div);
@@ -1398,44 +1399,55 @@
       });
     }
 
+    function applyRemoteChanges() {
+      appState = loadState();
+      refreshSetupView();
+      renderBrowse();
+      renderStats();
+      const quizView = document.getElementById("view-quiz");
+      if (quizView && !quizView.classList.contains("hidden")) {
+        renderQuizQuestion();
+      }
+    }
+
+    // Ascolta l'evento live emesso da sync.js quando arrivano nuovi dati dal Cloud
+    window.addEventListener("quiz-cloud-synced", () => {
+      applyRemoteChanges();
+    });
+
     // Startup cloud check
     window.QuizCloudSync.updateStatusDot();
     window.QuizCloudSync.pullFromCloud().then(res => {
       if (res && res.hasChanges) {
-        appState = loadState();
-        refreshSetupView();
-        renderBrowse();
-        renderStats();
+        applyRemoteChanges();
       }
     });
 
-    // Auto-pull al rientro nella pagina (visibilità attiva)
-    document.addEventListener("visibilitychange", () => {
+    // Auto-pull istantaneo al tocco, focus, risveglio o cambio scheda su smartphone o PC
+    const triggerInstantPull = () => {
       if (document.visibilityState === "visible") {
         window.QuizCloudSync.pullFromCloud().then(res => {
           if (res && res.hasChanges) {
-            appState = loadState();
-            refreshSetupView();
-            renderBrowse();
-            renderStats();
+            applyRemoteChanges();
           }
         });
       }
-    });
+    };
 
-    // Polling periodico automatico ogni 20 secondi per sincronizzazione reciproca in tempo reale
+    document.addEventListener("visibilitychange", triggerInstantPull);
+    window.addEventListener("focus", triggerInstantPull);
+    window.addEventListener("pageshow", triggerInstantPull);
+
+    // Polling in tempo reale ad alta frequenza (ogni 3.5s a schermo attivo) per aggiornamento simultaneo senza ricaricare la pagina
     setInterval(() => {
-      if (document.visibilityState === "visible") {
+      if (document.visibilityState === "visible" && !document.hidden) {
         window.QuizCloudSync.pullFromCloud().then(res => {
           if (res && res.hasChanges) {
-            appState = loadState();
-            refreshSetupView();
-            renderBrowse();
-            renderStats();
+            applyRemoteChanges();
           }
         });
       }
-    }, 20000);
+    }, 3500);
   }
 
   // Initial population of select and brand updates

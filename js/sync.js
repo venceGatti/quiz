@@ -139,12 +139,34 @@
       };
     },
 
+    // Mostra una pillola fluttuante di notifica sincronizzazione in tempo reale
+    showToast: function (msg) {
+      let toast = document.getElementById("syncLiveToast");
+      if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "syncLiveToast";
+        toast.className = "sync-live-toast";
+        toast.innerHTML = `<span class="pulse-dot"></span><span id="syncLiveToastMsg"></span>`;
+        document.body.appendChild(toast);
+      }
+      const label = document.getElementById("syncLiveToastMsg");
+      if (label) label.textContent = msg || "Dati sincronizzati dal Cloud";
+      toast.classList.add("show");
+      if (this._toastTimer) clearTimeout(this._toastTimer);
+      this._toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2500);
+    },
+
     // Unione a 3 vie (Merge) tra locale e cloud per non perdere alcun dato
     mergeStateData: function (remoteData) {
       if (!remoteData || !remoteData.courses) return false;
 
       let changed = false;
       const remoteCourses = remoteData.courses || {};
+      const localLastEdit = Number(localStorage.getItem("quiz_local_last_edit_ts") || 0);
+      const remoteLastEdit = Number(remoteData.lastUpdated || 0);
+      const remoteWins = remoteLastEdit >= localLastEdit;
 
       Object.keys(remoteCourses).forEach(cid => {
         const key = "quiz_state_" + cid;
@@ -163,12 +185,17 @@
             const lq = mergedStats[qid] || { attempts: 0, correct: 0, lastWrong: false, streak: 0, bookmarked: false };
             const rq = remoteState.questionStats[qid] || { attempts: 0, correct: 0, lastWrong: false, streak: 0, bookmarked: false };
 
+            // Se i bookmark differiscono, la modifica più recente vince
+            const finalBookmark = (rq.bookmarked !== lq.bookmarked)
+              ? (remoteWins ? Boolean(rq.bookmarked) : Boolean(lq.bookmarked))
+              : Boolean(lq.bookmarked);
+
             mergedStats[qid] = {
               attempts: Math.max(lq.attempts || 0, rq.attempts || 0),
               correct: Math.max(lq.correct || 0, rq.correct || 0),
               lastWrong: (rq.attempts || 0) >= (lq.attempts || 0) ? rq.lastWrong : lq.lastWrong,
               streak: Math.max(lq.streak || 0, rq.streak || 0),
-              bookmarked: Boolean(lq.bookmarked || rq.bookmarked)
+              bookmarked: finalBookmark
             };
           });
         }
@@ -179,13 +206,13 @@
         const histMap = new Map();
         [...localHist, ...remoteHist].forEach(item => {
           if (!item) return;
-          const k = item.date || item.timestamp || JSON.stringify(item);
+          const k = item.finishedAt || item.date || item.timestamp || JSON.stringify(item);
           if (!histMap.has(k)) {
             histMap.set(k, item);
           }
         });
         const mergedHist = Array.from(histMap.values());
-        mergedHist.sort((a, b) => (new Date(b.date || 0) - new Date(a.date || 0)));
+        mergedHist.sort((a, b) => ((b.finishedAt || b.date || 0) - (a.finishedAt || a.date || 0)));
 
         // Unione sessione attiva (la più recente)
         let mergedActive = localState.activeSession;
@@ -193,8 +220,8 @@
           if (!mergedActive) {
             mergedActive = remoteState.activeSession;
           } else {
-            const lts = mergedActive.startedAt || 0;
-            const rts = remoteState.activeSession.startedAt || 0;
+            const lts = mergedActive.lastTickAt || mergedActive.startedAt || 0;
+            const rts = remoteState.activeSession.lastTickAt || remoteState.activeSession.startedAt || 0;
             if (rts > lts) mergedActive = remoteState.activeSession;
           }
         }
@@ -205,11 +232,15 @@
           activeSession: mergedActive
         };
 
-        try {
-          localStorage.setItem(key, JSON.stringify(newLocalState));
-          changed = true;
-        } catch (e) {
-          console.warn("Errore salvataggio merge in localStorage:", e);
+        const prevSerialized = localStorage.getItem(key);
+        const newSerialized = JSON.stringify(newLocalState);
+        if (prevSerialized !== newSerialized) {
+          try {
+            localStorage.setItem(key, newSerialized);
+            changed = true;
+          } catch (e) {
+            console.warn("Errore salvataggio merge in localStorage:", e);
+          }
         }
       });
 
@@ -220,7 +251,12 @@
           if (raw) existingCustom = JSON.parse(raw);
         } catch (e) {}
         const mergedCustom = Object.assign({}, existingCustom, remoteData.customCourses);
-        localStorage.setItem("quiz_persisted_custom_courses", JSON.stringify(mergedCustom));
+        const prevCustomStr = localStorage.getItem("quiz_persisted_custom_courses");
+        const newCustomStr = JSON.stringify(mergedCustom);
+        if (prevCustomStr !== newCustomStr) {
+          localStorage.setItem("quiz_persisted_custom_courses", newCustomStr);
+          changed = true;
+        }
       }
 
       return changed;
@@ -329,6 +365,10 @@
           lastRemoteTimestamp = remotePayload.lastUpdated || Date.now();
           localStorage.setItem(STORAGE_LAST_SYNC_TS, String(Date.now()));
           this.updateStatusDot("synced");
+          if (hasChanges) {
+            this.showToast("⚡ Sincronizzato dal Cloud in tempo reale");
+            window.dispatchEvent(new CustomEvent("quiz-cloud-synced", { detail: remotePayload }));
+          }
           return { success: true, hasChanges: hasChanges, data: remotePayload };
         } else {
           this.updateStatusDot("synced");
@@ -342,15 +382,16 @@
       }
     },
 
-    // Schedula salvataggio automatico debounced dopo ogni risposta o fine quiz
-    schedulePush: function () {
+    // Schedula salvataggio automatico ultra-rapido debounced dopo ogni risposta o fine quiz
+    schedulePush: function (immediate = false) {
       if (!this.isAutoPushEnabled()) return;
       if (debounceTimer) clearTimeout(debounceTimer);
       this.updateStatusDot("pending");
 
+      const delay = immediate ? 50 : 350;
       debounceTimer = setTimeout(() => {
         this.pushToCloud();
-      }, 1200);
+      }, delay);
     },
 
     // Genera URL completo con parametri di sincronizzazione per il QR Code
