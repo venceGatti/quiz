@@ -1315,15 +1315,27 @@
       });
     }
 
+    const btnResetDefault = document.getElementById("btnResetDefaultGist");
+    if (btnResetDefault) {
+      btnResetDefault.addEventListener("click", () => {
+        window.QuizCloudSync.resetToDefaultGist();
+        const input = document.getElementById("syncKeyInput");
+        if (input) input.value = window.QuizCloudSync.getGistId();
+        updateSyncModalUI();
+        alert("Database Cloud ufficiale di venceGatti ripristinato con successo!");
+      });
+    }
+
     if (btnSave) {
       btnSave.addEventListener("click", async () => {
         const input = document.getElementById("syncKeyInput");
         const k = input ? input.value.trim() : "";
-        if (!k) {
-          alert("Inserisci un Gist ID valido!");
-          return;
+        if (!k || !window.QuizCloudSync.isValidGistId(k)) {
+          alert("Attenzione: il codice inserito non è un Gist ID esadecimale valido.\n\nViene mantenuto il Database Cloud ufficiale (93947b6ecd4c485e2c2e0802682e9a1c).");
+          window.QuizCloudSync.resetToDefaultGist();
+        } else {
+          window.QuizCloudSync.setGistId(k);
         }
-        window.QuizCloudSync.setGistId(k);
         updateSyncModalUI();
         btnSave.disabled = true;
         btnSave.textContent = "Sincronizzazione...";

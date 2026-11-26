@@ -23,17 +23,35 @@
   let lastRemoteTimestamp = 0;
 
   const QuizCloudSync = {
-    // Inizializza parametri da URL se presenti (?gist=...&token=...)
+    // Verifica se un ID è un hash Gist valido (es. 93947b6ecd4c485e2c2e0802682e9a1c)
+    isValidGistId: function (id) {
+      return typeof id === "string" && /^[0-9a-fA-F]{20,40}$/.test(id.trim());
+    },
+
+    // Inizializza parametri da URL se presenti (?gist=...&token=...) con auto-healing immediato
     initFromUrl: function () {
       const params = new URLSearchParams(window.location.search);
       const urlGist = params.get("gist");
       const urlToken = params.get("token");
 
       if (urlGist && urlGist.trim()) {
-        localStorage.setItem(STORAGE_GIST_ID, urlGist.trim());
+        const cleanedGist = urlGist.trim();
+        if (this.isValidGistId(cleanedGist)) {
+          localStorage.setItem(STORAGE_GIST_ID, cleanedGist);
+        } else {
+          console.warn("Parametro Gist ID non valido nell'URL ('" + cleanedGist + "'). Ripristino ID ufficiale.");
+          localStorage.setItem(STORAGE_GIST_ID, DEFAULT_GIST_ID);
+        }
       }
       if (urlToken && urlToken.trim()) {
         localStorage.setItem(STORAGE_GITHUB_TOKEN, urlToken.trim());
+      }
+
+      // Auto-healing: se in localStorage c'era memorizzato un valore corrotto o non-hex (es. 'vence')
+      const stored = localStorage.getItem(STORAGE_GIST_ID);
+      if (stored && !this.isValidGistId(stored)) {
+        console.warn("Valore non valido per Gist ID in localStorage ('" + stored + "'). Ripristino ID ufficiale.");
+        localStorage.setItem(STORAGE_GIST_ID, DEFAULT_GIST_ID);
       }
 
       if (urlGist || urlToken) {
@@ -44,16 +62,31 @@
     },
 
     getGistId: function () {
-      return localStorage.getItem(STORAGE_GIST_ID) || DEFAULT_GIST_ID;
+      const stored = localStorage.getItem(STORAGE_GIST_ID);
+      if (stored && this.isValidGistId(stored)) {
+        return stored.trim();
+      }
+      return DEFAULT_GIST_ID;
     },
 
     setGistId: function (id) {
       if (id && id.trim()) {
-        localStorage.setItem(STORAGE_GIST_ID, id.trim());
+        const trimmed = id.trim();
+        if (this.isValidGistId(trimmed)) {
+          localStorage.setItem(STORAGE_GIST_ID, trimmed);
+        } else {
+          localStorage.setItem(STORAGE_GIST_ID, DEFAULT_GIST_ID);
+        }
       } else {
-        localStorage.removeItem(STORAGE_GIST_ID);
+        localStorage.setItem(STORAGE_GIST_ID, DEFAULT_GIST_ID);
       }
       this.updateStatusDot();
+    },
+
+    resetToDefaultGist: function () {
+      localStorage.setItem(STORAGE_GIST_ID, DEFAULT_GIST_ID);
+      this.updateStatusDot();
+      return DEFAULT_GIST_ID;
     },
 
     getToken: function () {
@@ -230,6 +263,11 @@
         });
 
         if (!resp.ok) {
+          if (resp.status === 404 && gistId !== DEFAULT_GIST_ID) {
+            console.warn("Gist ID '" + gistId + "' non trovato (404). Ripristino automatico ID ufficiale e re-invio...");
+            this.resetToDefaultGist();
+            return await this.pushToCloud();
+          }
           const errText = await resp.text();
           throw new Error(`HTTP ${resp.status} - ${errText}`);
         }
@@ -272,6 +310,11 @@
         });
 
         if (!resp.ok) {
+          if (resp.status === 404 && gistId !== DEFAULT_GIST_ID) {
+            console.warn("Gist ID '" + gistId + "' non trovato (404) in pull. Ripristino ID ufficiale e riprova...");
+            this.resetToDefaultGist();
+            return await this.pullFromCloud();
+          }
           throw new Error(`HTTP ${resp.status}`);
         }
 
